@@ -1,0 +1,15 @@
+/.settings/
+/.vs/
+/.vscode/
+/.work/
+/examples/
+/src/
+/tools/
+.editorconfig
+.gitignore
+.gitmodules
+.gitattributes
+.npmignore
+npm-debug.log
+yarn.lock
+yarn-error.log

@@ -1,0 +1,32 @@
+{
+  "name": "resedit",
+  "version": "0.1.0",
+  "description": "Node.js library editing Windows Resource data",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "author": "jet",
+  "license": "MIT",
+  "homepage": "https://github.com/jet2jet/resedit-js",
+  "keywords": [
+    "windows",
+    "resource",
+    "javascript",
+    "library",
+    "version",
+    "icon",
+    "edit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jet2jet/resedit-js.git"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "version": "node ./tools/updateVersion.js ./src/main/version.ts && git add -A ./src/main/version.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "6",
+    "typescript": "~3.2.1"
+  }
+}
