@@ -646,7 +646,7 @@ export default class NtExecutableResource {
 					pointerToLineNumbers: 0,
 					numberOfRelocations: 0,
 					numberOfLineNumbers: 0,
-					characteristics: 0
+					characteristics: 0x40000040 // read access and initialized data
 				}
 			};
 		}

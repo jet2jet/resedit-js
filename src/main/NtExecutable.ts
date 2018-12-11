@@ -146,9 +146,10 @@ export default class NtExecutable {
 			info: section.info
 		} : null;
 		const dd = this._dda.get(entry);
+		const hasEntry = !!(dd && dd.size);
 
 		if (!sec) {
-			if (!dd) {
+			if (!hasEntry) {
 				// no need to replace
 			} else {
 				// clear entry
@@ -160,21 +161,24 @@ export default class NtExecutable {
 					const vaLast = vaStart + sec.info.virtualSize;
 					if (dd.virtualAddress >= vaStart && dd.virtualAddress < vaLast) {
 						this._sections.splice(i, 1);
+						// section count changed
+						this._nh.fileHeader.numberOfSections = this._sections.length;
 						break;
 					}
 				}
 			}
 		} else {
 			const rawSize = !sec.data ? 0 : sec.data.byteLength;
+			const secAlign = this._nh.optionalHeader.sectionAlignment;
 			let alignedFileSize = !sec.data ? 0 : roundUp(rawSize, this._nh.optionalHeader.fileAlignment);
-			const alignedSecSize = !sec.data ? 0 : roundUp(sec.info.virtualSize, this._nh.optionalHeader.sectionAlignment);
+			const alignedSecSize = !sec.data ? 0 : roundUp(sec.info.virtualSize, secAlign);
 			if (sec.info.sizeOfRawData < alignedFileSize) {
 				sec.info.sizeOfRawData = alignedFileSize;
 			} else {
 				alignedFileSize = sec.info.sizeOfRawData;
 			}
 
-			if (!dd) {
+			if (!hasEntry) {
 				let virtAddr = 0;
 				let rawAddr = this._headers.byteLength;
 				// get largest addresses
@@ -191,11 +195,15 @@ export default class NtExecutable {
 				if (!alignedFileSize) {
 					rawAddr = 0;
 				}
+				virtAddr = roundUp(virtAddr, secAlign);
 				sec.info.pointerToRawData = rawAddr;
 				sec.info.virtualAddress = virtAddr;
 				// add entry
 				this._dda.set(entry, { size: rawSize, virtualAddress: virtAddr });
 				this._sections.push(sec);
+
+				// section count changed
+				this._nh.fileHeader.numberOfSections = this._sections.length;
 
 				// change image size
 				this._nh.optionalHeader.sizeOfImage = roundUp(virtAddr + alignedSecSize, this._nh.optionalHeader.sectionAlignment);
