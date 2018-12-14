@@ -8,7 +8,7 @@ enum ImageDirectoryEntry {
 	BaseRelocation = 5,
 	Debug = 6,
 	Architecture = 7,
-	GlobaPointer = 8,
+	GlobalPointer = 8,
 	Tls = 9,
 	TLS = 9, // alias
 	LoadConfig = 10,
