@@ -90,6 +90,13 @@ export default class NtExecutable {
 		return new NtExecutable(headers, sections);
 	}
 
+	/**
+	 * Returns whether the executable is for 32-bit architecture
+	 */
+	public is32bit() {
+		return this._nh.is32bit();
+	}
+
 	public getTotalHeaderSize() {
 		return this._headers.byteLength;
 	}

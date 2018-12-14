@@ -25,6 +25,9 @@ export default class ImageNtHeaders extends FormatBase {
 	public isValid() {
 		return this.signature === ImageNtHeaders.DEFAULT_SIGNATURE;
 	}
+	public is32bit() {
+		return this.view.getUint16(ImageFileHeader.size + 4, true) === ImageOptionalHeader.DEFAULT_MAGIC;
+	}
 
 	public get signature() { return this.view.getUint32(0, true); }
 	public set signature(val: number) { this.view.setUint32(0, val, true); }
