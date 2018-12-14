@@ -189,14 +189,14 @@ export default class NtExecutable {
 				let virtAddr = 0;
 				let rawAddr = this._headers.byteLength;
 				// get largest addresses
-				this._sections.forEach((sec) => {
-					if (sec.info.pointerToRawData) {
-						if (rawAddr <= sec.info.pointerToRawData) {
-							rawAddr = sec.info.pointerToRawData + sec.info.sizeOfRawData;
+				this._sections.forEach((secExist) => {
+					if (secExist.info.pointerToRawData) {
+						if (rawAddr <= secExist.info.pointerToRawData) {
+							rawAddr = secExist.info.pointerToRawData + secExist.info.sizeOfRawData;
 						}
 					}
-					if (virtAddr <= sec.info.virtualAddress) {
-						virtAddr = sec.info.virtualAddress + sec.info.virtualSize;
+					if (virtAddr <= secExist.info.virtualAddress) {
+						virtAddr = secExist.info.virtualAddress + secExist.info.virtualSize;
 					}
 				});
 				if (!alignedFileSize) {
@@ -310,13 +310,16 @@ export default class NtExecutable {
 			if (s.info.virtualAddress === virtualAddress) {
 				// console.log(`  found`);
 				const secAlign = this._nh.optionalHeader.sectionAlignment;
-				const oldFileAddr = s.info.pointerToRawData + s.info.sizeOfRawData;
+				const fileAddr = s.info.pointerToRawData;
+				const oldFileAddr = fileAddr + s.info.sizeOfRawData;
 				const oldVirtAddr = virtualAddress + roundUp(s.info.virtualSize, secAlign);
 				s.info = cloneObject(info);
+				s.info.virtualAddress = virtualAddress;
+				s.info.pointerToRawData = fileAddr;
 				s.data = data;
 
 				// shift addresses
-				const newFileAddr = info.pointerToRawData + info.sizeOfRawData;
+				const newFileAddr = fileAddr + info.sizeOfRawData;
 				const newVirtAddr = virtualAddress + roundUp(info.virtualSize, secAlign);
 				this.rearrangeSections(oldFileAddr, newFileAddr - oldFileAddr, oldVirtAddr, newVirtAddr - oldVirtAddr);
 

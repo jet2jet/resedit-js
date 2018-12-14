@@ -510,7 +510,10 @@ export default class NtExecutableResource {
 	 */
 	public generateResourceData(virtualAddress: number, alignment: number): {
 		bin: ArrayBuffer,
-		rawSize: number
+		rawSize: number,
+		dataOffset: number,
+		descEntryOffset: number,
+		descEntryCount: number
 	} {
 		// estimate data size and divide to output table
 		const r: DivideEntriesResultType = {
@@ -590,7 +593,10 @@ export default class NtExecutableResource {
 
 		return {
 			bin: bin,
-			rawSize: size
+			rawSize: size,
+			dataOffset: dataOffset,
+			descEntryOffset: descOffset,
+			descEntryCount: this.entries.length
 		};
 	}
 
@@ -600,7 +606,6 @@ export default class NtExecutableResource {
 	public outputResource(exeDest: NtExecutable) {
 		// make section data
 		const fileAlign = exeDest.getFileAlignment();
-		const secAlign = exeDest.getSectionAlignment();
 		let sectionData: NtExecutableSection;
 		if (this.sectionDataHeader) {
 			sectionData = {
@@ -608,40 +613,14 @@ export default class NtExecutableResource {
 				info: cloneObject(this.sectionDataHeader)
 			};
 		} else {
-			let secs = ([] as NtExecutableSection[]).concat(exeDest.getAllSections());
-			let lastRaw = 0;
-			let lastVA = 0;
-			if (secs.length > 0) {
-				for (let i = secs.length - 1; i >= 0; --i) {
-					const sec = secs[i];
-					if (sec.info.pointerToRawData) {
-						lastRaw = roundUp(sec.info.pointerToRawData + sec.info.sizeOfRawData, fileAlign);
-						break;
-					}
-				}
-				secs = secs.sort((a, b) => (a.info.virtualAddress - b.info.virtualAddress));
-				for (let i = secs.length - 1; i >= 0; --i) {
-					const sec = secs[i];
-					if (sec.info.virtualAddress) {
-						lastVA = roundUp(sec.info.virtualAddress + sec.info.virtualSize, secAlign);
-						break;
-					}
-				}
-			}
-			if (!lastRaw) {
-				lastRaw = roundUp(exeDest.getTotalHeaderSize(), fileAlign);
-			}
-			if (!lastVA) {
-				lastVA = exeDest.getImageBase();
-			}
 			sectionData = {
 				data: null,
 				info: {
 					name: '.rsrc',
 					virtualSize: 0,
-					virtualAddress: lastVA,
+					virtualAddress: 0,
 					sizeOfRawData: 0,
-					pointerToRawData: lastRaw,
+					pointerToRawData: 0,
 					pointerToRelocations: 0,
 					pointerToLineNumbers: 0,
 					numberOfRelocations: 0,
@@ -651,7 +630,9 @@ export default class NtExecutableResource {
 			};
 		}
 
-		const data = this.generateResourceData(sectionData.info.virtualAddress, fileAlign);
+		// first, set virtualAddress to 0 because
+		// the virtual address is not determined now
+		const data = this.generateResourceData(0, fileAlign);
 
 		sectionData.data = data.bin;
 		sectionData.info.sizeOfRawData = data.bin.byteLength;
@@ -662,5 +643,20 @@ export default class NtExecutableResource {
 			ImageDirectoryEntry.Resource,
 			sectionData
 		);
+
+		// rewrite section raw-data
+		const generatedSection = exeDest.getSectionByEntry(ImageDirectoryEntry.Resource)!;
+		const view = new DataView(generatedSection.data!);
+		// set RVA
+		let o = data.descEntryOffset;
+		let va = generatedSection.info.virtualAddress + data.dataOffset;
+		for (let i = 0; i < data.descEntryCount; ++i) {
+			const len = view.getUint32(o + 4, true);
+			va = roundUp(va, 8);
+			// RVA
+			view.setUint32(o, va, true);
+			va += len;
+			o += 16;
+		}
 	}
 }
