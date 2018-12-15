@@ -103,7 +103,11 @@ function createFixedInfo(): VersionFixedInfo {
 
 // returns offset and structure
 function parseStringTable(view: DataView, offset: number, last: number): [number, VersionStringTable] {
+	const tableLen = view.getUint16(offset, true);
 	const valueLen = view.getUint16(offset + 2, true);
+	if (offset + tableLen < last) {
+		last = offset + tableLen;
+	}
 	// value type check is not needed; because no value is needed
 
 	const tableName = readStringToNullChar(view, offset + 6, last);
@@ -148,7 +152,8 @@ function parseStringTable(view: DataView, offset: number, last: number): [number
 
 		r.values[name] = value;
 	}
-	return [offset, r];
+	// return 'last' instead of 'offset'
+	return [last, r];
 }
 
 function parseStringFileInfo(view: DataView, offset: number, last: number): VersionStringTable[] {
@@ -204,19 +209,25 @@ function parseVarFileInfo(view: DataView, offset: number, last: number): Version
 		}
 		const name = readStringToNullChar(view, offset + 6, childDataLast);
 		offset = roundUp(offset + 6 + 2 * (name.length + 1), 4);
-		if (name !== 'Translation' || childValueLen !== 4) {
+		if (name !== 'Translation' || childValueLen % 4 !== 0) {
 			// unknown entry
 			offset = roundUp(childDataLast, 4);
 			continue;
 		}
 
-		const lang = view.getUint16(offset, true);
-		const codepage = view.getUint16(offset + 2, true);
-		offset += 4;
+		for (let child = 0; child < childValueLen; child += 4) {
+			if (offset + 4 > childDataLast) {
+				break;
+			}
+			const lang = view.getUint16(offset, true);
+			const codepage = view.getUint16(offset + 2, true);
+			offset += 4;
 
-		if (r.filter((e) => (e.lang === lang && e.codepage === codepage)).length === 0) {
-			r.push({ lang, codepage });
+			if (r.filter((e) => (e.lang === lang && e.codepage === codepage)).length === 0) {
+				r.push({ lang, codepage });
+			}
 		}
+		offset = roundUp(childDataLast, 4);
 	}
 
 	return r;
@@ -369,7 +380,8 @@ function generateVarFileInfo(translations: VersionTranslation[]): ArrayBuffer {
 	// estimate size
 	let size = 32; // roundUp(6 + ByteLenWithNull(L'VarFileInfo'), 4)
 	// (translation data is fixed length)
-	size += translations.length * 36;
+	const translationsValueSize = translations.length * 4;
+	size += 32 + translationsValueSize;
 
 	const bin = new ArrayBuffer(size);
 	const view = new DataView(bin);
@@ -378,14 +390,15 @@ function generateVarFileInfo(translations: VersionTranslation[]): ArrayBuffer {
 	view.setUint16(2, 0, true); // no value length
 	view.setUint16(4, 1, true);
 	let offset = roundUp(writeStringWithNullChar(view, 6, 'VarFileInfo'), 4);
+
+	view.setUint16(offset, 32 + translationsValueSize, true);
+	view.setUint16(offset + 2, translationsValueSize, true);
+	view.setUint16(offset + 4, 0, true);
+	offset = roundUp(writeStringWithNullChar(view, offset + 6, 'Translation'), 4);
 	translations.forEach((translation) => {
-		view.setUint16(offset, 36, true);
-		view.setUint16(offset + 2, 4, true);
-		view.setUint16(offset + 4, 0, true);
-		writeStringWithNullChar(view, offset + 6, 'Translation');
-		view.setUint16(offset + 32, translation.lang, true);
-		view.setUint16(offset + 34, translation.codepage, true);
-		offset += 36;
+		view.setUint16(offset, translation.lang, true);
+		view.setUint16(offset + 2, translation.codepage, true);
+		offset += 4;
 	});
 
 	return bin;
