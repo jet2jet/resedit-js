@@ -8,13 +8,20 @@ cache:
 matrix:
   include:
     - name: "Basic test"
-      env: JOB_TYPE=basic
+      env:
+        - JOB_TYPE=basic
     - name: "Windows-specific test (using x86)"
-      env: JOB_TYPE=win-x86 TEST_IGNORE_256_ICON=1
       os: windows
+      env:
+        - JOB_TYPE=win-x86
+        - TEST_IGNORE_256_ICON=1
+        - YARN_GPG=no # workaround
     - name: "Windows-specific test (using x64)"
-      env: JOB_TYPE=win-x64 TEST_IGNORE_256_ICON=1
       os: windows
+      env:
+        - JOB_TYPE=win-x64
+        - TEST_IGNORE_256_ICON=1
+        - YARN_GPG=no # workaround
   fast_finish: true
 
 script: yarn run test:$JOB_TYPE
