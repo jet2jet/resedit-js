@@ -1,0 +1,19 @@
+language: node_js
+node_js: "6"
+
+cache:
+  yarn: true
+
+matrix:
+  include:
+    - name: "Basic test"
+      env: JOB_TYPE=basic
+    - name: "Windows-specific test (using x86)"
+      env: JOB_TYPE=win-x86
+      os: windows
+    - name: "Windows-specific test (using x64)"
+      env: JOB_TYPE=win-x64
+      os: windows
+  fast_finish: true
+
+script: yarn run test:$JOB_TYPE
