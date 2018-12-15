@@ -25,6 +25,10 @@ function testExecWithResultData(bin: ArrayBuffer, appName: string) {
 function testIconPatterns(patterns: [number, number][], output: { [type: string]: { [key: string]: string; }; }) {
 	patterns.forEach(([width, height]) => {
 		const typeName = `${width}x${height}`;
+		if (__TEST_IGNORE_256_ICON__ && width === 256 && height === 256) {
+			console.log(`test is skipped for ${typeName} icon type because of Environment settings.`);
+			return;
+		}
 		expect(output).toHaveProperty(typeName);
 		const o = output[typeName];
 		expect(o).toBeDefined();
