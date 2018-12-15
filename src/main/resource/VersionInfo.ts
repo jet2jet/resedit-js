@@ -553,6 +553,34 @@ export default class VersionInfo {
 	public setStringValue(language: VersionTranslation, key: string, value: string) {
 		this.setStringValues(language, { [key]: value });
 	}
+	/**
+	 * Remove all string values for specified language.
+	 * @param language language info
+	 */
+	public removeAllStringValues(language: VersionTranslation) {
+		const strings = this.data.strings;
+		const len = strings.length;
+		for (let i = 0; i < len; ++i) {
+			const e = strings[i];
+			if (e.lang === language.lang && e.codepage === language.codepage) {
+				strings.splice(i, 1);
+				const translations = this.data.translations;
+				for (let j = 0; j < translations.length; j++) {
+					const t = translations[j];
+					if (t.lang === language.lang && t.codepage === language.codepage) {
+						translations.splice(j, 1);
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
+	/**
+	 * Remove specified string value for specified language.
+	 * @param language language info
+	 * @param key the key name of string value to be removed
+	 */
 	public removeStringValue(language: VersionTranslation, key: string) {
 		const strings = this.data.strings;
 		const len = strings.length;
