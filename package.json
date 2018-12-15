@@ -1,6 +1,6 @@
 {
   "name": "resedit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Node.js library editing Windows Resource data",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
