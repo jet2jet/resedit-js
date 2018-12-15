@@ -5,10 +5,10 @@ insert_final_newline = true
 indent_style = tab
 indent_size = 4
 
-[{*.c;*.cpp;*.cxx;*.cc;*.tli;*.tlh;*.h;*.hh;*.hpp;*.hxx;*.hh;*.inl;*.ipp;*.rc;*.resx;*.idl;*.asm;*.inc}]
+[{*.c,*.cpp,*.cxx,*.cc,*.tli,*.tlh,*.h,*.hh,*.hpp,*.hxx,*.hh,*.inl,*.ipp,*.rc,*.resx,*.idl,*.asm,*.inc}]
 end_of_line = crlf
 
-[{*.json,.bowerrc,.gitignore,.npmignore,.gitattributes,.editorconfig}]
+[{*.json,*.yml,.bowerrc,.gitignore,.npmignore,.gitattributes,.editorconfig}]
 end_of_line = lf
 indent_style = space
 indent_size = 2
