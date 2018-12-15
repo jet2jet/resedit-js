@@ -26,7 +26,7 @@ npm install resedit
 
 ## Examples
 
-For more APIs, please see `dist` directory of the package.
+For more APIs, please see `dist` directory of the package. And, [some test codes](./src/test) may help you for usages.
 
 ```js
 const ResEdit = require('resedit');
