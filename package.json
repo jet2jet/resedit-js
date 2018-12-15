@@ -21,7 +21,7 @@
     "url": "https://github.com/jet2jet/resedit-js.git"
   },
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsc -p ./tsconfig.app.json"
     "version": "node ./tools/updateVersion.js ./src/main/version.ts && git add -A ./src/main/version.ts"
   },
   "dependencies": {},

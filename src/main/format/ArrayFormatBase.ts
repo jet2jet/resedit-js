@@ -1,3 +1,4 @@
+/// <reference lib='es2015.collection' />
 
 import FormatBase from './FormatBase';
 

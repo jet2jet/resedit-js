@@ -15,9 +15,11 @@
         "../../node_modules/*"
       ]
     },
+    "rootDir": "./",
     "skipLibCheck": true,
     "strict": true,
-    "target": "es5"
+    "target": "es5",
+    "typeRoots": []
   },
   "include": [
     "./src/main/**/*.ts"
