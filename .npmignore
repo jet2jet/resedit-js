@@ -1,10 +1,14 @@
-/.settings/
-/.vs/
-/.vscode/
+.settings/
+.vs/
+.vscode/
+obj/
 /.work/
 /examples/
 /src/
+/test/
 /tools/
+*.aps
+*.user
 .editorconfig
 .gitignore
 .gitmodules
@@ -13,3 +17,7 @@
 npm-debug.log
 yarn.lock
 yarn-error.log
+jest.config.js
+jest.config.*.js
+tsconfig.json
+tsconfig.*.json

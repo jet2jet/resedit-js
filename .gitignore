@@ -1,8 +1,11 @@
-/.vs/
-/.vscode/
+.vs/
+.vscode/
+obj/
 /.work/
 /dist/
 /node_modules/
+*.aps
+*.user
 .github
 npm-debug.log
 yarn-error.log

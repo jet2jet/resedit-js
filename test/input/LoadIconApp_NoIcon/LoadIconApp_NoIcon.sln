@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoadIconApp_NoIcon", "LoadIconApp_NoIcon.vcxproj", "{82AD0C4A-58F7-46D9-8E28-ED26EF18264E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Windows|x64 = Windows|x64
+		Windows|x86 = Windows|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82AD0C4A-58F7-46D9-8E28-ED26EF18264E}.Windows|x64.ActiveCfg = Windows|x64
+		{82AD0C4A-58F7-46D9-8E28-ED26EF18264E}.Windows|x64.Build.0 = Windows|x64
+		{82AD0C4A-58F7-46D9-8E28-ED26EF18264E}.Windows|x86.ActiveCfg = Windows|Win32
+		{82AD0C4A-58F7-46D9-8E28-ED26EF18264E}.Windows|x86.Build.0 = Windows|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6D2F404C-E2B3-43BF-B831-34D7402F7053}
+	EndGlobalSection
+EndGlobal
