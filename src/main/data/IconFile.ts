@@ -143,13 +143,27 @@ export default class IconFile {
 			for (let i = 0; i < count; ++i) {
 				const dataSize = readUint32WithLastOffset(view, offset + 8, totalSize);
 				const dataOffset = readUint32WithLastOffset(view, offset + 12, totalSize);
+				const width = readUint8WithLastOffset(view, offset, totalSize);
+				const height = readUint8WithLastOffset(view, offset + 1, totalSize);
+				const bitCount = readUint8WithLastOffset(view, offset + 6, totalSize);
+				let data: IconItem | RawIconItem;
+				if (view.getUint32(dataOffset, true) === 0x28) {
+					data = IconItem.from(bin, dataOffset, dataSize);
+				} else {
+					data = RawIconItem.from(
+						bin.slice(dataOffset, dataOffset + dataSize),
+						width || 256,
+						height || 256,
+						bitCount
+					);
+				}
 				icons.push({
-					width: readUint8WithLastOffset(view, offset, totalSize),
-					height: readUint8WithLastOffset(view, offset + 1, totalSize),
+					width: width,
+					height: height,
 					colors: readUint8WithLastOffset(view, offset + 2, totalSize),
 					planes: readUint16WithLastOffset(view, offset + 4, totalSize),
-					bitCount: readUint16WithLastOffset(view, offset + 6, totalSize),
-					data: IconItem.from(bin, dataOffset, dataSize)
+					bitCount: bitCount,
+					data: data
 				});
 				offset += 16;
 			}

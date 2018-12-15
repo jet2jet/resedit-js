@@ -11,6 +11,11 @@ import {
 	roundUp
 } from '../util/functions';
 
+function calcMaskSize(width: number, height: number) {
+	const actualWidth = roundUp(Math.abs(width) / 8, 4);
+	return actualWidth * Math.abs(height);
+}
+
 export default class IconItem {
 
 	public readonly bitmapInfo: BitmapInfo;
@@ -19,7 +24,7 @@ export default class IconItem {
 
 	private constructor(bin: ArrayBuffer, byteOffset?: number, byteLength?: number) {
 		const view = new DataView(bin, byteOffset, byteLength);
-		const totalSize = view.byteLength - view.byteOffset;
+		const totalSize = view.byteLength;
 
 		let headerSize = view.getUint32(0, true);
 		if (headerSize > totalSize) {
@@ -53,7 +58,7 @@ export default class IconItem {
 					break;
 			}
 		}
-		for (let i = 0; i < bi.colorUsed; ++i) {
+		for (let i = 0; i < colors; ++i) {
 			bi.colors.push({
 				b: readUint8WithLastOffset(view, offset, totalSize),
 				g: readUint8WithLastOffset(view, offset + 1, totalSize),
@@ -63,15 +68,17 @@ export default class IconItem {
 		}
 
 		this.bitmapInfo = bi;
-		const size = sizeImage || (totalSize - offset);
-		this.pixels = allocatePartialBinary(bin, offset, size);
+		const absWidthRound = roundUp(Math.abs(bi.width), 8);
+		const absActualHeight = Math.abs(bi.height) / 2;
+		const size = sizeImage || (bi.bitCount * absWidthRound * absActualHeight / 8);
+		this.pixels = allocatePartialBinary(bin, view.byteOffset + offset, size);
 		offset += size;
-		let maskSize = bi.width * bi.height / 8;
+		let maskSize = calcMaskSize(bi.width, absActualHeight);
 		if (maskSize + offset > totalSize) {
 			maskSize = totalSize - offset;
 		}
 		if (maskSize) {
-			this.masks = allocatePartialBinary(bin, offset, maskSize);
+			this.masks = allocatePartialBinary(bin, view.byteOffset + offset, maskSize);
 		} else {
 			this.masks = null;
 		}
@@ -94,7 +101,7 @@ export default class IconItem {
 		const absWidthRound = roundUp(absWidth, 8);
 		const absActualHeight = Math.abs(bi.height) / 2;
 		const sizeImage = bi.bitCount * absWidthRound * absActualHeight / 8;
-		const sizeMask = this.masks ? absWidthRound * absActualHeight / 8 : 0;
+		const sizeMask = this.masks ? calcMaskSize(bi.width, absActualHeight) : 0;
 		let colorCount = bi.colors.length;
 		const totalSize = (
 			40 +
@@ -102,7 +109,6 @@ export default class IconItem {
 			(sizeImage) +
 			(sizeMask)
 		);
-		console.log(`totalSize = ${totalSize}, pixelSize = ${sizeImage} @ ${this.pixels.byteLength}, maskSize = ${sizeMask} @ ${this.masks && this.masks.byteLength}`);
 		const bin = new ArrayBuffer(totalSize);
 		const view = new DataView(bin);
 		view.setUint32(0, 40, true);
@@ -115,7 +121,7 @@ export default class IconItem {
 		view.setUint32(20, sizeImage, true);
 		view.setInt32(24, bi.xPelsPerMeter, true);
 		view.setInt32(28, bi.yPelsPerMeter, true);
-		view.setUint32(32, colorCount, true);
+		view.setUint32(32, bi.colorUsed, true);
 		view.setUint32(36, bi.colorImportant > colorCount ? colorCount : bi.colorImportant, true);
 
 		let offset = 40;

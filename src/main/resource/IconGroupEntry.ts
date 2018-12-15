@@ -164,7 +164,7 @@ export default class IconGroupEntry {
 		).map((item) => {
 			const bin = item.entry.bin;
 			const view = new DataView(bin);
-			if (view.getUint8(0) === 0 && view.getUint8(1) === 1) {
+			if (view.getUint32(0, true) === 0x28) {
 				return IconItem.from(bin);
 			} else {
 				const c = item.icon;
