@@ -1,5 +1,6 @@
 language: node_js
 node_js: "6"
+sudo: false
 
 cache:
   yarn: true
@@ -9,10 +10,10 @@ matrix:
     - name: "Basic test"
       env: JOB_TYPE=basic
     - name: "Windows-specific test (using x86)"
-      env: JOB_TYPE=win-x86
+      env: JOB_TYPE=win-x86 TEST_IGNORE_256_ICON=1
       os: windows
     - name: "Windows-specific test (using x64)"
-      env: JOB_TYPE=win-x64
+      env: JOB_TYPE=win-x64 TEST_IGNORE_256_ICON=1
       os: windows
   fast_finish: true
 
