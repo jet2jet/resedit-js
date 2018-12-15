@@ -22,6 +22,18 @@ function testExecWithResultData(bin: ArrayBuffer, appName: string) {
 	return result;
 }
 
+function testIconPatterns(patterns: [number, number][], output: { [type: string]: { [key: string]: string; }; }) {
+	patterns.forEach(([width, height]) => {
+		const typeName = `${width}x${height}`;
+		expect(output).toHaveProperty(typeName);
+		const o = output[typeName];
+		expect(o).toBeDefined();
+		expect(o.isIcon).toEqual('1');
+		expect(o.width).toEqual(`${width}`);
+		expect(o.height).toEqual(`${height}`);
+	});
+}
+
 describe(`IconGroupEntry - ${platform}`, () => {
 	const DUMMY_ICON_4_PATTERNS: [number, number][] = [[16, 16], [32, 32], [64, 64], [256, 256]];
 
@@ -50,14 +62,7 @@ describe(`IconGroupEntry - ${platform}`, () => {
 
 		// the output should have all size patterns (16x16, 32x32, 64x64, and 256x256)
 		const output = testExecWithResultData(newBin, appName);
-		expect(Object.keys(output).length).toEqual(DUMMY_ICON_4_PATTERNS.length);
-		DUMMY_ICON_4_PATTERNS.forEach(([width, height]) => {
-			const o = output[`${width}x${height}`];
-			expect(o).toBeDefined();
-			expect(o.isIcon).toEqual('1');
-			expect(o.width).toEqual(`${width}`);
-			expect(o.height).toEqual(`${height}`);
-		});
+		testIconPatterns(DUMMY_ICON_4_PATTERNS, output);
 	});
 
 	it('append new icon entry to existing resource data (no icon)', () => {
@@ -86,14 +91,7 @@ describe(`IconGroupEntry - ${platform}`, () => {
 
 		// the output should have all size patterns (16x16, 32x32, 64x64, and 256x256)
 		const output = testExecWithResultData(newBin, appName);
-		expect(Object.keys(output).length).toEqual(DUMMY_ICON_4_PATTERNS.length);
-		DUMMY_ICON_4_PATTERNS.forEach(([width, height]) => {
-			const o = output[`${width}x${height}`];
-			expect(o).toBeDefined();
-			expect(o.isIcon).toEqual('1');
-			expect(o.width).toEqual(`${width}`);
-			expect(o.height).toEqual(`${height}`);
-		});
+		testIconPatterns(DUMMY_ICON_4_PATTERNS, output);
 	});
 
 	it('replace existing icon entry', () => {
@@ -131,13 +129,6 @@ describe(`IconGroupEntry - ${platform}`, () => {
 
 		// the output should have all size patterns (16x16, 32x32, 64x64, and 256x256)
 		const output = testExecWithResultData(newBin, appName);
-		expect(Object.keys(output).length).toEqual(DUMMY_ICON_4_PATTERNS.length);
-		DUMMY_ICON_4_PATTERNS.forEach(([width, height]) => {
-			const o = output[`${width}x${height}`];
-			expect(o).toBeDefined();
-			expect(o.isIcon).toEqual('1');
-			expect(o.width).toEqual(`${width}`);
-			expect(o.height).toEqual(`${height}`);
-		});
+		testIconPatterns(DUMMY_ICON_4_PATTERNS, output);
 	});
 });
