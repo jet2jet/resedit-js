@@ -19,7 +19,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es5",
-    "typeRoots": []
+    "typeRoots": ["./node_modules/@types", "./node_modules"],
+    "types": []
   },
   "include": [
     "./src/main/**/*.ts"

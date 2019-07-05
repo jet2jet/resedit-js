@@ -1,4 +1,5 @@
 /// <reference types='node' />
+/// <reference types='jest' />
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -40,7 +41,7 @@ export function testExec(bin: ArrayBuffer, name: string, platform: string) {
 	const file = path.join(dir, `${name}.exe`);
 
 	mkdirp(dir);
-	fs.writeFileSync(file, new Buffer(bin));
+	fs.writeFileSync(file, Buffer.from(bin));
 
 	const result = child_process.spawnSync(file, { encoding: 'ascii' });
 	if (result.error) {

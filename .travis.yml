@@ -1,9 +1,8 @@
 language: node_js
-node_js: "6"
+node_js: "10"
 sudo: false
 
-cache:
-  yarn: true
+cache: npm
 
 matrix:
   include:
@@ -15,13 +14,11 @@ matrix:
       env:
         - JOB_TYPE=win-x86
         - TEST_IGNORE_256_ICON=1
-        - YARN_GPG=no # workaround
     - name: "Windows-specific test (using x64)"
       os: windows
       env:
         - JOB_TYPE=win-x64
         - TEST_IGNORE_256_ICON=1
-        - YARN_GPG=no # workaround
   fast_finish: true
 
-script: yarn run test:$JOB_TYPE
+script: npm run test:$JOB_TYPE
