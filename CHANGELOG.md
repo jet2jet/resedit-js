@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.1
+
+- Fix the build paths to match package.json file (#3, thanks to @AlexanderOMara)
+
 ## v0.2.0
 
 - Fix some bugs as followings:
