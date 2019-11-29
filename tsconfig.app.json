@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src/main",
+    "baseUrl": "./",
     "declaration": true,
     "lib": [ "es5", "es2015.collection" ],
     "module": "commonjs",
@@ -15,7 +15,7 @@
         "../../node_modules/*"
       ]
     },
-    "rootDir": "./",
+    "rootDir": "./src/main",
     "skipLibCheck": true,
     "strict": true,
     "target": "es5",
