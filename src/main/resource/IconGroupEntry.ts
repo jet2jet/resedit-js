@@ -193,11 +193,38 @@ export default class IconGroupEntry {
 		let entry: ResourceEntry | undefined =
 			destEntries.filter((e) => (e.type === 14 && e.id === iconGroupID && e.lang === lang))[0];
 		let binEntry: ArrayBuffer;
-		const tmpIconArray = icons.map((icon) => {
+		interface TempIconData {
+			base: IconItem | RawIconItem;
+			bm: {
+				width: number;
+				height: number;
+				planes: number;
+				bitCount: number;
+			};
+			bin: ArrayBuffer;
+			id: number;
+		}
+		const tmpIconArray: TempIconData[] = icons.map((icon): TempIconData => {
 			if (icon.isIcon()) {
+				let { width, height } = icon;
+				if (width === null) {
+					width = icon.bitmapInfo.width;
+				}
+				if (height === null) {
+					height = icon.bitmapInfo.height;
+					// if mask is specified, the icon height must be the half of bitmap height
+					if (icon.masks !== null) {
+						height = Math.floor(height / 2);
+					}
+				}
 				return {
 					base: icon,
-					bm: icon.bitmapInfo,
+					bm: {
+						width: width,
+						height: height,
+						planes: icon.bitmapInfo.planes,
+						bitCount: icon.bitmapInfo.bitCount
+					},
 					bin: icon.generate(),
 					id: 0
 				};

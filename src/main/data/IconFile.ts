@@ -148,7 +148,7 @@ export default class IconFile {
 				const bitCount = readUint8WithLastOffset(view, offset + 6, totalSize);
 				let data: IconItem | RawIconItem;
 				if (view.getUint32(dataOffset, true) === 0x28) {
-					data = IconItem.from(bin, dataOffset, dataSize);
+					data = IconItem.from(width, height, bin, dataOffset, dataSize);
 				} else {
 					data = RawIconItem.from(
 						bin.slice(dataOffset, dataOffset + dataSize),

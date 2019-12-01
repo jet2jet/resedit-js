@@ -18,11 +18,37 @@ function calcMaskSize(width: number, height: number) {
 
 export default class IconItem {
 
+	/**
+	 * Bitmap header data (`BITMAPINFOHEADER`)
+	 */
 	public readonly bitmapInfo: BitmapInfo;
+	/**
+	 * Horizontal size of the icon in pixel (overrides `bitmapInfo.width`).
+	 * If `null` is specified, `bitmapInfo.width` will be used.
+	 */
+	public width: number | null;
+	/**
+	 * Vertical size of the icon in pixel (overrides `bitmapInfo.height`).
+	 * If `null` is specified, `bitmapInfo.height` will be used.
+	 */
+	public height: number | null;
+	/**
+	 * Bitmap pixel data
+	 */
 	public pixels: ArrayBuffer;
+	/**
+	 * Bitmap pixel data used for mask
+	 * (the data will be appended immediately after `pixels` when generating icon binary)
+	 */
 	public masks: ArrayBuffer | null;
 
-	private constructor(bin: ArrayBuffer, byteOffset?: number, byteLength?: number) {
+	private constructor(
+		width: number | null,
+		height: number | null,
+		bin: ArrayBuffer,
+		byteOffset?: number,
+		byteLength?: number
+	) {
 		const view = new DataView(bin, byteOffset, byteLength);
 		const totalSize = view.byteLength;
 
@@ -67,6 +93,8 @@ export default class IconItem {
 			offset += 4;
 		}
 
+		this.width = width;
+		this.height = height;
 		this.bitmapInfo = bi;
 		const absWidthRound = roundUp(Math.abs(bi.width), 8);
 		const absActualHeight = Math.abs(bi.height) / 2;
@@ -84,8 +112,53 @@ export default class IconItem {
 		}
 	}
 
-	public static from(bin: ArrayBuffer, byteOffset?: number, byteLength?: number): IconItem {
-		return new IconItem(bin, byteOffset, byteLength);
+	/**
+	 * Generates `IconItem` instance from bitmap data binary.
+	 * @param bin binary data containing the bitmap data
+	 * @param byteOffset byte offset of `bin` referring the bitmap data
+	 * @param byteLength available byte length for `bin` (from the offset `byteOffset`)
+	 */
+	public static from(bin: ArrayBuffer, byteOffset?: number, byteLength?: number): IconItem;
+	/**
+	 * Generates `IconItem` instance from bitmap data binary width actual icon size (width and height).
+	 * @param width icon width
+	 * @param height icon height
+	 * @param bin binary data containing the bitmap data
+	 * @param byteOffset byte offset of `bin` referring the bitmap data
+	 * @param byteLength available byte length for `bin` (from the offset `byteOffset`)
+	 */
+	public static from(
+		width: number,
+		height: number,
+		bin: ArrayBuffer,
+		byteOffset?: number,
+		byteLength?: number
+	): IconItem
+
+	public static from(
+		arg1: ArrayBuffer | number,
+		arg2?: number,
+		arg3?: number | ArrayBuffer,
+		byteOffset?: number,
+		byteLength?: number
+	): IconItem {
+		let width: number | null;
+		let height: number | null;
+		let bin: ArrayBuffer;
+		if (typeof arg3 === 'object') {
+			// second overload
+			width = arg1 as number;
+			height = arg2!;
+			bin = arg3 as ArrayBuffer;
+		} else {
+			// first overload
+			width = null;
+			height = null;
+			bin = arg1 as ArrayBuffer;
+			byteOffset = arg2;
+			byteLength = arg3 as typeof byteLength;
+		}
+		return new IconItem(width, height, bin, byteOffset, byteLength);
 	}
 
 	public isIcon(): this is IconItem {
