@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.2
+
+- Fix width and height usage for icon group, especially when loading from an icon file (#5)
+
 ## v0.2.1
 
 - Fix the build paths to match package.json file (#3, thanks to @AlexanderOMara)
