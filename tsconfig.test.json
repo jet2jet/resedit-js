@@ -2,7 +2,7 @@
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
     "baseUrl": "./src/main",
-    "rootDir": "./",
+    "rootDir": "../..",
     "paths": {
       "@/*": [
         "../../src/main/*"

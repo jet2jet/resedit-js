@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.app.json",
+  "extends": "./tsconfig.test.json",
   "compilerOptions": {
     "paths": {
       "@/*": [
