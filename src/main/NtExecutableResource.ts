@@ -554,7 +554,7 @@ export default class NtExecutableResource {
 			// size
 			view.setUint32(o + 4, len, true);
 			// codepage
-			view.setUint32(o + 8, 0, true);
+			view.setUint32(o + 8, e.codepage, true);
 			// (zero)
 			view.setUint32(o + 12, 0, true);
 			va += len;
