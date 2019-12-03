@@ -14,9 +14,8 @@ npm install resedit
 
 ## Supported formats
 
-- Windows Executables (PE Format), both 32-bit and 64-bit, are supported.
+- Windows Executables (PE Format, such as `.exe` and `.dll`), both 32-bit and 64-bit, are supported.
   - Executables for 16-bit Windows is not supported.
-  - Checksum is always set to zero when generating binary.
 - `.res` file is not supported now.
 - PNG-based icon data is supported on `require('resedit').Resource.IconGroupEntry` class.
 
