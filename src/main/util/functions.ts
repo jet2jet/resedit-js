@@ -18,8 +18,33 @@ export function calculateCheckSumForPE(bin: ArrayBuffer, storeToBinary?: boolean
 
 	const checkSumOffset = dosHeader.newHeaderAddress + 88;
 
-	// Currently this function does not calculate check-sum, and does return '0' instead.
-	const result = 0;
+	let result = 0;
+	const limit = 0x100000000; // 2^32
+	const update = (dword: number) => {
+		result += dword;
+		if (result >= limit) {
+			result = (result % limit) + ((result / limit) | 0);
+		}
+	};
+
+	const len = view.byteLength;
+	const lenExtra = len % 4;
+	const lenAlign = len - lenExtra;
+	for (let i = 0; i < lenAlign; i += 4) {
+		if (i !== checkSumOffset) {
+			update(view.getUint32(i, true));
+		}
+	}
+	if (lenExtra) {
+		let extra = 0;
+		for (let i = 0; i < lenExtra; i++) {
+			extra |= view.getUint8(lenAlign + i) << ((3 - i) * 8);
+		}
+		update(extra);
+	}
+	result = (result & 0xffff) + (result >>> 16);
+	result += (result >>> 16);
+	result = (result & 0xffff) + len;
 
 	if (storeToBinary) {
 		view.setUint32(checkSumOffset, result, true);
