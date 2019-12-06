@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.0
+
+- Throw error if specified executable binary is signed (#10)
+- Implemented PE checksum calculation (#8, thanks to @AlexanderOMara)
+- (Internal change) Updated package dependencies for developments
+
 ## v0.2.2
 
 - Fix width and height usage for icon group, especially when loading from an icon file (#5)
