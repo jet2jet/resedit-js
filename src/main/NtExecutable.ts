@@ -58,6 +58,12 @@ export default class NtExecutable {
 		if (nh.fileHeader.numberOfSymbols > 0) {
 			throw new Error('Binary with symbols is not supported now');
 		}
+		// Currently we cannot treat signed executables properly
+		// (Signed executables may be supported with some restrictions in the future)
+		const securityEntry = nh.optionalHeaderDataDirectory.get(ImageDirectoryEntry.Security);
+		if (securityEntry && securityEntry.size > 0) {
+			throw new Error('Signed executable binary is not supported now');
+		}
 		const secOff = dh.newHeaderAddress + nh.getSectionHeaderOffset();
 		const secCount = nh.fileHeader.numberOfSections;
 		const sections: {
