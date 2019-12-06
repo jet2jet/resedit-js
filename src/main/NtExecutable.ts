@@ -1,11 +1,17 @@
-
 import ImageDataDirectoryArray from './format/ImageDataDirectoryArray';
 import ImageDirectoryEntry from './format/ImageDirectoryEntry';
 import ImageDosHeader from './format/ImageDosHeader';
 import ImageNtHeaders from './format/ImageNtHeaders';
-import ImageSectionHeaderArray, { ImageSectionHeader } from './format/ImageSectionHeaderArray';
+import ImageSectionHeaderArray, {
+	ImageSectionHeader,
+} from './format/ImageSectionHeaderArray';
 
-import { calculateCheckSumForPE, cloneObject, copyBuffer, roundUp } from './util/functions';
+import {
+	calculateCheckSumForPE,
+	cloneObject,
+	copyBuffer,
+	roundUp,
+} from './util/functions';
 
 export interface NtExecutableSection {
 	info: ImageSectionHeader;
@@ -13,7 +19,6 @@ export interface NtExecutableSection {
 }
 
 export default class NtExecutable {
-
 	private _dh: ImageDosHeader;
 	private _nh: ImageNtHeaders;
 	private _dda: ImageDataDirectoryArray;
@@ -60,33 +65,41 @@ export default class NtExecutable {
 		}
 		// Currently we cannot treat signed executables properly
 		// (Signed executables may be supported with some restrictions in the future)
-		const securityEntry = nh.optionalHeaderDataDirectory.get(ImageDirectoryEntry.Security);
+		const securityEntry = nh.optionalHeaderDataDirectory.get(
+			ImageDirectoryEntry.Security
+		);
 		if (securityEntry && securityEntry.size > 0) {
 			throw new Error('Signed executable binary is not supported now');
 		}
 		const secOff = dh.newHeaderAddress + nh.getSectionHeaderOffset();
 		const secCount = nh.fileHeader.numberOfSections;
-		const sections: {
-			info: ImageSectionHeader
-			data: ArrayBuffer | null
-		}[] = [];
+		const sections: Array<{
+			info: ImageSectionHeader;
+			data: ArrayBuffer | null;
+		}> = [];
 		const secArray = ImageSectionHeaderArray.from(bin, secCount, secOff);
 		// console.log(`from data size 0x${bin.byteLength.toString(16)}:`);
-		secArray.forEach((info) => {
+		secArray.forEach(info => {
 			if (!info.pointerToRawData || !info.sizeOfRawData) {
 				info.pointerToRawData = 0;
 				info.sizeOfRawData = 0;
 				sections.push({
 					info,
-					data: null
+					data: null,
 				});
 			} else {
 				const secBin = new ArrayBuffer(info.sizeOfRawData);
 				// console.log(`  section ${info.name}: 0x${info.pointerToRawData.toString(16)}, size = 0x${info.sizeOfRawData.toString(16)}`);
-				copyBuffer(secBin, 0, bin, info.pointerToRawData, info.sizeOfRawData);
+				copyBuffer(
+					secBin,
+					0,
+					bin,
+					info.pointerToRawData,
+					info.sizeOfRawData
+				);
 				sections.push({
 					info,
-					data: secBin
+					data: secBin,
 				});
 			}
 		});
@@ -122,21 +135,26 @@ export default class NtExecutable {
 	/**
 	 * Return all sections. The returned array is sorted by raw address.
 	 */
-	public getAllSections(): ReadonlyArray<NtExecutableSection> {
+	public getAllSections(): readonly NtExecutableSection[] {
 		return this._sections;
 	}
 
 	/**
 	 * Return the section data from ImageDirectoryEntry enum value.
 	 */
-	public getSectionByEntry(entry: ImageDirectoryEntry): Readonly<NtExecutableSection> | null {
+	public getSectionByEntry(
+		entry: ImageDirectoryEntry
+	): Readonly<NtExecutableSection> | null {
 		const dd = this._dda.get(entry);
 		if (!dd) {
 			return null;
 		}
-		const r = this._sections.filter((sec) => {
+		const r = this._sections.filter(sec => {
 			const vaEnd = sec.info.virtualAddress + sec.info.virtualSize;
-			return (dd.virtualAddress >= sec.info.virtualAddress && dd.virtualAddress < vaEnd);
+			return (
+				dd.virtualAddress >= sec.info.virtualAddress &&
+				dd.virtualAddress < vaEnd
+			);
 		})[0];
 		return r || null;
 	}
@@ -153,11 +171,13 @@ export default class NtExecutable {
 	 * @param entry ImageDirectoryEntry enum value for the section
 	 * @param section the section data, or null to remove the section
 	 */
-	public setSectionByEntry(entry: ImageDirectoryEntry, section: Readonly<NtExecutableSection> | null) {
-		const sec: NtExecutableSection | null = section ? {
-			data: section.data,
-			info: section.info
-		} : null;
+	public setSectionByEntry(
+		entry: ImageDirectoryEntry,
+		section: Readonly<NtExecutableSection> | null
+	) {
+		const sec: NtExecutableSection | null = section
+			? { data: section.data, info: section.info }
+			: null;
 		const dd = this._dda.get(entry);
 		const hasEntry = !!(dd && dd.size);
 
@@ -172,7 +192,10 @@ export default class NtExecutable {
 					const sec = this._sections[i];
 					const vaStart = sec.info.virtualAddress;
 					const vaLast = vaStart + sec.info.virtualSize;
-					if (dd.virtualAddress >= vaStart && dd.virtualAddress < vaLast) {
+					if (
+						dd.virtualAddress >= vaStart &&
+						dd.virtualAddress < vaLast
+					) {
 						this._sections.splice(i, 1);
 						// section count changed
 						this._nh.fileHeader.numberOfSections = this._sections.length;
@@ -183,8 +206,12 @@ export default class NtExecutable {
 		} else {
 			const rawSize = !sec.data ? 0 : sec.data.byteLength;
 			const secAlign = this._nh.optionalHeader.sectionAlignment;
-			let alignedFileSize = !sec.data ? 0 : roundUp(rawSize, this._nh.optionalHeader.fileAlignment);
-			const alignedSecSize = !sec.data ? 0 : roundUp(sec.info.virtualSize, secAlign);
+			let alignedFileSize = !sec.data
+				? 0
+				: roundUp(rawSize, this._nh.optionalHeader.fileAlignment);
+			const alignedSecSize = !sec.data
+				? 0
+				: roundUp(sec.info.virtualSize, secAlign);
 			if (sec.info.sizeOfRawData < alignedFileSize) {
 				sec.info.sizeOfRawData = alignedFileSize;
 			} else {
@@ -195,14 +222,18 @@ export default class NtExecutable {
 				let virtAddr = 0;
 				let rawAddr = this._headers.byteLength;
 				// get largest addresses
-				this._sections.forEach((secExist) => {
+				this._sections.forEach(secExist => {
 					if (secExist.info.pointerToRawData) {
 						if (rawAddr <= secExist.info.pointerToRawData) {
-							rawAddr = secExist.info.pointerToRawData + secExist.info.sizeOfRawData;
+							rawAddr =
+								secExist.info.pointerToRawData +
+								secExist.info.sizeOfRawData;
 						}
 					}
 					if (virtAddr <= secExist.info.virtualAddress) {
-						virtAddr = secExist.info.virtualAddress + secExist.info.virtualSize;
+						virtAddr =
+							secExist.info.virtualAddress +
+							secExist.info.virtualSize;
 					}
 				});
 				if (!alignedFileSize) {
@@ -212,14 +243,20 @@ export default class NtExecutable {
 				sec.info.pointerToRawData = rawAddr;
 				sec.info.virtualAddress = virtAddr;
 				// add entry
-				this._dda.set(entry, { size: rawSize, virtualAddress: virtAddr });
+				this._dda.set(entry, {
+					size: rawSize,
+					virtualAddress: virtAddr,
+				});
 				this._sections.push(sec);
 
 				// section count changed
 				this._nh.fileHeader.numberOfSections = this._sections.length;
 
 				// change image size
-				this._nh.optionalHeader.sizeOfImage = roundUp(virtAddr + alignedSecSize, this._nh.optionalHeader.sectionAlignment);
+				this._nh.optionalHeader.sizeOfImage = roundUp(
+					virtAddr + alignedSecSize,
+					this._nh.optionalHeader.sectionAlignment
+				);
 			} else {
 				// replace entry
 				this.replaceSectionImpl(dd.virtualAddress, sec.info, sec.data);
@@ -240,7 +277,7 @@ export default class NtExecutable {
 		const align = nh.optionalHeader.fileAlignment;
 		size = Math.floor((size + align - 1) / align) * align;
 
-		this._sections.forEach((sec) => {
+		this._sections.forEach(sec => {
 			if (!sec.info.pointerToRawData) {
 				return;
 			}
@@ -255,7 +292,11 @@ export default class NtExecutable {
 		const bin = new ArrayBuffer(size);
 		const u8bin = new Uint8Array(bin);
 		u8bin.set(new Uint8Array(this._headers, 0, secOff));
-		const secArray = ImageSectionHeaderArray.from(bin, this._sections.length * 40, secOff);
+		const secArray = ImageSectionHeaderArray.from(
+			bin,
+			this._sections.length * 40,
+			secOff
+		);
 		this._sections.forEach((sec, i) => {
 			if (!sec.data) {
 				sec.info.pointerToRawData = 0;
@@ -276,7 +317,12 @@ export default class NtExecutable {
 		return bin;
 	}
 
-	private rearrangeSections(rawAddressStart: number, rawDiff: number, virtualAddressStart: number, virtualDiff: number) {
+	private rearrangeSections(
+		rawAddressStart: number,
+		rawDiff: number,
+		virtualAddressStart: number,
+		virtualDiff: number
+	) {
 		if (!rawDiff && !virtualDiff) {
 			return;
 		}
@@ -292,7 +338,10 @@ export default class NtExecutable {
 				const iDir = dirs.findIndexByVirtualAddress(virtAddr);
 				virtAddr += virtualDiff;
 				if (iDir !== null) {
-					dirs.set(iDir, { virtualAddress: virtAddr, size: sec.info.virtualSize });
+					dirs.set(iDir, {
+						virtualAddress: virtAddr,
+						size: sec.info.virtualSize,
+					});
 				}
 				sec.info.virtualAddress = virtAddr;
 			}
@@ -300,7 +349,10 @@ export default class NtExecutable {
 			if (rawDiff && fileAddr >= rawAddressStart) {
 				sec.info.pointerToRawData = fileAddr + rawDiff;
 			}
-			lastVirtAddress = roundUp(sec.info.virtualAddress + sec.info.virtualSize, secAlign);
+			lastVirtAddress = roundUp(
+				sec.info.virtualAddress + sec.info.virtualSize,
+				secAlign
+			);
 		}
 
 		// fix image size from last virtual address
@@ -308,7 +360,11 @@ export default class NtExecutable {
 	}
 
 	// NOTE: info.virtualSize must be valid
-	private replaceSectionImpl(virtualAddress: number, info: Readonly<ImageSectionHeader>, data: ArrayBuffer | null) {
+	private replaceSectionImpl(
+		virtualAddress: number,
+		info: Readonly<ImageSectionHeader>,
+		data: ArrayBuffer | null
+	) {
 		const len = this._sections.length;
 		for (let i = 0; i < len; ++i) {
 			const s = this._sections[i];
@@ -318,7 +374,8 @@ export default class NtExecutable {
 				const secAlign = this._nh.optionalHeader.sectionAlignment;
 				const fileAddr = s.info.pointerToRawData;
 				const oldFileAddr = fileAddr + s.info.sizeOfRawData;
-				const oldVirtAddr = virtualAddress + roundUp(s.info.virtualSize, secAlign);
+				const oldVirtAddr =
+					virtualAddress + roundUp(s.info.virtualSize, secAlign);
 				s.info = cloneObject(info);
 				s.info.virtualAddress = virtualAddress;
 				s.info.pointerToRawData = fileAddr;
@@ -326,15 +383,24 @@ export default class NtExecutable {
 
 				// shift addresses
 				const newFileAddr = fileAddr + info.sizeOfRawData;
-				const newVirtAddr = virtualAddress + roundUp(info.virtualSize, secAlign);
-				this.rearrangeSections(oldFileAddr, newFileAddr - oldFileAddr, oldVirtAddr, newVirtAddr - oldVirtAddr);
+				const newVirtAddr =
+					virtualAddress + roundUp(info.virtualSize, secAlign);
+				this.rearrangeSections(
+					oldFileAddr,
+					newFileAddr - oldFileAddr,
+					oldVirtAddr,
+					newVirtAddr - oldVirtAddr
+				);
 
 				// BLOCK: rewrite DataDirectory entry for specified virtualAddress
 				{
 					const dirs = this._dda;
 					const iDir = dirs.findIndexByVirtualAddress(virtualAddress);
 					if (iDir !== null) {
-						dirs.set(iDir, { virtualAddress, size: info.virtualSize });
+						dirs.set(iDir, {
+							virtualAddress,
+							size: info.virtualSize,
+						});
 					}
 				}
 				break;

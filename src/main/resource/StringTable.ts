@@ -1,4 +1,3 @@
-
 import ResourceEntry from './ResourceEntry';
 
 import StringTableItem from './StringTableItem';
@@ -17,29 +16,44 @@ export default class StringTable {
 	}
 
 	/** Create StringTable instance from resource entries, with specified language. */
-	public static fromEntries(lang: string | number, entries: ReadonlyArray<ResourceEntry>): StringTable {
+	public static fromEntries(
+		lang: string | number,
+		entries: readonly ResourceEntry[]
+	): StringTable {
 		const r = new StringTable();
-		entries.forEach((e) => {
+		entries.forEach(e => {
 			// 6: RT_STRING
-			if (e.type !== 6 || e.lang !== lang || typeof e.id !== 'number' || e.id <= 0) {
+			if (
+				e.type !== 6 ||
+				e.lang !== lang ||
+				typeof e.id !== 'number' ||
+				e.id <= 0
+			) {
 				return;
 			}
-			r.items[e.id - 1] = StringTableItem.fromEntry(e.bin, 0, e.bin.byteLength);
+			r.items[e.id - 1] = StringTableItem.fromEntry(
+				e.bin,
+				0,
+				e.bin.byteLength
+			);
 		});
 		r.lang = lang;
 		return r;
 	}
 
 	/** Return all string entries. */
-	public getAllStrings(): { id: number, text: string }[] {
-		return this.items.map((e, i) => {
-			if (!e) {
-				return [];
-			}
-			return e.getAll().map(
-				(x, j) => (x ? { id: (i << 4) + j, text: x } : null)
-			).filter((x): x is Exclude<typeof x, null> => !!x);
-		}).reduce((p, c) => p.concat(c), []);
+	public getAllStrings(): Array<{ id: number; text: string }> {
+		return this.items
+			.map((e, i) => {
+				if (!e) {
+					return [];
+				}
+				return e
+					.getAll()
+					.map((x, j) => (x ? { id: (i << 4) + j, text: x } : null))
+					.filter((x): x is Exclude<typeof x, null> => !!x);
+			})
+			.reduce((p, c) => p.concat(c), []);
 	}
 	/** Return the string data for ID value, which can be used for Win32API LoadString. */
 	public getById(id: number): string | null {
@@ -71,21 +85,23 @@ export default class StringTable {
 
 	/** Generates an array of Entry for resource processings */
 	public generateEntries(): ResourceEntry[] {
-		return this.items.map((e, i): ResourceEntry | null => {
-			if (!e) {
-				return null;
-			}
-			const len = e.calcByteLength();
-			const bin = new ArrayBuffer(len);
-			e.generate(bin, 0);
-			return {
-				type: 6,
-				id: i + 1,
-				lang: this.lang,
-				codepage: 1200,
-				bin
-			};
-		}).filter((e): e is ResourceEntry => !!e);
+		return this.items
+			.map((e, i): ResourceEntry | null => {
+				if (!e) {
+					return null;
+				}
+				const len = e.calcByteLength();
+				const bin = new ArrayBuffer(len);
+				e.generate(bin, 0);
+				return {
+					type: 6,
+					id: i + 1,
+					lang: this.lang,
+					codepage: 1200,
+					bin,
+				};
+			})
+			.filter((e): e is ResourceEntry => !!e);
 	}
 
 	/**
@@ -106,7 +122,7 @@ export default class StringTable {
 					}
 				}
 				const f = dest.splice.bind(dest, i, 0);
-				f.apply(null, entries);
+				f(...entries);
 				return;
 			}
 		}
@@ -115,7 +131,7 @@ export default class StringTable {
 			const e = dest[i];
 			if (e.type === 6 && e.lang < this.lang) {
 				const f = dest.splice.bind(dest, i + 1, 0);
-				f.apply(null, entries);
+				f(...entries);
 				return;
 			}
 		}
@@ -124,11 +140,11 @@ export default class StringTable {
 			const e = dest[i];
 			if (e.type === 6) {
 				const f = dest.splice.bind(dest, i + 1, 0);
-				f.apply(null, entries);
+				f(...entries);
 				return;
 			}
 		}
 		// otherwise -- add entries to the last
-		dest.push.apply(dest, entries);
+		dest.push(...entries);
 	}
 }

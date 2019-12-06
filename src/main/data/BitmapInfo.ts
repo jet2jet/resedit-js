@@ -1,4 +1,3 @@
-
 export default interface BitmapInfo {
 	width: number;
 	height: number;
@@ -9,5 +8,5 @@ export default interface BitmapInfo {
 	yPelsPerMeter: number;
 	colorUsed: number;
 	colorImportant: number;
-	colors: { r: number; g: number; b: number; }[];
+	colors: Array<{ r: number; g: number; b: number }>;
 }

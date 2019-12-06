@@ -1,0 +1,3 @@
+.work/
+dist/
+**/*.d.ts

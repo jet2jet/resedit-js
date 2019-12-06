@@ -15,7 +15,11 @@ export interface ImageSectionHeader {
 	characteristics: number;
 }
 
-function getFixedString(view: DataView, offset: number, length: number): string {
+function getFixedString(
+	view: DataView,
+	offset: number,
+	length: number
+): string {
 	let actualLen = 0;
 	for (let i = 0; i < length; ++i) {
 		if (view.getUint8(offset + i) === 0) {
@@ -24,7 +28,11 @@ function getFixedString(view: DataView, offset: number, length: number): string 
 		++actualLen;
 	}
 	if (typeof Buffer !== 'undefined') {
-		return Buffer.from(view.buffer, view.byteOffset + offset, actualLen).toString('utf8');
+		return Buffer.from(
+			view.buffer,
+			view.byteOffset + offset,
+			actualLen
+		).toString('utf8');
 	} else if (typeof decodeURIComponent !== 'undefined') {
 		let s = '';
 		for (let i = 0; i < actualLen; ++i) {
@@ -46,22 +54,26 @@ function getFixedString(view: DataView, offset: number, length: number): string 
 	}
 }
 
-function setFixedString(view: DataView, offset: number, length: number, text: string) {
+function setFixedString(
+	view: DataView,
+	offset: number,
+	length: number,
+	text: string
+) {
 	if (typeof Buffer !== 'undefined') {
 		const u = new Uint8Array(view.buffer, view.byteOffset + offset, length);
 		// fill by zero
 		u.set(new Uint8Array(length));
-		u.set(
-			Buffer.from(text, 'utf8').subarray(0, length)
-		);
+		u.set(Buffer.from(text, 'utf8').subarray(0, length));
 	} else if (typeof encodeURIComponent !== 'undefined') {
-		let s = encodeURIComponent(text);
+		const s = encodeURIComponent(text);
 		for (let i = 0, j = 0; i < length; ++i) {
 			if (j >= s.length) {
 				view.setUint8(i + offset, 0);
 			} else {
 				const c = s.charCodeAt(j);
-				if (c === 37) { // '%'
+				if (c === 37) {
+					// '%'
 					const n = parseInt(s.substr(j + 1, 2), 16);
 					if (typeof n === 'number' && !isNaN(n)) {
 						view.setUint8(i + offset, n);
@@ -80,22 +92,28 @@ function setFixedString(view: DataView, offset: number, length: number, text: st
 				view.setUint8(i + offset, 0);
 			} else {
 				const c = text.charCodeAt(j);
-				view.setUint8(i + offset, c & 0xFF);
+				view.setUint8(i + offset, c & 0xff);
 			}
 		}
 	}
 }
 
-export default class ImageSectionHeaderArray extends ArrayFormatBase<ImageSectionHeader> {
+export default class ImageSectionHeaderArray extends ArrayFormatBase<
+	ImageSectionHeader
+> {
+	public static readonly itemSize = 40;
+
 	private constructor(view: DataView, public readonly length: number) {
 		super(view);
 	}
 
 	public static from(bin: ArrayBuffer, length: number, offset = 0) {
 		const size = length * 40;
-		return new ImageSectionHeaderArray(new DataView(bin, offset, size), length);
+		return new ImageSectionHeaderArray(
+			new DataView(bin, offset, size),
+			length
+		);
 	}
-	public static readonly itemSize = 40;
 
 	public get(index: number): Readonly<ImageSectionHeader> {
 		return {
@@ -108,7 +126,7 @@ export default class ImageSectionHeaderArray extends ArrayFormatBase<ImageSectio
 			pointerToLineNumbers: this.view.getUint32(28 + index * 40, true),
 			numberOfRelocations: this.view.getUint16(32 + index * 40, true),
 			numberOfLineNumbers: this.view.getUint16(34 + index * 40, true),
-			characteristics: this.view.getUint32(36 + index * 40, true)
+			characteristics: this.view.getUint32(36 + index * 40, true),
 		};
 	}
 	public set(index: number, data: ImageSectionHeader) {

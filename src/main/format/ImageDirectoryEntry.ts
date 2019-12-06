@@ -1,4 +1,3 @@
-
 enum ImageDirectoryEntry {
 	Export = 0,
 	Import = 1,
@@ -17,6 +16,6 @@ enum ImageDirectoryEntry {
 	IAT = 12, // alias
 	DelayImport = 13,
 	ComDescriptor = 14,
-	COMDescriptor = 14 // alias
+	COMDescriptor = 14, // alias
 }
 export default ImageDirectoryEntry;

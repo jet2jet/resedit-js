@@ -3,6 +3,7 @@
 import NtExecutable, { NtExecutableSection } from '@/NtExecutable';
 import ImageDirectoryEntry from '@/format/ImageDirectoryEntry';
 
+// prettier-ignore
 const DUMMY_EXECUTABLE_32 = new Uint8Array([
 	0x4d,0x5a,0x90,0x00,0x03,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xff,0xff,0x00,0x00,
 	0xb8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -70,6 +71,7 @@ const DUMMY_EXECUTABLE_32 = new Uint8Array([
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 ]);
 
+// prettier-ignore
 const DUMMY_EXECUTABLE_64 = new Uint8Array([
 	0x4d,0x5a,0x90,0x00,0x03,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xff,0xff,0x00,0x00,
 	0xb8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -148,22 +150,24 @@ const DUMMY_SECTION: NtExecutableSection = {
 		pointerToLineNumbers: 0,
 		numberOfRelocations: 0,
 		numberOfLineNumbers: 0,
-		characteristics: 0x40000040
+		characteristics: 0x40000040,
 	},
-	data: new ArrayBuffer(256)
+	data: new ArrayBuffer(256),
 };
 
 describe('NtExecutable', () => {
 	describe('32-bit binary', () => {
 		it('should be parsed correctly', () => {
 			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32.buffer);
-			const sections = exe.getAllSections()
+			const sections = exe.getAllSections();
 			expect(exe.is32bit()).toBeTruthy();
 			// the following data is specified in DUMMY_EXECUTABLE_32 data
 			expect(exe.getSectionAlignment()).toEqual(0x1000);
 			expect(exe.getFileAlignment()).toEqual(0x200);
 			expect(sections.length).toEqual(1);
-			expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toBeNull();
+			expect(
+				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
+			).not.toBeNull();
 		});
 		it('sections should be added', () => {
 			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32.buffer);
@@ -171,36 +175,50 @@ describe('NtExecutable', () => {
 			exe.setSectionByEntry(ImageDirectoryEntry.Debug, DUMMY_SECTION);
 			const afterSec = exe.getSectionByEntry(ImageDirectoryEntry.Debug);
 			expect(afterSec).not.toBeNull();
-			expect(afterSec!.data!.byteLength).toEqual(DUMMY_SECTION.data!.byteLength);
+			expect(afterSec!.data!.byteLength).toEqual(
+				DUMMY_SECTION.data!.byteLength
+			);
 			expect(afterSec!.info.name).toEqual(DUMMY_SECTION.info.name);
 		});
 		it('sections should be replaced', () => {
 			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32.buffer);
-			expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toBeNull();
+			expect(
+				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
+			).not.toBeNull();
 			exe.setSectionByEntry(ImageDirectoryEntry.Resource, DUMMY_SECTION);
-			const afterSec = exe.getSectionByEntry(ImageDirectoryEntry.Resource);
+			const afterSec = exe.getSectionByEntry(
+				ImageDirectoryEntry.Resource
+			);
 			expect(afterSec).not.toBeNull();
-			expect(afterSec!.data!.byteLength).toEqual(DUMMY_SECTION.data!.byteLength);
+			expect(afterSec!.data!.byteLength).toEqual(
+				DUMMY_SECTION.data!.byteLength
+			);
 			expect(afterSec!.info.name).toEqual(DUMMY_SECTION.info.name);
 		});
 		it('sections should be removed', () => {
 			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32.buffer);
-			expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toBeNull();
+			expect(
+				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
+			).not.toBeNull();
 			exe.setSectionByEntry(ImageDirectoryEntry.Resource, null);
-			const afterSec = exe.getSectionByEntry(ImageDirectoryEntry.Resource);
+			const afterSec = exe.getSectionByEntry(
+				ImageDirectoryEntry.Resource
+			);
 			expect(afterSec).toBeNull();
 		});
 	});
 	describe('64-bit binary', () => {
 		it('should be parsed correctly', () => {
 			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64.buffer);
-			const sections = exe.getAllSections()
+			const sections = exe.getAllSections();
 			expect(exe.is32bit()).toBeFalsy();
 			// the following data is specified in DUMMY_EXECUTABLE_32 data
 			expect(exe.getSectionAlignment()).toEqual(0x1000);
 			expect(exe.getFileAlignment()).toEqual(0x200);
 			expect(sections.length).toEqual(1);
-			expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toBeNull();
+			expect(
+				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
+			).not.toBeNull();
 		});
 		it('sections should be added', () => {
 			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64.buffer);
@@ -208,23 +226,35 @@ describe('NtExecutable', () => {
 			exe.setSectionByEntry(ImageDirectoryEntry.Debug, DUMMY_SECTION);
 			const afterSec = exe.getSectionByEntry(ImageDirectoryEntry.Debug);
 			expect(afterSec).not.toBeNull();
-			expect(afterSec!.data!.byteLength).toEqual(DUMMY_SECTION.data!.byteLength);
+			expect(afterSec!.data!.byteLength).toEqual(
+				DUMMY_SECTION.data!.byteLength
+			);
 			expect(afterSec!.info.name).toEqual(DUMMY_SECTION.info.name);
 		});
 		it('sections should be replaced', () => {
 			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64.buffer);
-			expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toBeNull();
+			expect(
+				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
+			).not.toBeNull();
 			exe.setSectionByEntry(ImageDirectoryEntry.Resource, DUMMY_SECTION);
-			const afterSec = exe.getSectionByEntry(ImageDirectoryEntry.Resource);
+			const afterSec = exe.getSectionByEntry(
+				ImageDirectoryEntry.Resource
+			);
 			expect(afterSec).not.toBeNull();
-			expect(afterSec!.data!.byteLength).toEqual(DUMMY_SECTION.data!.byteLength);
+			expect(afterSec!.data!.byteLength).toEqual(
+				DUMMY_SECTION.data!.byteLength
+			);
 			expect(afterSec!.info.name).toEqual(DUMMY_SECTION.info.name);
 		});
 		it('sections should be removed', () => {
 			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64.buffer);
-			expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toBeNull();
+			expect(
+				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
+			).not.toBeNull();
 			exe.setSectionByEntry(ImageDirectoryEntry.Resource, null);
-			const afterSec = exe.getSectionByEntry(ImageDirectoryEntry.Resource);
+			const afterSec = exe.getSectionByEntry(
+				ImageDirectoryEntry.Resource
+			);
 			expect(afterSec).toBeNull();
 		});
 	});

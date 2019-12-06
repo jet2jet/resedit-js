@@ -27,8 +27,15 @@
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.app.json",
+    "lint": "npm run lint:prettier && npm run lint:eslint",
+    "lint:eslint": "eslint -c .eslintrc.yml --ext .js,.jsx,.ts,.tsx .",
+    "lint:eslint:fix": "eslint -c .eslintrc.yml --fix --ext .js,.jsx,.ts,.tsx .",
+    "lint:fix": "npm run lint:prettier:fix && npm run lint:eslint:fix",
+    "lint:prettier": "prettier --config ./.prettierrc.yml --check \"**/*.{js,jsx,ts,tsx,yml,json,md}\"",
+    "lint:prettier:fix": "prettier --config ./.prettierrc.yml --write \"**/*.{js,jsx,ts,tsx,yml,json,md}\"",
     "test": "jest --config ./jest.config.basic.js",
     "test:basic": "jest --config ./jest.config.basic.js",
+    "test:lint": "npm run lint",
     "test:win-x86": "jest --config ./jest.config.win-x86.js",
     "test:win-x64": "jest --config ./jest.config.win-x64.js",
     "version": "node ./tools/updateVersion.js ./src/main/version.ts && git add -A ./src/main/version.ts"
@@ -37,7 +44,19 @@
   "devDependencies": {
     "@types/jest": "^24.0.23",
     "@types/node": "10",
+    "@typescript-eslint/eslint-plugin": "^2.10.0",
+    "@typescript-eslint/parser": "^2.10.0",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-semistandard": "^15.0.0",
+    "eslint-config-standard": "^13.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.9.0",
+    "prettier": "^1.19.1",
     "ts-jest": "^24.2.0",
     "typescript": "~3.7.3"
   }

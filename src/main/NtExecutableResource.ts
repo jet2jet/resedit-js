@@ -1,11 +1,14 @@
-
 import ImageDirectoryEntry from './format/ImageDirectoryEntry';
 import { ImageSectionHeader } from './format/ImageSectionHeaderArray';
 import NtExecutable, { NtExecutableSection } from './NtExecutable';
-import ResourceEntry, { ResourceEntryBaseType, ResourceEntry_T, ResourceEntry_TT } from './resource/ResourceEntry';
+import ResourceEntry, {
+	ResourceEntryBaseType,
+	ResourceEntryT,
+	ResourceEntryTT,
+} from './resource/ResourceEntry';
 import { cloneObject, copyBuffer, roundUp } from './util/functions';
 
-function removeDuplicates<T>(a: ReadonlyArray<T>): T[] {
+function removeDuplicates<T>(a: readonly T[]): T[] {
 	return a.reduce<T[]>((p, c) => {
 		return p.indexOf(c) >= 0 ? p : p.concat(c);
 	}, []);
@@ -48,9 +51,19 @@ interface TypeEntry {
 	minorVersion: number;
 }
 
-type ReadDataCallback = (typeEntry: TypeEntry, nameEntry: NameEntry, langEntry: LanguageEntry) => void;
+type ReadDataCallback = (
+	typeEntry: TypeEntry,
+	nameEntry: NameEntry,
+	langEntry: LanguageEntry
+) => void;
 
-function readLanguageTable(view: DataView, typeEntry: TypeEntry, name: string | number, languageTable: number, cb: ReadDataCallback) {
+function readLanguageTable(
+	view: DataView,
+	typeEntry: TypeEntry,
+	name: string | number,
+	languageTable: number,
+	cb: ReadDataCallback
+) {
 	let off = languageTable;
 	const nameEntry: NameEntry = {
 		name,
@@ -58,15 +71,15 @@ function readLanguageTable(view: DataView, typeEntry: TypeEntry, name: string | 
 		characteristics: view.getUint32(off, true),
 		dateTime: view.getUint32(off + 4, true),
 		majorVersion: view.getUint16(off + 8, true),
-		minorVersion: view.getUint16(off + 10, true)
+		minorVersion: view.getUint16(off + 10, true),
 	};
 	const nameCount = view.getUint16(off + 12, true);
 	const idCount = view.getUint16(off + 14, true);
 	off += 16;
 
 	for (let i = 0; i < nameCount; ++i) {
-		const nameOffset = view.getUint32(off, true) & 0x7FFFFFFF;
-		let dataOffset = view.getUint32(off + 4, true);
+		const nameOffset = view.getUint32(off, true) & 0x7fffffff;
+		const dataOffset = view.getUint32(off + 4, true);
 		// ignore if the offset refers to the next table
 		if ((dataOffset & 0x80000000) !== 0) {
 			off += 8;
@@ -78,8 +91,8 @@ function readLanguageTable(view: DataView, typeEntry: TypeEntry, name: string | 
 		off += 8;
 	}
 	for (let i = 0; i < idCount; ++i) {
-		const id = view.getUint32(off, true) & 0x7FFFFFFF;
-		let dataOffset = view.getUint32(off + 4, true);
+		const id = view.getUint32(off, true) & 0x7fffffff;
+		const dataOffset = view.getUint32(off + 4, true);
 		// ignore if the offset refers to the next table
 		if ((dataOffset & 0x80000000) !== 0) {
 			off += 8;
@@ -91,7 +104,12 @@ function readLanguageTable(view: DataView, typeEntry: TypeEntry, name: string | 
 	}
 }
 
-function readNameTable(view: DataView, type: string | number, nameTable: number, cb: ReadDataCallback) {
+function readNameTable(
+	view: DataView,
+	type: string | number,
+	nameTable: number,
+	cb: ReadDataCallback
+) {
 	let off = nameTable;
 	const typeEntry: TypeEntry = {
 		type,
@@ -99,35 +117,35 @@ function readNameTable(view: DataView, type: string | number, nameTable: number,
 		characteristics: view.getUint32(off, true),
 		dateTime: view.getUint32(off + 4, true),
 		majorVersion: view.getUint16(off + 8, true),
-		minorVersion: view.getUint16(off + 10, true)
+		minorVersion: view.getUint16(off + 10, true),
 	};
 	const nameCount = view.getUint16(off + 12, true);
 	const idCount = view.getUint16(off + 14, true);
 	off += 16;
 
 	for (let i = 0; i < nameCount; ++i) {
-		const nameOffset = view.getUint32(off, true) & 0x7FFFFFFF;
+		const nameOffset = view.getUint32(off, true) & 0x7fffffff;
 		let nextTable = view.getUint32(off + 4, true);
 		// ignore if no next table is available
 		if (!(nextTable & 0x80000000)) {
 			off += 8;
 			continue;
 		}
-		nextTable &= 0x7FFFFFFF;
+		nextTable &= 0x7fffffff;
 
 		const name = readString(view, nameOffset);
 		readLanguageTable(view, typeEntry, name, nextTable, cb);
 		off += 8;
 	}
 	for (let i = 0; i < idCount; ++i) {
-		const id = view.getUint32(off, true) & 0x7FFFFFFF;
+		const id = view.getUint32(off, true) & 0x7fffffff;
 		let nextTable = view.getUint32(off + 4, true);
 		// ignore if no next table is available
 		if (!(nextTable & 0x80000000)) {
 			off += 8;
 			continue;
 		}
-		nextTable &= 0x7FFFFFFF;
+		nextTable &= 0x7fffffff;
 
 		readLanguageTable(view, typeEntry, id, nextTable, cb);
 		off += 8;
@@ -143,21 +161,19 @@ interface DivideEntriesResultTypeCC<
 > {
 	id: TID;
 	offset?: number;
-	s: ResourceEntryBaseType<TType, TID, string>[];
-	n: ResourceEntryBaseType<TType, TID, number>[];
+	s: Array<ResourceEntryBaseType<TType, TID, string>>;
+	n: Array<ResourceEntryBaseType<TType, TID, number>>;
 }
-interface DivideEntriesResultTypeC<
-	TType extends string | number
-> {
+interface DivideEntriesResultTypeC<TType extends string | number> {
 	type: TType;
 	offset?: number;
-	s: DivideEntriesResultTypeCC<TType, string>[];
-	n: DivideEntriesResultTypeCC<TType, number>[];
+	s: Array<DivideEntriesResultTypeCC<TType, string>>;
+	n: Array<DivideEntriesResultTypeCC<TType, number>>;
 }
 
 interface DivideEntriesResultType {
-	s: DivideEntriesResultTypeC<string>[];
-	n: DivideEntriesResultTypeC<number>[];
+	s: Array<DivideEntriesResultTypeC<string>>;
+	n: Array<DivideEntriesResultTypeC<number>>;
 }
 
 interface StringData {
@@ -168,89 +184,147 @@ interface StringData {
 function divideEntriesImplByID<
 	TType extends string | number,
 	TID extends string | number
->(r: DivideEntriesResultTypeCC<TType, TID>, names: string[], entries: ResourceEntry_TT<TType, TID>[]) {
-	const entriesByString: { [key: string]: ResourceEntryBaseType<TType, TID, string>; } = {};
-	const entriesByNumber: { [key: number]: ResourceEntryBaseType<TType, TID, number>; } = {};
-	entries.forEach((e) => {
+>(
+	r: DivideEntriesResultTypeCC<TType, TID>,
+	names: string[],
+	entries: Array<ResourceEntryTT<TType, TID>>
+) {
+	const entriesByString: {
+		[key: string]: ResourceEntryBaseType<TType, TID, string>;
+	} = {};
+	const entriesByNumber: {
+		[key: number]: ResourceEntryBaseType<TType, TID, number>;
+	} = {};
+	entries.forEach(e => {
 		if (typeof e.lang === 'string') {
-			entriesByString[e.lang] = e as ResourceEntryBaseType<TType, TID, string>;
+			entriesByString[e.lang] = e as ResourceEntryBaseType<
+				TType,
+				TID,
+				string
+			>;
 			names.push(e.lang);
 		} else {
-			entriesByNumber[e.lang] = e as ResourceEntryBaseType<TType, TID, number>;
+			entriesByNumber[e.lang] = e as ResourceEntryBaseType<
+				TType,
+				TID,
+				number
+			>;
 		}
 	});
 	const strKeys = Object.keys(entriesByString);
-	strKeys.sort().forEach((type) => {
+	strKeys.sort().forEach(type => {
 		r.s.push(entriesByString[type]);
 	});
 	const numKeys = Object.keys(entriesByNumber);
-	numKeys.map((k) => Number(k)).sort((a, b) => (a - b)).forEach((type) => {
-		r.n.push(entriesByNumber[type]);
-	});
+	numKeys
+		.map(k => Number(k))
+		.sort((a, b) => a - b)
+		.forEach(type => {
+			r.n.push(entriesByNumber[type]);
+		});
 	return 16 + 8 * (strKeys.length + numKeys.length);
 }
 
-function divideEntriesImplByName<
-	TType extends string | number
->(r: DivideEntriesResultTypeC<TType>, names: string[], entries: ResourceEntry_T<TType>[]) {
-	const entriesByString: { [key: string]: ResourceEntry_TT<TType, string>[]; } = {};
-	const entriesByNumber: { [key: number]: ResourceEntry_TT<TType, number>[]; } = {};
-	entries.forEach((e) => {
+function divideEntriesImplByName<TType extends string | number>(
+	r: DivideEntriesResultTypeC<TType>,
+	names: string[],
+	entries: Array<ResourceEntryT<TType>>
+) {
+	const entriesByString: {
+		[key: string]: Array<ResourceEntryTT<TType, string>>;
+	} = {};
+	const entriesByNumber: {
+		[key: number]: Array<ResourceEntryTT<TType, number>>;
+	} = {};
+	entries.forEach(e => {
 		if (typeof e.id === 'string') {
 			const a = entriesByString[e.id] || (entriesByString[e.id] = []);
 			names.push(e.id);
-			a.push(e as ResourceEntry_TT<TType, string>);
+			a.push(e as ResourceEntryTT<TType, string>);
 		} else {
 			const a = entriesByNumber[e.id] || (entriesByNumber[e.id] = []);
-			a.push(e as ResourceEntry_TT<TType, number>);
+			a.push(e as ResourceEntryTT<TType, number>);
 		}
 	});
-	const sSum = Object.keys(entriesByString).sort().map((id) => {
-		const o: DivideEntriesResultTypeCC<TType, string> = { id, s: [], n: [] };
-		r.s.push(o);
-		return divideEntriesImplByID(o, names, entriesByString[id]);
-	}).reduce((p, c) => (p + 8 + c), 0);
-	const nSum = Object.keys(entriesByNumber).map((k) => Number(k)).sort((a, b) => (a - b)).map((id) => {
-		const o: DivideEntriesResultTypeCC<TType, number> = { id, s: [], n: [] };
-		r.n.push(o);
-		return divideEntriesImplByID(o, names, entriesByNumber[id]);
-	}).reduce((p, c) => (p + 8 + c), 0);
+	const sSum = Object.keys(entriesByString)
+		.sort()
+		.map(id => {
+			const o: DivideEntriesResultTypeCC<TType, string> = {
+				id,
+				s: [],
+				n: [],
+			};
+			r.s.push(o);
+			return divideEntriesImplByID(o, names, entriesByString[id]);
+		})
+		.reduce((p, c) => p + 8 + c, 0);
+	const nSum = Object.keys(entriesByNumber)
+		.map(k => Number(k))
+		.sort((a, b) => a - b)
+		.map(id => {
+			const o: DivideEntriesResultTypeCC<TType, number> = {
+				id,
+				s: [],
+				n: [],
+			};
+			r.n.push(o);
+			return divideEntriesImplByID(o, names, entriesByNumber[id]);
+		})
+		.reduce((p, c) => p + 8 + c, 0);
 	return 16 + sSum + nSum;
 }
 
-function divideEntriesImplByType(r: DivideEntriesResultType, names: string[], entries: ResourceEntry[]) {
-	const entriesByString: { [key: string]: ResourceEntry_T<string>[]; } = {};
-	const entriesByNumber: { [key: number]: ResourceEntry_T<number>[]; } = {};
-	entries.forEach((e) => {
+function divideEntriesImplByType(
+	r: DivideEntriesResultType,
+	names: string[],
+	entries: ResourceEntry[]
+) {
+	const entriesByString: {
+		[key: string]: Array<ResourceEntryT<string>>;
+	} = {};
+	const entriesByNumber: {
+		[key: number]: Array<ResourceEntryT<number>>;
+	} = {};
+	entries.forEach(e => {
 		if (typeof e.type === 'string') {
 			const a = entriesByString[e.type] || (entriesByString[e.type] = []);
 			names.push(e.type);
-			a.push(e as ResourceEntry_T<string>);
+			a.push(e as ResourceEntryT<string>);
 		} else {
 			const a = entriesByNumber[e.type] || (entriesByNumber[e.type] = []);
-			a.push(e as ResourceEntry_T<number>);
+			a.push(e as ResourceEntryT<number>);
 		}
 	});
-	const sSum = Object.keys(entriesByString).sort().map((type) => {
-		const o: DivideEntriesResultTypeC<string> = { type, s: [], n: [] };
-		r.s.push(o);
-		return divideEntriesImplByName(o, names, entriesByString[type]);
-	}).reduce((p, c) => (p + 8 + c), 0);
-	const nSum = Object.keys(entriesByNumber).map((k) => Number(k)).sort((a, b) => (a - b)).map((type) => {
-		const o: DivideEntriesResultTypeC<number> = { type, s: [], n: [] };
-		r.n.push(o);
-		return divideEntriesImplByName(o, names, entriesByNumber[type]);
-	}).reduce((p, c) => (p + 8 + c), 0);
+	const sSum = Object.keys(entriesByString)
+		.sort()
+		.map(type => {
+			const o: DivideEntriesResultTypeC<string> = { type, s: [], n: [] };
+			r.s.push(o);
+			return divideEntriesImplByName(o, names, entriesByString[type]);
+		})
+		.reduce((p, c) => p + 8 + c, 0);
+	const nSum = Object.keys(entriesByNumber)
+		.map(k => Number(k))
+		.sort((a, b) => a - b)
+		.map(type => {
+			const o: DivideEntriesResultTypeC<number> = { type, s: [], n: [] };
+			r.n.push(o);
+			return divideEntriesImplByName(o, names, entriesByNumber[type]);
+		})
+		.reduce((p, c) => p + 8 + c, 0);
 	return 16 + sSum + nSum;
 }
 
 function calculateStringLengthForWrite(text: string): number {
-	let length = text.length;
+	const length = text.length;
 	// limit to 65535 because the 'length' field is uint16
-	return (length > 65535) ? 65535 : length;
+	return length > 65535 ? 65535 : length;
 }
 
-function getStringOffset(target: string, strings: ReadonlyArray<StringData>): number {
+function getStringOffset(
+	target: string,
+	strings: readonly StringData[]
+): number {
 	const l = strings.length;
 	for (let i = 0; i < l; ++i) {
 		const s = strings[i];
@@ -273,8 +347,14 @@ function writeString(view: DataView, offset: number, text: string): number {
 	return offset;
 }
 
-function writeLanguageTable<TType extends string | number, TID extends string | number>(
-	view: DataView, offset: number, strings: ReadonlyArray<StringData>, data: DivideEntriesResultTypeCC<TType, TID>
+function writeLanguageTable<
+	TType extends string | number,
+	TID extends string | number
+>(
+	view: DataView,
+	offset: number,
+	strings: readonly StringData[],
+	data: DivideEntriesResultTypeCC<TType, TID>
 ) {
 	// characteristics
 	view.setUint32(offset, 0, true);
@@ -289,14 +369,14 @@ function writeLanguageTable<TType extends string | number, TID extends string | 
 
 	offset += 16;
 	// name entries (not in specification)
-	data.s.forEach((e) => {
+	data.s.forEach(e => {
 		const strOff = getStringOffset(e.lang, strings);
 		view.setUint32(offset, strOff, true);
 		view.setUint32(offset + 4, e.offset!, true);
 		offset += 8;
 	});
 	// id entries
-	data.n.forEach((e) => {
+	data.n.forEach(e => {
 		view.setUint32(offset, e.lang, true);
 		view.setUint32(offset + 4, e.offset!, true);
 		offset += 8;
@@ -305,7 +385,11 @@ function writeLanguageTable<TType extends string | number, TID extends string | 
 }
 
 function writeNameTable<TType extends string | number>(
-	view: DataView, offset: number, leafOffset: number, strings: ReadonlyArray<StringData>, data: DivideEntriesResultTypeC<TType>
+	view: DataView,
+	offset: number,
+	leafOffset: number,
+	strings: readonly StringData[],
+	data: DivideEntriesResultTypeC<TType>
 ) {
 	// characteristics
 	view.setUint32(offset, 0, true);
@@ -319,22 +403,22 @@ function writeNameTable<TType extends string | number>(
 	view.setUint16(offset + 14, data.n.length, true);
 	offset += 16;
 
-	data.s.forEach((e) => {
+	data.s.forEach(e => {
 		e.offset = leafOffset;
 		leafOffset = writeLanguageTable(view, leafOffset, strings, e);
 	});
-	data.n.forEach((e) => {
+	data.n.forEach(e => {
 		e.offset = leafOffset;
 		leafOffset = writeLanguageTable(view, leafOffset, strings, e);
 	});
 
-	data.s.forEach((e) => {
+	data.s.forEach(e => {
 		const strOff = getStringOffset(e.id, strings);
 		view.setUint32(offset, strOff + 0x80000000, true);
 		view.setUint32(offset + 4, e.offset! + 0x80000000, true);
 		offset += 8;
 	});
-	data.n.forEach((e) => {
+	data.n.forEach(e => {
 		view.setUint32(offset, e.id, true);
 		view.setUint32(offset + 4, e.offset! + 0x80000000, true);
 		offset += 8;
@@ -344,7 +428,10 @@ function writeNameTable<TType extends string | number>(
 }
 
 function writeTypeTable(
-	view: DataView, offset: number, strings: ReadonlyArray<StringData>, data: DivideEntriesResultType
+	view: DataView,
+	offset: number,
+	strings: readonly StringData[],
+	data: DivideEntriesResultType
 ) {
 	// characteristics
 	view.setUint32(offset, 0, true);
@@ -359,27 +446,39 @@ function writeTypeTable(
 	offset += 16;
 
 	let nextTableOffset = offset + 8 * (data.s.length + data.n.length);
-	data.s.forEach((e) => {
+	data.s.forEach(e => {
 		e.offset = nextTableOffset;
 		nextTableOffset += 16 + 8 * (e.s.length + e.n.length);
 	});
-	data.n.forEach((e) => {
+	data.n.forEach(e => {
 		e.offset = nextTableOffset;
 		nextTableOffset += 16 + 8 * (e.s.length + e.n.length);
 	});
 
-	data.s.forEach((e) => {
+	data.s.forEach(e => {
 		const strOff = getStringOffset(e.type, strings);
 		view.setUint32(offset, strOff + 0x80000000, true);
 		view.setUint32(offset + 4, e.offset! + 0x80000000, true);
 		offset += 8;
-		nextTableOffset = writeNameTable(view, e.offset!, nextTableOffset, strings, e);
+		nextTableOffset = writeNameTable(
+			view,
+			e.offset!,
+			nextTableOffset,
+			strings,
+			e
+		);
 	});
-	data.n.forEach((e) => {
+	data.n.forEach(e => {
 		view.setUint32(offset, e.type, true);
 		view.setUint32(offset + 4, e.offset! + 0x80000000, true);
 		offset += 8;
-		nextTableOffset = writeNameTable(view, e.offset!, nextTableOffset, strings, e);
+		nextTableOffset = writeNameTable(
+			view,
+			e.offset!,
+			nextTableOffset,
+			strings,
+			e
+		);
 	});
 
 	return nextTableOffset;
@@ -389,7 +488,6 @@ function writeTypeTable(
 
 /** Manages resource data for NtExecutable */
 export default class NtExecutableResource {
-
 	/** The timestamp for resource */
 	public dateTime: number = 0;
 	/** The major version data for resource */
@@ -406,8 +504,7 @@ export default class NtExecutableResource {
 	 */
 	public sectionDataHeader: ImageSectionHeader | null = null;
 
-	private constructor() {
-	}
+	private constructor() {}
 	private parse(section: Readonly<NtExecutableSection>) {
 		if (!section.data) {
 			return;
@@ -424,7 +521,9 @@ export default class NtExecutableResource {
 		let off = 16;
 		const res: ResourceEntry[] = [];
 		const cb: ReadDataCallback = (t, n, l) => {
-			const off = view.getUint32(l.dataOffset, true) - section.info.virtualAddress;
+			const off =
+				view.getUint32(l.dataOffset, true) -
+				section.info.virtualAddress;
 			const size = view.getUint32(l.dataOffset + 4, true);
 			const cp = view.getUint32(l.dataOffset + 8, true);
 			const bin = new Uint8Array(size);
@@ -434,32 +533,32 @@ export default class NtExecutableResource {
 				id: n.name,
 				lang: l.lang,
 				codepage: cp,
-				bin: bin.buffer
+				bin: bin.buffer,
 			});
 		};
 		for (let i = 0; i < nameCount; ++i) {
-			const nameOffset = view.getUint32(off, true) & 0x7FFFFFFF;
+			const nameOffset = view.getUint32(off, true) & 0x7fffffff;
 			let nextTable = view.getUint32(off + 4, true);
 			// ignore if no next table is available
 			if (!(nextTable & 0x80000000)) {
 				off += 8;
 				continue;
 			}
-			nextTable &= 0x7FFFFFFF;
+			nextTable &= 0x7fffffff;
 
 			const name = readString(view, nameOffset);
 			readNameTable(view, name, nextTable, cb);
 			off += 8;
 		}
 		for (let i = 0; i < idCount; ++i) {
-			const typeId = view.getUint32(off, true) & 0x7FFFFFFF;
+			const typeId = view.getUint32(off, true) & 0x7fffffff;
 			let nextTable = view.getUint32(off + 4, true);
 			// ignore if no next table is available
 			if (!(nextTable & 0x80000000)) {
 				off += 8;
 				continue;
 			}
-			nextTable &= 0x7FFFFFFF;
+			nextTable &= 0x7fffffff;
 
 			readNameTable(view, typeId, nextTable, cb);
 			off += 8;
@@ -474,14 +573,17 @@ export default class NtExecutableResource {
 	 * the executable does not have resource data.
 	 */
 	public static from(exe: NtExecutable): NtExecutableResource {
-		const secs = ([] as NtExecutableSection[]).concat(exe.getAllSections())
-			.sort((a, b) => (a.info.virtualAddress - b.info.virtualAddress));
+		const secs = ([] as NtExecutableSection[])
+			.concat(exe.getAllSections())
+			.sort((a, b) => a.info.virtualAddress - b.info.virtualAddress);
 		const entry = exe.getSectionByEntry(ImageDirectoryEntry.Resource);
 		// check if the section order is supported
 		// (not supported if any other sections except 'relocation' is available,
 		// because the recalculation of virtual address is not simple)
 		if (entry) {
-			const reloc = exe.getSectionByEntry(ImageDirectoryEntry.BaseRelocation);
+			const reloc = exe.getSectionByEntry(
+				ImageDirectoryEntry.BaseRelocation
+			);
 			for (let i = 0; i < secs.length; ++i) {
 				const s = secs[i];
 				if (s.info.name === entry.info.name) {
@@ -508,17 +610,20 @@ export default class NtExecutableResource {
 	/**
 	 * Generates resource data binary for NtExecutable (not for .res file)
 	 */
-	public generateResourceData(virtualAddress: number, alignment: number): {
-		bin: ArrayBuffer,
-		rawSize: number,
-		dataOffset: number,
-		descEntryOffset: number,
-		descEntryCount: number
+	public generateResourceData(
+		virtualAddress: number,
+		alignment: number
+	): {
+		bin: ArrayBuffer;
+		rawSize: number;
+		dataOffset: number;
+		descEntryOffset: number;
+		descEntryCount: number;
 	} {
 		// estimate data size and divide to output table
 		const r: DivideEntriesResultType = {
 			s: [],
-			n: []
+			n: [],
 		};
 		let strings: string[] = [];
 		let size = divideEntriesImplByType(r, strings, this.entries);
@@ -546,7 +651,7 @@ export default class NtExecutableResource {
 
 		let o = descOffset;
 		let va = virtualAddress + dataOffset;
-		this.entries.forEach((e) => {
+		this.entries.forEach(e => {
 			const len = e.bin.byteLength;
 			va = roundUp(va, 8);
 			// RVA
@@ -562,7 +667,7 @@ export default class NtExecutableResource {
 		});
 
 		o = dataOffset;
-		this.entries.forEach((e) => {
+		this.entries.forEach(e => {
 			const len = e.bin.byteLength;
 			copyBuffer(bin, o, e.bin, 0, len);
 			o += roundUp(len, 8);
@@ -570,10 +675,10 @@ export default class NtExecutableResource {
 
 		const stringsData: StringData[] = [];
 		o = stringsOffset;
-		strings.forEach((s) => {
+		strings.forEach(s => {
 			stringsData.push({
 				offset: o,
-				text: s
+				text: s,
 			});
 			o = writeString(view, o, s);
 		});
@@ -596,7 +701,7 @@ export default class NtExecutableResource {
 			rawSize: size,
 			dataOffset: dataOffset,
 			descEntryOffset: descOffset,
-			descEntryCount: this.entries.length
+			descEntryCount: this.entries.length,
 		};
 	}
 
@@ -610,7 +715,7 @@ export default class NtExecutableResource {
 		if (this.sectionDataHeader) {
 			sectionData = {
 				data: null,
-				info: cloneObject(this.sectionDataHeader)
+				info: cloneObject(this.sectionDataHeader),
 			};
 		} else {
 			sectionData = {
@@ -625,8 +730,8 @@ export default class NtExecutableResource {
 					pointerToLineNumbers: 0,
 					numberOfRelocations: 0,
 					numberOfLineNumbers: 0,
-					characteristics: 0x40000040 // read access and initialized data
-				}
+					characteristics: 0x40000040, // read access and initialized data
+				},
 			};
 		}
 
@@ -639,13 +744,12 @@ export default class NtExecutableResource {
 		sectionData.info.virtualSize = data.rawSize;
 
 		// write as section
-		exeDest.setSectionByEntry(
-			ImageDirectoryEntry.Resource,
-			sectionData
-		);
+		exeDest.setSectionByEntry(ImageDirectoryEntry.Resource, sectionData);
 
 		// rewrite section raw-data
-		const generatedSection = exeDest.getSectionByEntry(ImageDirectoryEntry.Resource)!;
+		const generatedSection = exeDest.getSectionByEntry(
+			ImageDirectoryEntry.Resource
+		)!;
 		const view = new DataView(generatedSection.data!);
 		// set RVA
 		let o = data.descEntryOffset;

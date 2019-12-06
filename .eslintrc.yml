@@ -1,0 +1,82 @@
+root: true
+plugins:
+  - prettier
+  - '@typescript-eslint'
+extends:
+  - semistandard
+  - 'plugin:prettier/recommended'
+  - 'plugin:@typescript-eslint/recommended'
+env:
+  browser: true
+  node: false
+globals:
+  __DEV__: readonly
+  __PROD__: readonly
+rules:
+  'import/export': off
+  lines-between-class-members: off
+  max-len:
+    - error
+    - code: 140
+      ignoreComments: true
+      ignoreUrls: true
+      ignoreRegExpLiterals: true
+      ignoreTemplateLiterals: true
+  no-dupe-class-members: off
+  no-tabs: off
+  no-undef: off
+  # using @typescript-eslint/no-useless-constructor instead
+  no-useless-constructor: off
+  spaced-comment:
+    - error
+    - always
+    - markers: ['/']
+      exceptions: ['/']
+  standard/computed-property-even-spacing: off
+  standard/no-callback-literal: off
+  '@typescript-eslint/adjacent-overload-signatures': error
+  '@typescript-eslint/array-type': [error, { default: array-simple }]
+  '@typescript-eslint/camelcase':
+    - error
+    - allow:
+        - child_process
+        - DOS_Windows16
+        - DOS_Windows32
+        - NT_Windows32
+  '@typescript-eslint/explicit-function-return-type': off
+  '@typescript-eslint/indent': off
+  '@typescript-eslint/interface-name-prefix': off
+  '@typescript-eslint/member-delimiter-style': off
+  '@typescript-eslint/member-ordering':
+    - error
+    - default:
+        - public-static-field
+        - private-static-field
+        - public-instance-field
+        - private-instance-field
+        - public-constructor
+        - private-constructor
+  '@typescript-eslint/no-empty-function':
+    - error
+    - allow:
+        - protected-constructors
+        - private-constructors
+  '@typescript-eslint/no-explicit-any': off
+  '@typescript-eslint/no-inferrable-types': off
+  '@typescript-eslint/no-non-null-assertion': off
+  '@typescript-eslint/no-use-before-define': off
+  '@typescript-eslint/no-useless-constructor': error
+  '@typescript-eslint/no-unused-vars': off
+overrides:
+  - files: ['./*.js', 'tools/**/*.js']
+    env:
+      browser: false
+      node: true
+    rules:
+      '@typescript-eslint/no-var-requires': off
+  - files: ['**/*.ts', '**/*.tsx']
+    parser: '@typescript-eslint/parser'
+    parserOptions:
+      project: ./tsconfig.json
+    rules:
+      no-redeclare: off

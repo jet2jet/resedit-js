@@ -1,4 +1,3 @@
-
 import ResourceEntry, { ResourceEntryBaseType } from './ResourceEntry';
 
 import IconItem from '../data/IconItem';
@@ -7,7 +6,7 @@ import RawIconItem from '../data/RawIconItem';
 import {
 	readUint8WithLastOffset,
 	readUint16WithLastOffset,
-	readUint32WithLastOffset
+	readUint32WithLastOffset,
 } from '../util/functions';
 
 // struct ICON_GROUP {
@@ -36,12 +35,12 @@ export interface IconGroupItem {
 	iconID: number;
 }
 
-function generateEntryBinary(icons: ReadonlyArray<IconGroupItem>): ArrayBuffer {
+function generateEntryBinary(icons: readonly IconGroupItem[]): ArrayBuffer {
 	let count = icons.length;
 	if (count > 65535) {
 		count = 65535;
 	}
-	const size = 6 + (14 * icons.length);
+	const size = 6 + 14 * icons.length;
 	const bin = new ArrayBuffer(size);
 	const view = new DataView(bin);
 
@@ -50,7 +49,7 @@ function generateEntryBinary(icons: ReadonlyArray<IconGroupItem>): ArrayBuffer {
 	view.setUint16(4, count, true);
 
 	let offset = 6;
-	icons.forEach((icon) => {
+	icons.forEach(icon => {
 		view.setUint8(offset, icon.width >= 256 ? 0 : icon.width);
 		view.setUint8(offset + 1, icon.height >= 256 ? 0 : icon.height);
 		view.setUint8(offset + 2, icon.colors >= 256 ? 0 : icon.colors);
@@ -65,24 +64,30 @@ function generateEntryBinary(icons: ReadonlyArray<IconGroupItem>): ArrayBuffer {
 	return bin;
 }
 
-function findUnusedIconID(entries: ReadonlyArray<ResourceEntry>, lang: string | number, isCursor: boolean): {
+function findUnusedIconID(
+	entries: readonly ResourceEntry[],
+	lang: string | number,
+	isCursor: boolean
+): {
 	id: number;
 	last: boolean;
 } {
 	const type = isCursor ? 1 : 3;
 	// (ignore string id)
-	const filteredIDs = entries.filter(
-		(e): e is ResourceEntryBaseType<number, number, string | number> => (
-			e.type === type && e.lang === lang && typeof e.id === 'number'
+	const filteredIDs = entries
+		.filter(
+			(e): e is ResourceEntryBaseType<number, number, string | number> =>
+				e.type === type && e.lang === lang && typeof e.id === 'number'
 		)
-	).map((e) => e.id).sort((a, b) => (a - b));
+		.map(e => e.id)
+		.sort((a, b) => a - b);
 	let idCurrent = 1;
 	for (let i = 0; i < filteredIDs.length; ++i) {
 		const id = filteredIDs[i];
 		if (idCurrent < id) {
 			return {
 				id: idCurrent,
-				last: false
+				last: false,
 			};
 		} else if (idCurrent === id) {
 			++idCurrent;
@@ -90,12 +95,11 @@ function findUnusedIconID(entries: ReadonlyArray<ResourceEntry>, lang: string | 
 	}
 	return {
 		id: idCurrent,
-		last: true
+		last: true,
 	};
 }
 
 export default class IconGroupEntry {
-
 	public id: string | number;
 	public lang: string | number;
 	public readonly icons: IconGroupItem[];
@@ -111,12 +115,36 @@ export default class IconGroupEntry {
 			for (let i = 0; i < count; ++i) {
 				icons.push({
 					width: readUint8WithLastOffset(view, offset, totalSize),
-					height: readUint8WithLastOffset(view, offset + 1, totalSize),
-					colors: readUint8WithLastOffset(view, offset + 2, totalSize),
-					planes: readUint16WithLastOffset(view, offset + 4, totalSize),
-					bitCount: readUint16WithLastOffset(view, offset + 6, totalSize),
-					dataSize: readUint32WithLastOffset(view, offset + 8, totalSize),
-					iconID: readUint16WithLastOffset(view, offset + 12, totalSize)
+					height: readUint8WithLastOffset(
+						view,
+						offset + 1,
+						totalSize
+					),
+					colors: readUint8WithLastOffset(
+						view,
+						offset + 2,
+						totalSize
+					),
+					planes: readUint16WithLastOffset(
+						view,
+						offset + 4,
+						totalSize
+					),
+					bitCount: readUint16WithLastOffset(
+						view,
+						offset + 6,
+						totalSize
+					),
+					dataSize: readUint32WithLastOffset(
+						view,
+						offset + 8,
+						totalSize
+					),
+					iconID: readUint16WithLastOffset(
+						view,
+						offset + 12,
+						totalSize
+					),
 				});
 				offset += 14; // 16 for .ico file, but 14 for resource data
 			}
@@ -127,8 +155,12 @@ export default class IconGroupEntry {
 		this.icons = icons;
 	}
 
-	public static fromEntries(entries: ReadonlyArray<ResourceEntry>): IconGroupEntry[] {
-		return entries.filter((e) => e.type === 14).map((e) => new IconGroupEntry(e));
+	public static fromEntries(
+		entries: readonly ResourceEntry[]
+	): IconGroupEntry[] {
+		return entries
+			.filter(e => e.type === 14)
+			.map(e => new IconGroupEntry(e));
 	}
 
 	public generateEntry(): ResourceEntry {
@@ -138,7 +170,7 @@ export default class IconGroupEntry {
 			id: this.id,
 			lang: this.lang,
 			codepage: 0,
-			bin: bin
+			bin: bin,
 		};
 	}
 
@@ -146,31 +178,34 @@ export default class IconGroupEntry {
 	 * Return an array of IconItem, which is used by this IconGroupEntry instance,
 	 * from specified resource entries.
 	 */
-	public getIconItemsFromEntries(entries: ReadonlyArray<ResourceEntry>): (IconItem | RawIconItem)[] {
-		return entries.map((e) => {
-			if (e.type !== 3 || e.lang !== this.lang) {
-				return null;
-			}
-			const c = this.icons.filter((icon) => e.id === icon.iconID)[0];
-			if (!c) {
-				return null;
-			}
-			return {
-				entry: e,
-				icon: c
-			};
-		}).filter(
-			(item): item is Exclude<typeof item, null> => !!item
-		).map((item) => {
-			const bin = item.entry.bin;
-			const view = new DataView(bin);
-			if (view.getUint32(0, true) === 0x28) {
-				return IconItem.from(bin);
-			} else {
-				const c = item.icon;
-				return RawIconItem.from(bin, c.width, c.height, c.bitCount);
-			}
-		});
+	public getIconItemsFromEntries(
+		entries: readonly ResourceEntry[]
+	): Array<IconItem | RawIconItem> {
+		return entries
+			.map(e => {
+				if (e.type !== 3 || e.lang !== this.lang) {
+					return null;
+				}
+				const c = this.icons.filter(icon => e.id === icon.iconID)[0];
+				if (!c) {
+					return null;
+				}
+				return {
+					entry: e,
+					icon: c,
+				};
+			})
+			.filter((item): item is Exclude<typeof item, null> => !!item)
+			.map(item => {
+				const bin = item.entry.bin;
+				const view = new DataView(bin);
+				if (view.getUint32(0, true) === 0x28) {
+					return IconItem.from(bin);
+				} else {
+					const c = item.icon;
+					return RawIconItem.from(bin, c.width, c.height, c.bitCount);
+				}
+			});
 	}
 
 	/**
@@ -187,12 +222,12 @@ export default class IconGroupEntry {
 		destEntries: ResourceEntry[],
 		iconGroupID: string | number,
 		lang: string | number,
-		icons: (IconItem | RawIconItem)[]
+		icons: Array<IconItem | RawIconItem>
 	) {
 		// find existing entry
-		let entry: ResourceEntry | undefined =
-			destEntries.filter((e) => (e.type === 14 && e.id === iconGroupID && e.lang === lang))[0];
-		let binEntry: ArrayBuffer;
+		let entry: ResourceEntry | undefined = destEntries.filter(
+			e => e.type === 14 && e.id === iconGroupID && e.lang === lang
+		)[0];
 		interface TempIconData {
 			base: IconItem | RawIconItem;
 			bm: {
@@ -204,50 +239,53 @@ export default class IconGroupEntry {
 			bin: ArrayBuffer;
 			id: number;
 		}
-		const tmpIconArray: TempIconData[] = icons.map((icon): TempIconData => {
-			if (icon.isIcon()) {
-				let { width, height } = icon;
-				if (width === null) {
-					width = icon.bitmapInfo.width;
-				}
-				if (height === null) {
-					height = icon.bitmapInfo.height;
-					// if mask is specified, the icon height must be the half of bitmap height
-					if (icon.masks !== null) {
-						height = Math.floor(height / 2);
+		const tmpIconArray: TempIconData[] = icons.map(
+			(icon): TempIconData => {
+				if (icon.isIcon()) {
+					let { width, height } = icon;
+					if (width === null) {
+						width = icon.bitmapInfo.width;
 					}
+					if (height === null) {
+						height = icon.bitmapInfo.height;
+						// if mask is specified, the icon height must be the half of bitmap height
+						if (icon.masks !== null) {
+							height = Math.floor(height / 2);
+						}
+					}
+					return {
+						base: icon,
+						bm: {
+							width: width,
+							height: height,
+							planes: icon.bitmapInfo.planes,
+							bitCount: icon.bitmapInfo.bitCount,
+						},
+						bin: icon.generate(),
+						id: 0,
+					};
+				} else {
+					return {
+						base: icon,
+						bm: {
+							width: icon.width,
+							height: icon.height,
+							planes: 1,
+							bitCount: icon.bitCount,
+						},
+						bin: icon.bin,
+						id: 0,
+					};
 				}
-				return {
-					base: icon,
-					bm: {
-						width: width,
-						height: height,
-						planes: icon.bitmapInfo.planes,
-						bitCount: icon.bitmapInfo.bitCount
-					},
-					bin: icon.generate(),
-					id: 0
-				};
-			} else {
-				return {
-					base: icon,
-					bm: {
-						width: icon.width,
-						height: icon.height,
-						planes: 1,
-						bitCount: icon.bitCount
-					},
-					bin: icon.bin,
-					id: 0
-				};
 			}
-		});
+		);
 
 		if (entry) {
 			// remove unused icon data
 			for (let i = destEntries.length - 1; i >= 0; --i) {
 				const e = destEntries[i];
-				if (e.type === 3) { // RT_ICON
+				if (e.type === 3) {
+					// RT_ICON
 					if (!isIconUsed(e, destEntries, entry)) {
 						destEntries.splice(i, 1);
 					}
@@ -261,14 +299,14 @@ export default class IconGroupEntry {
 				lang: lang,
 				codepage: 0,
 				// set later
-				bin: null as any as ArrayBuffer
+				bin: (null as any) as ArrayBuffer,
 			};
 			destEntries.push(entry);
 		}
 
 		// append icons
 		let idInfo: ReturnType<typeof findUnusedIconID> | undefined;
-		tmpIconArray.forEach((icon) => {
+		tmpIconArray.forEach(icon => {
 			if (!idInfo || !idInfo.last) {
 				idInfo = findUnusedIconID(destEntries, lang, false);
 			} else {
@@ -279,63 +317,74 @@ export default class IconGroupEntry {
 				id: idInfo.id,
 				lang: lang,
 				codepage: 0,
-				bin: icon.bin
+				bin: icon.bin,
 			});
 			// set 'id' field to use in generateEntryBinary
 			icon.id = idInfo.id;
 		});
 
-		binEntry = generateEntryBinary(tmpIconArray.map((icon): IconGroupItem => {
-			let width = Math.abs(icon.bm.width);
-			if (width >= 256) {
-				width = 0;
-			}
-			let height = Math.abs(icon.bm.height);
-			if (height >= 256) {
-				height = 0;
-			}
-			let colors = 0;
-			if (icon.base.isIcon()) {
-				const bmBase = icon.base.bitmapInfo;
-				colors = bmBase.colorUsed || bmBase.colors.length;
-				if (!colors) {
-					switch (bmBase.bitCount) {
-						case 1:
-							colors = 2;
-							break;
-						case 4:
-							colors = 16;
-							break;
-						// case 8:
-						// 	colors = 256;
-						// 	break;
+		const binEntry = generateEntryBinary(
+			tmpIconArray.map(
+				(icon): IconGroupItem => {
+					let width = Math.abs(icon.bm.width);
+					if (width >= 256) {
+						width = 0;
 					}
+					let height = Math.abs(icon.bm.height);
+					if (height >= 256) {
+						height = 0;
+					}
+					let colors = 0;
+					if (icon.base.isIcon()) {
+						const bmBase = icon.base.bitmapInfo;
+						colors = bmBase.colorUsed || bmBase.colors.length;
+						if (!colors) {
+							switch (bmBase.bitCount) {
+								case 1:
+									colors = 2;
+									break;
+								case 4:
+									colors = 16;
+									break;
+								// case 8:
+								// 	colors = 256;
+								// 	break;
+							}
+						}
+						if (colors >= 256) {
+							colors = 0;
+						}
+					}
+					return {
+						width: width,
+						height: height,
+						colors: colors,
+						planes: icon.bm.planes,
+						bitCount: icon.bm.bitCount,
+						dataSize: icon.bin.byteLength,
+						iconID: icon.id,
+					};
 				}
-				if (colors >= 256) {
-					colors = 0;
-				}
-			}
-			return {
-				width: width,
-				height: height,
-				colors: colors,
-				planes: icon.bm.planes,
-				bitCount: icon.bm.bitCount,
-				dataSize: icon.bin.byteLength,
-				iconID: icon.id
-			};
-		}));
+			)
+		);
 		// rewrite entry
 		entry.bin = binEntry;
 
-		function isIconUsed(icon: ResourceEntry, allEntries: ReadonlyArray<ResourceEntry>, excludeGroup: ResourceEntry) {
-			return allEntries.some((e) => {
-				if (e.type !== 14 || (e.id === excludeGroup.id && e.lang === excludeGroup.lang)) {
+		function isIconUsed(
+			icon: ResourceEntry,
+			allEntries: readonly ResourceEntry[],
+			excludeGroup: ResourceEntry
+		) {
+			return allEntries.some(e => {
+				if (
+					e.type !== 14 ||
+					(e.id === excludeGroup.id && e.lang === excludeGroup.lang)
+				) {
 					return false;
 				}
 
 				const g = new IconGroupEntry(e);
-				return g.icons.some((c) => {
+				return g.icons.some(c => {
 					return c.iconID === icon.id;
 				});
 			});

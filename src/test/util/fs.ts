@@ -10,13 +10,16 @@ import ImageDirectoryEntry from '@/format/ImageDirectoryEntry';
 
 function loadBinary(filePath: string) {
 	const buffer = fs.readFileSync(filePath);
-	return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+	return buffer.buffer.slice(
+		buffer.byteOffset,
+		buffer.byteOffset + buffer.byteLength
+	);
 }
 
 export function mkdirp(dir: string) {
 	const tokens = path.normalize(dir).split(path.sep);
 	let curDir: string = '';
-	tokens.forEach((token) => {
+	tokens.forEach(token => {
 		if (!curDir) {
 			curDir = token;
 		} else {
@@ -27,13 +30,15 @@ export function mkdirp(dir: string) {
 			if (stat.isDirectory()) {
 				return;
 			}
-		} catch (_e) { }
+		} catch (_e) {}
 		fs.mkdirSync(curDir);
 	});
 }
 
 export function loadExeBinary(name: string, platform: string): ArrayBuffer {
-	return loadBinary(path.resolve(__TEST_INPUT_ROOT__, name, platform, `${name}.exe`));
+	return loadBinary(
+		path.resolve(__TEST_INPUT_ROOT__, name, platform, `${name}.exe`)
+	);
 }
 
 export function testExec(bin: ArrayBuffer, name: string, platform: string) {
@@ -53,17 +58,27 @@ export function testExec(bin: ArrayBuffer, name: string, platform: string) {
 	return result.stdout;
 }
 
-export function loadExecutableWithResourceCheck(appName: string, platform: string, exists: boolean): NtExecutable {
+export function loadExecutableWithResourceCheck(
+	appName: string,
+	platform: string,
+	exists: boolean
+): NtExecutable {
 	const bin = loadExeBinary(appName, platform);
 	const exe = NtExecutable.from(bin);
 	if (exists) {
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 	} else {
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).toEqual(
+			null
+		);
 	}
 	return exe;
 }
 
 export function loadIcon(name: string): ArrayBuffer {
-	return loadBinary(path.resolve(__TEST_INPUT_ROOT__, 'icons', `${name}.ico`));
+	return loadBinary(
+		path.resolve(__TEST_INPUT_ROOT__, 'icons', `${name}.ico`)
+	);
 }

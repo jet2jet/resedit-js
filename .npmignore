@@ -10,10 +10,14 @@ obj/
 *.aps
 *.user
 .editorconfig
+.eslintignore
+.eslintrc.yml
 .gitignore
 .gitmodules
 .gitattributes
 .npmignore
+.prettierignore
+.prettierrc.yml
 .travis.yml
 npm-debug.log
 yarn.lock

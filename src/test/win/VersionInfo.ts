@@ -13,7 +13,7 @@ const platform = __TEST_PLATFORM__;
 
 function copyValues<T extends object>(dest: T, src: Readonly<T>) {
 	type TKeys = keyof T;
-	Object.keys(src).forEach((key) => {
+	Object.keys(src).forEach(key => {
 		dest[key as TKeys] = src[key as TKeys];
 	});
 }
@@ -24,9 +24,9 @@ function doTestExecWithVersionValues(
 	versionFixed: VersionFixedInfo | null,
 	lang: number,
 	codepage: number,
-	versionStrings: { [key: string]: string; } | null
+	versionStrings: { [key: string]: string } | null
 ) {
-	const copiedVersionStrings: { [key: string]: string; } = {};
+	const copiedVersionStrings: { [key: string]: string } = {};
 	if (versionStrings) {
 		copyValues(copiedVersionStrings, versionStrings);
 	}
@@ -37,7 +37,7 @@ function doTestExecWithVersionValues(
 		.split(/\r\n|[\r\n]/g);
 
 	let versionStringsChecked = false;
-	output.forEach((line) => {
+	output.forEach(line => {
 		if (!line) {
 			return;
 		}
@@ -49,9 +49,13 @@ function doTestExecWithVersionValues(
 			if (langCp === `${lang}-${codepage}`) {
 				if (versionStrings) {
 					expect(value).toEqual(versionStrings[stringKey]);
-					try { delete copiedVersionStrings[stringKey]; } catch (_e) { }
+					try {
+						delete copiedVersionStrings[stringKey];
+					} catch (_e) {}
 				} else {
-					fail(`Unexpected value for [lang,cp]=[${lang},${codepage}]: ${value}`);
+					fail(
+						`Unexpected value for [lang,cp]=[${lang},${codepage}]: ${value}`
+					);
 				}
 				versionStringsChecked = true;
 			}
@@ -59,16 +63,24 @@ function doTestExecWithVersionValues(
 			if (versionFixed) {
 				switch (key) {
 					case 'FileVersionMS':
-						expect(Number(value)).toEqual(versionFixed.fileVersionMS);
+						expect(Number(value)).toEqual(
+							versionFixed.fileVersionMS
+						);
 						break;
 					case 'FileVersionLS':
-						expect(Number(value)).toEqual(versionFixed.fileVersionLS);
+						expect(Number(value)).toEqual(
+							versionFixed.fileVersionLS
+						);
 						break;
 					case 'ProductVersionMS':
-						expect(Number(value)).toEqual(versionFixed.productVersionMS);
+						expect(Number(value)).toEqual(
+							versionFixed.productVersionMS
+						);
 						break;
 					case 'ProductVersionLS':
-						expect(Number(value)).toEqual(versionFixed.productVersionLS);
+						expect(Number(value)).toEqual(
+							versionFixed.productVersionLS
+						);
 						break;
 					case 'FileType':
 						expect(Number(value)).toEqual(versionFixed.fileType);
@@ -102,14 +114,14 @@ describe(`VersionInfo - ${platform}`, () => {
 		fileType: VersionFileType.App,
 		fileSubtype: 0,
 		fileDateMS: 0,
-		fileDateLS: 0
+		fileDateLS: 0,
 	};
 	const versionStringValues = {
 		FileDescription: 'dummy version - replaced by versionInfo test',
 		FileVersion: '1.2.3.4',
 		ProductName: 'versionInfo test',
 		ProductVersion: '1.1.2.3',
-		OriginalFilename: 'versionInfo.exe'
+		OriginalFilename: 'versionInfo.exe',
 	};
 
 	it('append new version info as a new resource data', () => {
@@ -123,13 +135,18 @@ describe(`VersionInfo - ${platform}`, () => {
 		version.lang = lang;
 
 		copyValues(version.fixedInfo, versionFixedValues);
-		version.setStringValues({ lang: lang, codepage: codepage }, versionStringValues);
+		version.setStringValues(
+			{ lang: lang, codepage: codepage },
+			versionStringValues
+		);
 
 		version.outputToResourceEntries(res.entries);
 		expect(res.entries.length).toEqual(1);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -158,14 +175,19 @@ describe(`VersionInfo - ${platform}`, () => {
 		version.lang = lang;
 
 		copyValues(version.fixedInfo, versionFixedValues);
-		version.setStringValues({ lang: lang, codepage: codepage }, versionStringValues);
+		version.setStringValues(
+			{ lang: lang, codepage: codepage },
+			versionStringValues
+		);
 
 		version.outputToResourceEntries(res.entries);
 		// should be incremented because no version entries are available
 		expect(res.entries.length).toEqual(countEntries + 1);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -190,22 +212,31 @@ describe(`VersionInfo - ${platform}`, () => {
 		// check entries
 		const baseVersions = VersionInfo.fromEntries(res.entries);
 		expect(baseVersions.length).toBeGreaterThan(0);
-		expect(baseVersions.some((v) => v.lang === lang)).toBeTruthy();
-		expect(baseVersions.filter((v) => v.lang === lang)[0]
-			.getAvailableLanguages().some((v) => v.lang === lang)).toBeTruthy();
+		expect(baseVersions.some(v => v.lang === lang)).toBeTruthy();
+		expect(
+			baseVersions
+				.filter(v => v.lang === lang)[0]
+				.getAvailableLanguages()
+				.some(v => v.lang === lang)
+		).toBeTruthy();
 
 		const version = VersionInfo.createEmpty();
 		version.lang = lang;
 
 		copyValues(version.fixedInfo, versionFixedValues);
-		version.setStringValues({ lang: lang, codepage: codepage }, versionStringValues);
+		version.setStringValues(
+			{ lang: lang, codepage: codepage },
+			versionStringValues
+		);
 
 		version.outputToResourceEntries(res.entries);
 		// should be same because existing version entry is replaced
 		expect(res.entries.length).toEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -230,15 +261,20 @@ describe(`VersionInfo - ${platform}`, () => {
 		// check entries
 		const baseVersions = VersionInfo.fromEntries(res.entries);
 		expect(baseVersions.length).toBeGreaterThan(0);
-		expect(baseVersions.some((v) => v.lang === lang)).toBeTruthy();
+		expect(baseVersions.some(v => v.lang === lang)).toBeTruthy();
 
-		const version = baseVersions.filter((v) => v.lang === lang).shift()!;
+		const version = baseVersions.filter(v => v.lang === lang).shift()!;
 		const verLangs = version.getAvailableLanguages().length;
-		expect(version.getAvailableLanguages().some((v) => v.lang === lang)).toBeTruthy();
+		expect(
+			version.getAvailableLanguages().some(v => v.lang === lang)
+		).toBeTruthy();
 
 		copyValues(version.fixedInfo, versionFixedValues);
 		// use another language for here
-		version.setStringValues({ lang: langAnother, codepage: codepage }, versionStringValues);
+		version.setStringValues(
+			{ lang: langAnother, codepage: codepage },
+			versionStringValues
+		);
 		expect(version.getAvailableLanguages().length).toEqual(verLangs + 1);
 
 		version.outputToResourceEntries(res.entries);
@@ -246,7 +282,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -271,10 +309,12 @@ describe(`VersionInfo - ${platform}`, () => {
 		// check entries
 		const baseVersions = VersionInfo.fromEntries(res.entries);
 		expect(baseVersions.length).toBeGreaterThan(0);
-		expect(baseVersions.some((v) => v.lang === lang)).toBeTruthy();
-		const version = baseVersions.filter((v) => v.lang === lang)[0];
+		expect(baseVersions.some(v => v.lang === lang)).toBeTruthy();
+		const version = baseVersions.filter(v => v.lang === lang)[0];
 		const verLangs = version.getAvailableLanguages().length;
-		expect(version.getAvailableLanguages().some((v) => v.lang === lang)).toBeTruthy();
+		expect(
+			version.getAvailableLanguages().some(v => v.lang === lang)
+		).toBeTruthy();
 		expect(verLangs).toBeGreaterThanOrEqual(2);
 
 		version.removeAllStringValues({ lang: lang, codepage: codepage });
@@ -285,7 +325,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 

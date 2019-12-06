@@ -1,4 +1,3 @@
-
 /**
  * File type values used by VersionEntry.fixedInfo field.
  */
@@ -9,6 +8,6 @@ enum VersionFileType {
 	Driver = 3,
 	Font = 4,
 	VxD = 5,
-	StaticLibrary = 7
+	StaticLibrary = 7,
 }
 export default VersionFileType;

@@ -1,4 +1,3 @@
-
 import ArrayFormatBase from './ArrayFormatBase';
 import FormatBase from './FormatBase';
 import ImageDataDirectoryArray from './ImageDataDirectoryArray';
@@ -20,17 +19,28 @@ export {
 	ImageNtHeaders,
 	ImageOptionalHeader,
 	ImageOptionalHeader64,
-	ImageSectionHeaderArray
+	ImageSectionHeaderArray,
 };
 
 export function getImageDosHeader(bin: ArrayBuffer) {
 	return ImageDosHeader.from(bin);
 }
-export function getImageNtHeadersByDosHeader(bin: ArrayBuffer, dosHeader: ImageDosHeader) {
+export function getImageNtHeadersByDosHeader(
+	bin: ArrayBuffer,
+	dosHeader: ImageDosHeader
+) {
 	return ImageNtHeaders.from(bin, dosHeader.newHeaderAddress);
 }
-export function getImageSectionHeadersByNtHeaders(bin: ArrayBuffer, dosHeader: ImageDosHeader, ntHeaders: ImageNtHeaders) {
-	return ImageSectionHeaderArray.from(bin, ntHeaders.fileHeader.numberOfSections, dosHeader.newHeaderAddress + ntHeaders.byteLength);
+export function getImageSectionHeadersByNtHeaders(
+	bin: ArrayBuffer,
+	dosHeader: ImageDosHeader,
+	ntHeaders: ImageNtHeaders
+) {
+	return ImageSectionHeaderArray.from(
+		bin,
+		ntHeaders.fileHeader.numberOfSections,
+		dosHeader.newHeaderAddress + ntHeaders.byteLength
+	);
 }
 export function findImageSectionBlockByDirectoryEntry(
 	bin: ArrayBuffer,
@@ -38,9 +48,14 @@ export function findImageSectionBlockByDirectoryEntry(
 	ntHeaders: ImageNtHeaders,
 	entryType: ImageDirectoryEntry
 ) {
-	const arr = ImageSectionHeaderArray.from(bin, ntHeaders.fileHeader.numberOfSections, dosHeader.newHeaderAddress + ntHeaders.byteLength);
+	const arr = ImageSectionHeaderArray.from(
+		bin,
+		ntHeaders.fileHeader.numberOfSections,
+		dosHeader.newHeaderAddress + ntHeaders.byteLength
+	);
 	const len = arr.length;
-	const rva = ntHeaders.optionalHeaderDataDirectory.get(entryType).virtualAddress;
+	const rva = ntHeaders.optionalHeaderDataDirectory.get(entryType)
+		.virtualAddress;
 	for (let i = 0; i < len; ++i) {
 		const sec = arr.get(i);
 		const vaEnd = sec.virtualAddress + sec.virtualSize;

@@ -1,4 +1,3 @@
-
 /**
  * OS values used by VersionEntry.fixedInfo field.
  */
@@ -17,6 +16,6 @@ enum VersionFileOS {
 	DOS_Windows32 = 0x10004,
 	NT_Windows32 = 0x40004,
 	OS2_16_PM16 = 0x20002,
-	OS2_32_PM32 = 0x30003
+	OS2_32_PM32 = 0x30003,
 }
 export default VersionFileOS;

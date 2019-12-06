@@ -2,9 +2,7 @@
   "extends": "./tsconfig.test.json",
   "compilerOptions": {
     "paths": {
-      "@/*": [
-        "../../src/main/*"
-      ]
+      "@/*": ["../../src/main/*"]
     }
   },
   "include": [

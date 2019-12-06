@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "declaration": true,
-    "lib": [ "es5", "es2015.collection" ],
+    "lib": ["es5", "es2015.collection"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitReturns": true,
@@ -10,10 +10,7 @@
     "noUnusedParameters": true,
     "outDir": "./dist",
     "paths": {
-      "*": [
-        "../../node_modules/@types/*",
-        "../../node_modules/*"
-      ]
+      "*": ["../../node_modules/@types/*", "../../node_modules/*"]
     },
     "rootDir": "./src/main",
     "skipLibCheck": true,
@@ -22,7 +19,5 @@
     "typeRoots": ["./node_modules/@types", "./node_modules"],
     "types": []
   },
-  "include": [
-    "./src/main/**/*.ts"
-  ]
+  "include": ["./src/main/**/*.ts"]
 }
