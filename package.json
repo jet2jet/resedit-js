@@ -27,6 +27,8 @@
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.app.json",
+    "lint": "eslint -c .eslintrc.yml --ext .js,.jsx,.ts,.tsx .",
+    "lint:fix": "eslint -c .eslintrc.yml --fix --ext .js,.jsx,.ts,.tsx .",
     "test": "jest --config ./jest.config.basic.js",
     "test:basic": "jest --config ./jest.config.basic.js",
     "test:win-x86": "jest --config ./jest.config.win-x86.js",
@@ -37,6 +39,15 @@
   "devDependencies": {
     "@types/jest": "^24.0.23",
     "@types/node": "10",
+    "@typescript-eslint/eslint-plugin": "^2.10.0",
+    "@typescript-eslint/parser": "^2.10.0",
+    "eslint": "^6.7.2",
+    "eslint-config-semistandard": "^15.0.0",
+    "eslint-config-standard": "^13.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.9.0",
     "ts-jest": "^24.2.0",
     "typescript": "~3.7.3"
