@@ -5,6 +5,7 @@
 - Throw error if specified executable binary is signed (#10)
 - Implemented PE checksum calculation (#8, thanks to @AlexanderOMara)
 - (Internal change) Updated package dependencies for developments
+  - TypeScript version is updated to 3.7.x, so the type definitions might be incompatible for older version of TypeScript (especially <3.4.x)
 
 ## v0.2.2
 
