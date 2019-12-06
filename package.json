@@ -35,6 +35,7 @@
     "lint:prettier:fix": "prettier --config ./.prettierrc.yml --write \"**/*.{js,jsx,ts,tsx,yml,json,md}\"",
     "test": "jest --config ./jest.config.basic.js",
     "test:basic": "jest --config ./jest.config.basic.js",
+    "test:lint": "npm run lint",
     "test:win-x86": "jest --config ./jest.config.win-x86.js",
     "test:win-x64": "jest --config ./jest.config.win-x64.js",
     "version": "node ./tools/updateVersion.js ./src/main/version.ts && git add -A ./src/main/version.ts"

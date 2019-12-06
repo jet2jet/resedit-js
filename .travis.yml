@@ -6,6 +6,9 @@ cache: npm
 
 matrix:
   include:
+    - name: 'Lint'
+      env:
+        - JOB_TYPE=lint
     - name: 'Basic test'
       env:
         - JOB_TYPE=basic
