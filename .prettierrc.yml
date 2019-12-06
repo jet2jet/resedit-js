@@ -1,0 +1,19 @@
+trailingComma: 'es5'
+tabWidth: 4
+semi: true
+singleQuote: true
+useTabs: true
+
+overrides:
+  - files:
+      - '**/*.json'
+      - '**/*.yml'
+      - '**/*.md'
+      - .bowerrc
+      - .gitignore
+      - .npmignore
+      - .gitattributes
+      - .editorconfig
+    options:
+      tabWidth: 2
+      useTabs: false

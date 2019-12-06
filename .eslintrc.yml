@@ -1,8 +1,10 @@
 root: true
 plugins:
+  - prettier
   - '@typescript-eslint'
 extends:
   - semistandard
+  - 'plugin:prettier/recommended'
   - 'plugin:@typescript-eslint/recommended'
 env:
   browser: true
@@ -33,7 +35,7 @@ rules:
   standard/computed-property-even-spacing: off
   standard/no-callback-literal: off
   '@typescript-eslint/adjacent-overload-signatures': error
-  '@typescript-eslint/array-type': [error, {default: array-simple}]
+  '@typescript-eslint/array-type': [error, { default: array-simple }]
   '@typescript-eslint/camelcase':
     - error
     - allow:
@@ -48,17 +50,17 @@ rules:
   '@typescript-eslint/member-ordering':
     - error
     - default:
-      - public-static-field
-      - private-static-field
-      - public-instance-field
-      - private-instance-field
-      - public-constructor
-      - private-constructor
+        - public-static-field
+        - private-static-field
+        - public-instance-field
+        - private-instance-field
+        - public-constructor
+        - private-constructor
   '@typescript-eslint/no-empty-function':
     - error
     - allow:
-      - protected-constructors
-      - private-constructors
+        - protected-constructors
+        - private-constructors
   '@typescript-eslint/no-explicit-any': off
   '@typescript-eslint/no-inferrable-types': off
   '@typescript-eslint/no-non-null-assertion': off
