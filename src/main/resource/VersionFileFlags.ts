@@ -1,4 +1,3 @@
-
 /**
  * Flag values used by VersionEntry.fixedInfo field.
  * Zero or more enum values are stored (with OR operator).
@@ -9,6 +8,6 @@ enum VersionFileFlags {
 	Patched = 4,
 	PrivateBuild = 8,
 	InfoInferred = 16,
-	SpecialBuild = 32
+	SpecialBuild = 32,
 }
 export default VersionFileFlags;

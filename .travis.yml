@@ -1,20 +1,20 @@
 language: node_js
-node_js: "10"
+node_js: '10'
 sudo: false
 
 cache: npm
 
 matrix:
   include:
-    - name: "Basic test"
+    - name: 'Basic test'
       env:
         - JOB_TYPE=basic
-    - name: "Windows-specific test (using x86)"
+    - name: 'Windows-specific test (using x86)'
       os: windows
       env:
         - JOB_TYPE=win-x86
         - TEST_IGNORE_256_ICON=1
-    - name: "Windows-specific test (using x64)"
+    - name: 'Windows-specific test (using x64)'
       os: windows
       env:
         - JOB_TYPE=win-x64

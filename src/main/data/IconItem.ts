@@ -1,4 +1,3 @@
-
 import BitmapInfo from './BitmapInfo';
 
 import {
@@ -8,7 +7,7 @@ import {
 	readUint8WithLastOffset,
 	readUint16WithLastOffset,
 	readUint32WithLastOffset,
-	roundUp
+	roundUp,
 } from '../util/functions';
 
 function calcMaskSize(width: number, height: number) {
@@ -17,7 +16,6 @@ function calcMaskSize(width: number, height: number) {
 }
 
 export default class IconItem {
-
 	/**
 	 * Bitmap header data (`BITMAPINFOHEADER`)
 	 */
@@ -56,7 +54,7 @@ export default class IconItem {
 		if (headerSize > totalSize) {
 			headerSize = totalSize;
 		}
-		let sizeImage = readUint32WithLastOffset(view, 20, headerSize);
+		const sizeImage = readUint32WithLastOffset(view, 20, headerSize);
 		const bi: BitmapInfo = {
 			width: readInt32WithLastOffset(view, 4, headerSize),
 			height: readInt32WithLastOffset(view, 8, headerSize),
@@ -67,7 +65,7 @@ export default class IconItem {
 			yPelsPerMeter: readInt32WithLastOffset(view, 28, headerSize),
 			colorUsed: readUint32WithLastOffset(view, 32, headerSize),
 			colorImportant: readUint32WithLastOffset(view, 36, headerSize),
-			colors: []
+			colors: [],
 		};
 		let offset = 40;
 		let colors = bi.colorUsed;
@@ -88,7 +86,7 @@ export default class IconItem {
 			bi.colors.push({
 				b: readUint8WithLastOffset(view, offset, totalSize),
 				g: readUint8WithLastOffset(view, offset + 1, totalSize),
-				r: readUint8WithLastOffset(view, offset + 2, totalSize)
+				r: readUint8WithLastOffset(view, offset + 2, totalSize),
 			});
 			offset += 4;
 		}
@@ -98,15 +96,24 @@ export default class IconItem {
 		this.bitmapInfo = bi;
 		const absWidthRound = roundUp(Math.abs(bi.width), 8);
 		const absActualHeight = Math.abs(bi.height) / 2;
-		const size = sizeImage || (bi.bitCount * absWidthRound * absActualHeight / 8);
-		this.pixels = allocatePartialBinary(bin, view.byteOffset + offset, size);
+		const size =
+			sizeImage || (bi.bitCount * absWidthRound * absActualHeight) / 8;
+		this.pixels = allocatePartialBinary(
+			bin,
+			view.byteOffset + offset,
+			size
+		);
 		offset += size;
 		let maskSize = calcMaskSize(bi.width, absActualHeight);
 		if (maskSize + offset > totalSize) {
 			maskSize = totalSize - offset;
 		}
 		if (maskSize) {
-			this.masks = allocatePartialBinary(bin, view.byteOffset + offset, maskSize);
+			this.masks = allocatePartialBinary(
+				bin,
+				view.byteOffset + offset,
+				maskSize
+			);
 		} else {
 			this.masks = null;
 		}
@@ -118,7 +125,11 @@ export default class IconItem {
 	 * @param byteOffset byte offset of `bin` referring the bitmap data
 	 * @param byteLength available byte length for `bin` (from the offset `byteOffset`)
 	 */
-	public static from(bin: ArrayBuffer, byteOffset?: number, byteLength?: number): IconItem;
+	public static from(
+		bin: ArrayBuffer,
+		byteOffset?: number,
+		byteLength?: number
+	): IconItem;
 	/**
 	 * Generates `IconItem` instance from bitmap data binary width actual icon size (width and height).
 	 * @param width icon width
@@ -133,7 +144,7 @@ export default class IconItem {
 		bin: ArrayBuffer,
 		byteOffset?: number,
 		byteLength?: number
-	): IconItem
+	): IconItem;
 
 	public static from(
 		arg1: ArrayBuffer | number,
@@ -173,15 +184,12 @@ export default class IconItem {
 		const absWidth = Math.abs(bi.width);
 		const absWidthRound = roundUp(absWidth, 8);
 		const absActualHeight = Math.abs(bi.height) / 2;
-		const sizeImage = bi.bitCount * absWidthRound * absActualHeight / 8;
-		const sizeMask = this.masks ? calcMaskSize(bi.width, absActualHeight) : 0;
-		let colorCount = bi.colors.length;
-		const totalSize = (
-			40 +
-			(4 * colorCount) +
-			(sizeImage) +
-			(sizeMask)
-		);
+		const sizeImage = (bi.bitCount * absWidthRound * absActualHeight) / 8;
+		const sizeMask = this.masks
+			? calcMaskSize(bi.width, absActualHeight)
+			: 0;
+		const colorCount = bi.colors.length;
+		const totalSize = 40 + 4 * colorCount + sizeImage + sizeMask;
 		const bin = new ArrayBuffer(totalSize);
 		const view = new DataView(bin);
 		view.setUint32(0, 40, true);
@@ -195,10 +203,14 @@ export default class IconItem {
 		view.setInt32(24, bi.xPelsPerMeter, true);
 		view.setInt32(28, bi.yPelsPerMeter, true);
 		view.setUint32(32, bi.colorUsed, true);
-		view.setUint32(36, bi.colorImportant > colorCount ? colorCount : bi.colorImportant, true);
+		view.setUint32(
+			36,
+			bi.colorImportant > colorCount ? colorCount : bi.colorImportant,
+			true
+		);
 
 		let offset = 40;
-		bi.colors.forEach((c) => {
+		bi.colors.forEach(c => {
 			view.setUint8(offset, c.b);
 			view.setUint8(offset + 1, c.g);
 			view.setUint8(offset + 2, c.r);

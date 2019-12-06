@@ -1,6 +1,10 @@
 /// <reference types='jest' />
 
-import { loadExecutableWithResourceCheck, loadIcon, testExec } from '../util/fs';
+import {
+	loadExecutableWithResourceCheck,
+	loadIcon,
+	testExec,
+} from '../util/fs';
 
 import NtExecutableResource from '@/NtExecutableResource';
 import IconFile from '@/data/IconFile';
@@ -10,11 +14,13 @@ import IconGroupEntry from '@/resource/IconGroupEntry';
 const platform = __TEST_PLATFORM__;
 
 function testExecWithResultData(bin: ArrayBuffer, appName: string) {
-	const output = testExec(bin, appName, platform)
-		.replace(/(?:\r\n|[\r\n])$/g, '');
-	const result: { [type: string]: { [key: string]: string; }; } = {};
-	output.split(/\r\n|[\r\n]/g).forEach((token) => {
-		const data = token.split(/\:/g, 2);
+	const output = testExec(bin, appName, platform).replace(
+		/(?:\r\n|[\r\n])$/g,
+		''
+	);
+	const result: { [type: string]: { [key: string]: string } } = {};
+	output.split(/\r\n|[\r\n]/g).forEach(token => {
+		const data = token.split(/:/g, 2);
 		const pairs = data[0].split(/\./g, 2);
 		const obj = result[pairs[0]] || (result[pairs[0]] = {});
 		obj[pairs[1]] = data[1];
@@ -22,11 +28,16 @@ function testExecWithResultData(bin: ArrayBuffer, appName: string) {
 	return result;
 }
 
-function testIconPatterns(patterns: [number, number][], output: { [type: string]: { [key: string]: string; }; }) {
+function testIconPatterns(
+	patterns: Array<[number, number]>,
+	output: { [type: string]: { [key: string]: string } }
+) {
 	patterns.forEach(([width, height]) => {
 		const typeName = `${width}x${height}`;
 		if (__TEST_IGNORE_256_ICON__ && width === 256 && height === 256) {
-			console.log(`test is skipped for ${typeName} icon type because of Environment settings.`);
+			console.log(
+				`test is skipped for ${typeName} icon type because of Environment settings.`
+			);
 			return;
 		}
 		expect(output).toHaveProperty(typeName);
@@ -39,7 +50,12 @@ function testIconPatterns(patterns: [number, number][], output: { [type: string]
 }
 
 describe(`IconGroupEntry - ${platform}`, () => {
-	const DUMMY_ICON_4_PATTERNS: [number, number][] = [[16, 16], [32, 32], [64, 64], [256, 256]];
+	const DUMMY_ICON_4_PATTERNS: Array<[number, number]> = [
+		[16, 16],
+		[32, 32],
+		[64, 64],
+		[256, 256],
+	];
 
 	it('append new icon entry as a new resource data', () => {
 		const appName = 'LoadIconApp_NoRes';
@@ -49,18 +65,20 @@ describe(`IconGroupEntry - ${platform}`, () => {
 		expect(res.entries.length).toEqual(0);
 
 		const iconFile = IconFile.from(loadIcon('data1_4b16_4b32_4b64_png256'));
-		
+
 		IconGroupEntry.replaceIconsForResource(
 			res.entries,
 			101,
 			1033,
-			iconFile.icons.map((icon) => icon.data)
+			iconFile.icons.map(icon => icon.data)
 		);
 
 		expect(res.entries.length).toEqual(1 + iconFile.icons.length);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -83,13 +101,17 @@ describe(`IconGroupEntry - ${platform}`, () => {
 			res.entries,
 			101,
 			1033,
-			iconFile.icons.map((icon) => icon.data)
+			iconFile.icons.map(icon => icon.data)
 		);
 
-		expect(res.entries.length).toEqual(countEntries + 1 + iconFile.icons.length);
+		expect(res.entries.length).toEqual(
+			countEntries + 1 + iconFile.icons.length
+		);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -109,8 +131,13 @@ describe(`IconGroupEntry - ${platform}`, () => {
 		const existEntries = IconGroupEntry.fromEntries(res.entries);
 		const existEntryCount = existEntries.length;
 		expect(existEntryCount).toBeGreaterThan(0);
-		expect(existEntries.some((e) => e.id === 101 && e.lang === 1033)).toBeTruthy();
-		const totalIconCount = existEntries.reduce((p, c) => (p + c.icons.length), 0);
+		expect(
+			existEntries.some(e => e.id === 101 && e.lang === 1033)
+		).toBeTruthy();
+		const totalIconCount = existEntries.reduce(
+			(p, c) => p + c.icons.length,
+			0
+		);
 
 		const iconFile = IconFile.from(loadIcon('data1_4b16_4b32_4b64_png256'));
 
@@ -118,16 +145,22 @@ describe(`IconGroupEntry - ${platform}`, () => {
 			res.entries,
 			101,
 			1033,
-			iconFile.icons.map((icon) => icon.data)
+			iconFile.icons.map(icon => icon.data)
 		);
 
 		// icon-group count should not be changed
-		expect(IconGroupEntry.fromEntries(res.entries).length).toEqual(existEntryCount);
+		expect(IconGroupEntry.fromEntries(res.entries).length).toEqual(
+			existEntryCount
+		);
 		// 'icon-group' count is not changed, but 'icon' count may be changed
-		expect(res.entries.length).toEqual(countEntries + iconFile.icons.length - totalIconCount);
+		expect(res.entries.length).toEqual(
+			countEntries + iconFile.icons.length - totalIconCount
+		);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 

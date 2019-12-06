@@ -1,8 +1,10 @@
-
 // StringTable entry:
 //   16-times of {<WORD length> [<UTF-16 string>]}
 
 export default class StringTableItem {
+	public readonly length = 16;
+	private _a: string[];
+
 	constructor() {
 		this._a = [];
 		this._a.length = 16;
@@ -11,10 +13,11 @@ export default class StringTableItem {
 		}
 	}
 
-	private _a: string[];
-	public readonly length = 16;
-
-	public static fromEntry(bin: ArrayBuffer, offset: number, byteLength: number): StringTableItem {
+	public static fromEntry(
+		bin: ArrayBuffer,
+		offset: number,
+		byteLength: number
+	): StringTableItem {
 		const view = new DataView(bin, offset, byteLength);
 		const ret = new StringTableItem();
 		let o = 0;
@@ -34,8 +37,8 @@ export default class StringTableItem {
 	public get(index: number): string | null {
 		return this._a[index] || null;
 	}
-	public getAll(): (string | null)[] {
-		return this._a.map((s) => (s || null));
+	public getAll(): Array<string | null> {
+		return this._a.map(s => s || null);
 	}
 	public set(index: number, val: string | null) {
 		this._a[index] = `${val || ''}`.substr(0, 4097); // length must be no longer than 4097

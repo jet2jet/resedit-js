@@ -1,4 +1,3 @@
-
 import IconItem from './IconItem';
 import RawIconItem from './RawIconItem';
 
@@ -6,7 +5,7 @@ import {
 	readUint8WithLastOffset,
 	readUint16WithLastOffset,
 	readUint32WithLastOffset,
-    copyBuffer
+	copyBuffer,
 } from '../util/functions';
 
 // struct ICON_GROUP {
@@ -38,30 +37,30 @@ export interface IconFileItem {
 	data: IconItem | RawIconItem;
 }
 
-function generateEntryBinary(icons: ReadonlyArray<IconFileItem>): ArrayBuffer {
+function generateEntryBinary(icons: readonly IconFileItem[]): ArrayBuffer {
 	let count = icons.length;
 	if (count > 65535) {
 		count = 65535;
 	}
-	const tmpIcons = icons.map((item) => {
+	const tmpIcons = icons.map(item => {
 		if (item.data.isIcon()) {
 			return {
 				item: item,
 				bin: item.data.generate(),
-				offset: 0
+				offset: 0,
 			};
 		} else {
 			return {
 				item: item,
 				bin: item.data.bin,
-				offset: 0
-			}
+				offset: 0,
+			};
 		}
 	});
 	const size = tmpIcons.reduce((p, icon) => {
 		icon.offset = p;
-		return (p + icon.bin.byteLength);
-	}, 6 + (16 * count));
+		return p + icon.bin.byteLength;
+	}, 6 + 16 * count);
 	const bin = new ArrayBuffer(size);
 	const view = new DataView(bin);
 
@@ -70,7 +69,7 @@ function generateEntryBinary(icons: ReadonlyArray<IconFileItem>): ArrayBuffer {
 	view.setUint16(4, count, true);
 
 	let offset = 6;
-	tmpIcons.forEach((icon) => {
+	tmpIcons.forEach(icon => {
 		const item = icon.item;
 		let width: number;
 		let height: number;
@@ -79,27 +78,39 @@ function generateEntryBinary(icons: ReadonlyArray<IconFileItem>): ArrayBuffer {
 		let bitCount: number;
 		if (item.data.isIcon()) {
 			const bi = item.data.bitmapInfo;
-			width = (typeof item.width !== 'undefined' ? item.width :
-				Math.abs(bi.width));
-			height = (typeof item.height !== 'undefined' ? item.height :
-				Math.abs(bi.height));
-			colors = (typeof item.colors !== 'undefined' ? item.colors :
-				(bi.colorUsed || bi.colors.length));
-			planes = (typeof item.planes !== 'undefined' ? item.planes :
-				(bi.planes));
-			bitCount = (typeof item.bitCount !== 'undefined' ? item.bitCount :
-				(bi.bitCount));
+			width =
+				typeof item.width !== 'undefined'
+					? item.width
+					: Math.abs(bi.width);
+			height =
+				typeof item.height !== 'undefined'
+					? item.height
+					: Math.abs(bi.height);
+			colors =
+				typeof item.colors !== 'undefined'
+					? item.colors
+					: bi.colorUsed || bi.colors.length;
+			planes =
+				typeof item.planes !== 'undefined' ? item.planes : bi.planes;
+			bitCount =
+				typeof item.bitCount !== 'undefined'
+					? item.bitCount
+					: bi.bitCount;
 		} else {
-			width = (typeof item.width !== 'undefined' ? item.width :
-				Math.abs(item.data.width));
-			height = (typeof item.height !== 'undefined' ? item.height :
-				Math.abs(item.data.height));
-			colors = (typeof item.colors !== 'undefined' ? item.colors :
-				0);
-			planes = (typeof item.planes !== 'undefined' ? item.planes :
-				1);
-			bitCount = (typeof item.bitCount !== 'undefined' ? item.bitCount :
-				item.data.bitCount);
+			width =
+				typeof item.width !== 'undefined'
+					? item.width
+					: Math.abs(item.data.width);
+			height =
+				typeof item.height !== 'undefined'
+					? item.height
+					: Math.abs(item.data.height);
+			colors = typeof item.colors !== 'undefined' ? item.colors : 0;
+			planes = typeof item.planes !== 'undefined' ? item.planes : 1;
+			bitCount =
+				typeof item.bitCount !== 'undefined'
+					? item.bitCount
+					: item.data.bitCount;
 		}
 		const dataSize = icon.bin.byteLength;
 		view.setUint8(offset, width >= 256 ? 0 : width);
@@ -119,7 +130,6 @@ function generateEntryBinary(icons: ReadonlyArray<IconFileItem>): ArrayBuffer {
 }
 
 export default class IconFile {
-
 	/** Containing icons */
 	public icons: IconFileItem[];
 
@@ -141,14 +151,36 @@ export default class IconFile {
 			const count = view.getUint16(4, true);
 			let offset = 6;
 			for (let i = 0; i < count; ++i) {
-				const dataSize = readUint32WithLastOffset(view, offset + 8, totalSize);
-				const dataOffset = readUint32WithLastOffset(view, offset + 12, totalSize);
+				const dataSize = readUint32WithLastOffset(
+					view,
+					offset + 8,
+					totalSize
+				);
+				const dataOffset = readUint32WithLastOffset(
+					view,
+					offset + 12,
+					totalSize
+				);
 				const width = readUint8WithLastOffset(view, offset, totalSize);
-				const height = readUint8WithLastOffset(view, offset + 1, totalSize);
-				const bitCount = readUint8WithLastOffset(view, offset + 6, totalSize);
+				const height = readUint8WithLastOffset(
+					view,
+					offset + 1,
+					totalSize
+				);
+				const bitCount = readUint8WithLastOffset(
+					view,
+					offset + 6,
+					totalSize
+				);
 				let data: IconItem | RawIconItem;
 				if (view.getUint32(dataOffset, true) === 0x28) {
-					data = IconItem.from(width, height, bin, dataOffset, dataSize);
+					data = IconItem.from(
+						width,
+						height,
+						bin,
+						dataOffset,
+						dataSize
+					);
 				} else {
 					data = RawIconItem.from(
 						bin.slice(dataOffset, dataOffset + dataSize),
@@ -160,10 +192,18 @@ export default class IconFile {
 				icons.push({
 					width: width,
 					height: height,
-					colors: readUint8WithLastOffset(view, offset + 2, totalSize),
-					planes: readUint16WithLastOffset(view, offset + 4, totalSize),
+					colors: readUint8WithLastOffset(
+						view,
+						offset + 2,
+						totalSize
+					),
+					planes: readUint16WithLastOffset(
+						view,
+						offset + 4,
+						totalSize
+					),
 					bitCount: bitCount,
-					data: data
+					data: data,
 				});
 				offset += 16;
 			}
@@ -179,5 +219,4 @@ export default class IconFile {
 	public generate(): ArrayBuffer {
 		return generateEntryBinary(this.icons);
 	}
-
 }

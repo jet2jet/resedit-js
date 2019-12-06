@@ -9,16 +9,17 @@ import StringTable from '@/resource/StringTable';
 const platform = __TEST_PLATFORM__;
 
 function testExecWithSingleLine(bin: ArrayBuffer, appName: string) {
-	return testExec(bin, appName, platform)
-		.replace(/(?:\r\n|[\r\n])$/g, '');
+	return testExec(bin, appName, platform).replace(/(?:\r\n|[\r\n])$/g, '');
 }
 
 function testExecWithStringTable(bin: ArrayBuffer, appName: string) {
-	const output = testExec(bin, appName, platform)
-		.replace(/(?:\r\n|[\r\n])$/g, '');
-	const result: { [id: number]: string; } = {};
-	output.split(/\r\n|[\r\n]/g).forEach((token) => {
-		const pairs = token.split(/\:/g, 2);
+	const output = testExec(bin, appName, platform).replace(
+		/(?:\r\n|[\r\n])$/g,
+		''
+	);
+	const result: { [id: number]: string } = {};
+	output.split(/\r\n|[\r\n]/g).forEach(token => {
+		const pairs = token.split(/:/g, 2);
 		result[Number(pairs[0])] = pairs[1];
 	});
 	return result;
@@ -43,7 +44,9 @@ describe(`StringTable - ${platform}`, () => {
 		expect(res.entries.length).toEqual(1);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -68,7 +71,9 @@ describe(`StringTable - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries + 1);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -92,7 +97,9 @@ describe(`StringTable - ${platform}`, () => {
 		// check if id = 101 exists
 		const existData = strings.getById(101);
 		expect(existData).not.toEqual(null);
-		expect(existData).toEqual(allStrings.filter((o) => o.id === 101).map((o) => o.text)[0]);
+		expect(existData).toEqual(
+			allStrings.filter(o => o.id === 101).map(o => o.text)[0]
+		);
 
 		// add string with id = 102
 		strings.setById(102, stringValue);
@@ -102,7 +109,9 @@ describe(`StringTable - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -133,7 +142,9 @@ describe(`StringTable - ${platform}`, () => {
 		// check if id = 101 exists
 		const existData = strings.getById(101);
 		expect(existData).not.toEqual(null);
-		expect(existData).toEqual(allStrings.filter((o) => o.id === 101).map((o) => o.text)[0]);
+		expect(existData).toEqual(
+			allStrings.filter(o => o.id === 101).map(o => o.text)[0]
+		);
 
 		// replace string with id = 101
 		strings.setById(101, stringValue);
@@ -142,7 +153,9 @@ describe(`StringTable - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 
@@ -172,7 +185,9 @@ describe(`StringTable - ${platform}`, () => {
 		// check if id = 101 exists
 		const existData = strings.getById(101);
 		expect(existData).not.toEqual(null);
-		expect(existData).toEqual(allStrings.filter((o) => o.id === 101).map((o) => o.text)[0]);
+		expect(existData).toEqual(
+			allStrings.filter(o => o.id === 101).map(o => o.text)[0]
+		);
 
 		// replace string with id = 101
 		strings.setById(101, null);
@@ -182,7 +197,9 @@ describe(`StringTable - ${platform}`, () => {
 		expect(res.entries.length).toBeLessThanOrEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(null);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
 
 		const newBin = exe.generate();
 

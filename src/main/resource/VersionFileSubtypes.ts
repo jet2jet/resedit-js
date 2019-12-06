@@ -1,4 +1,3 @@
-
 export enum VersionFileDriverSubtype {
 	Unknown = 0,
 	Printer = 1,
@@ -11,12 +10,12 @@ export enum VersionFileDriverSubtype {
 	Installable = 8,
 	Sound = 9,
 	Comm = 10,
-	VersionedPrinter = 12
+	VersionedPrinter = 12,
 }
 
 export enum VersionFileFontSubtype {
 	Unknown = 0,
 	Raster = 1,
 	Vector = 2,
-	TrueType = 3
+	TrueType = 3,
 }

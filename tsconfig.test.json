@@ -4,9 +4,7 @@
     "baseUrl": "./src/main",
     "rootDir": "../..",
     "paths": {
-      "@/*": [
-        "../../src/main/*"
-      ]
+      "@/*": ["../../src/main/*"]
     }
   },
   "include": [

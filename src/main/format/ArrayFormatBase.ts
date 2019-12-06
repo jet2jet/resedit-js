@@ -23,29 +23,30 @@ abstract class ArrayFormatBase<T> extends FormatBase {
 		}
 	}
 	public _iterator(): Iterator<Readonly<T>> {
-		return new class {
+		return new (class {
 			private i: number = 0;
-			constructor(private base: ArrayFormatBase<T>) { }
+			constructor(private base: ArrayFormatBase<T>) {}
 			public next(): IteratorResult<Readonly<T>, void> {
 				if (this.i === this.base.length) {
 					return {
 						value: undefined,
-						done: true
+						done: true,
 					};
 				} else {
 					return {
 						value: this.base.get(this.i++),
-						done: false
+						done: false,
 					};
 				}
 			}
-		}(this);
+		})(this);
 	}
 }
 interface ArrayFormatBase<T> {
 	[Symbol.iterator](): Iterator<Readonly<T>>;
 }
 if (typeof Symbol !== 'undefined') {
-	(ArrayFormatBase.prototype as any)[(Symbol as any).iterator] = ArrayFormatBase.prototype._iterator;
+	(ArrayFormatBase.prototype as any)[(Symbol as any).iterator] =
+		ArrayFormatBase.prototype._iterator;
 }
 export default ArrayFormatBase;
