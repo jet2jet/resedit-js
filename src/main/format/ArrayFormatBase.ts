@@ -26,9 +26,10 @@ abstract class ArrayFormatBase<T> extends FormatBase {
 		return new class {
 			private i: number = 0;
 			constructor(private base: ArrayFormatBase<T>) { }
-			public next(): IteratorResult<Readonly<T>> {
+			public next(): IteratorResult<Readonly<T>, void> {
 				if (this.i === this.base.length) {
 					return {
+						value: undefined,
 						done: true
 					};
 				} else {
