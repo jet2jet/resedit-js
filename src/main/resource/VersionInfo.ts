@@ -196,7 +196,7 @@ function parseStringFileInfo(
 				a[0].values[key] = table.values[key];
 			}
 		}
-		offset = childData[0];
+		offset = roundUp(childData[0], 4);
 	}
 	return r;
 }
@@ -221,7 +221,7 @@ function parseVarFileInfo(
 		const childValueLen = view.getUint16(offset + 2, true);
 		// value type must be binary; if not, skip it
 		if (view.getUint16(offset + 4, true) !== 0) {
-			offset += childDataLen;
+			offset += roundUp(childDataLen, 4);
 			continue;
 		}
 		let childDataLast = offset + childDataLen;
