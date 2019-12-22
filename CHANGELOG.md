@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.1
+
+- Added missing string table rounding up for `VersionInfo` (#13, thanks to @AlexanderOMara)
+
 ## v0.3.0
 
 - Throw error if specified executable binary is signed (#10)
