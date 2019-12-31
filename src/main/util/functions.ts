@@ -11,6 +11,27 @@ export function cloneObject<T extends object>(object: any): T {
 	return r;
 }
 
+export function createDataView(
+	bin: ArrayBuffer | ArrayBufferView,
+	byteOffset?: number,
+	byteLength?: number
+): DataView {
+	if ('buffer' in bin) {
+		let newOffset = bin.byteOffset;
+		let newLength = bin.byteLength;
+		if (typeof byteOffset !== 'undefined') {
+			newOffset += byteOffset;
+			newLength -= byteOffset;
+		}
+		if (typeof byteLength !== 'undefined') {
+			newLength = byteLength;
+		}
+		return new DataView(bin.buffer, newOffset, newLength);
+	} else {
+		return new DataView(bin, byteOffset, byteLength);
+	}
+}
+
 export function calculateCheckSumForPE(
 	bin: ArrayBuffer,
 	storeToBinary?: boolean
@@ -61,17 +82,27 @@ export function roundUp(val: number, align: number): number {
 export function copyBuffer(
 	dest: ArrayBuffer,
 	destOffset: number,
-	src: ArrayBuffer,
+	src: ArrayBuffer | ArrayBufferView,
 	srcOffset: number,
 	length: number
 ) {
-	new Uint8Array(dest, destOffset, length).set(
-		new Uint8Array(src, srcOffset, length)
-	);
+	if ('buffer' in src) {
+		new Uint8Array(dest, destOffset, length).set(
+			new Uint8Array(
+				src.buffer,
+				src.byteOffset + (srcOffset || 0),
+				length
+			)
+		);
+	} else {
+		new Uint8Array(dest, destOffset, length).set(
+			new Uint8Array(src, srcOffset, length)
+		);
+	}
 }
 
 export function allocatePartialBinary(
-	binBase: ArrayBuffer,
+	binBase: ArrayBuffer | ArrayBufferView,
 	offset: number,
 	length: number
 ): ArrayBuffer {
