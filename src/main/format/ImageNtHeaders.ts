@@ -3,6 +3,7 @@ import ImageFileHeader from './ImageFileHeader';
 import ImageOptionalHeader from './ImageOptionalHeader';
 import ImageOptionalHeader64 from './ImageOptionalHeader64';
 import ImageDataDirectoryArray from './ImageDataDirectoryArray';
+import { createDataView } from '../util/functions';
 
 export default class ImageNtHeaders extends FormatBase {
 	public static readonly DEFAULT_SIGNATURE = 0x4550; // 'PE\x00\x00'
@@ -11,8 +12,8 @@ export default class ImageNtHeaders extends FormatBase {
 		super(view);
 	}
 
-	public static from(bin: ArrayBuffer, offset = 0) {
-		const magic = new DataView(
+	public static from(bin: ArrayBuffer | ArrayBufferView, offset = 0) {
+		const magic = createDataView(
 			bin,
 			offset + ImageFileHeader.size,
 			6
@@ -23,7 +24,7 @@ export default class ImageNtHeaders extends FormatBase {
 		} else {
 			len += ImageOptionalHeader.size;
 		}
-		return new ImageNtHeaders(new DataView(bin, offset, len));
+		return new ImageNtHeaders(createDataView(bin, offset, len));
 	}
 
 	public isValid() {

@@ -7,9 +7,9 @@ import ImageSectionHeaderArray, {
 } from './format/ImageSectionHeaderArray';
 
 import {
+	allocatePartialBinary,
 	calculateCheckSumForPE,
 	cloneObject,
-	copyBuffer,
 	roundUp,
 } from './util/functions';
 
@@ -54,7 +54,7 @@ export default class NtExecutable {
 	 * @param bin binary data
 	 * @return NtExecutable instance
 	 */
-	public static from(bin: ArrayBuffer): NtExecutable {
+	public static from(bin: ArrayBuffer | ArrayBufferView): NtExecutable {
 		const dh = ImageDosHeader.from(bin);
 		const nh = ImageNtHeaders.from(bin, dh.newHeaderAddress);
 		if (!dh.isValid() || !nh.isValid()) {
@@ -73,11 +73,17 @@ export default class NtExecutable {
 		}
 		const secOff = dh.newHeaderAddress + nh.getSectionHeaderOffset();
 		const secCount = nh.fileHeader.numberOfSections;
-		const sections: Array<{
-			info: ImageSectionHeader;
-			data: ArrayBuffer | null;
-		}> = [];
-		const secArray = ImageSectionHeaderArray.from(bin, secCount, secOff);
+		const sections: NtExecutableSection[] = [];
+		const tempSectionHeaderBinary = allocatePartialBinary(
+			bin,
+			secOff,
+			secCount * ImageSectionHeaderArray.itemSize
+		);
+		const secArray = ImageSectionHeaderArray.from(
+			tempSectionHeaderBinary,
+			secCount,
+			0
+		);
 		// console.log(`from data size 0x${bin.byteLength.toString(16)}:`);
 		secArray.forEach(info => {
 			if (!info.pointerToRawData || !info.sizeOfRawData) {
@@ -88,11 +94,8 @@ export default class NtExecutable {
 					data: null,
 				});
 			} else {
-				const secBin = new ArrayBuffer(info.sizeOfRawData);
 				// console.log(`  section ${info.name}: 0x${info.pointerToRawData.toString(16)}, size = 0x${info.sizeOfRawData.toString(16)}`);
-				copyBuffer(
-					secBin,
-					0,
+				const secBin = allocatePartialBinary(
 					bin,
 					info.pointerToRawData,
 					info.sizeOfRawData
@@ -104,8 +107,7 @@ export default class NtExecutable {
 			}
 		});
 		// the size of DOS and NT headers is equal to section offset
-		const headers = new ArrayBuffer(secOff);
-		copyBuffer(headers, 0, bin, 0, secOff);
+		const headers = allocatePartialBinary(bin, 0, secOff);
 		return new NtExecutable(headers, sections);
 	}
 

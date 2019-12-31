@@ -3,6 +3,7 @@ import BitmapInfo from './BitmapInfo';
 import {
 	allocatePartialBinary,
 	copyBuffer,
+	createDataView,
 	readInt32WithLastOffset,
 	readUint8WithLastOffset,
 	readUint16WithLastOffset,
@@ -43,11 +44,11 @@ export default class IconItem {
 	private constructor(
 		width: number | null,
 		height: number | null,
-		bin: ArrayBuffer,
+		bin: ArrayBuffer | ArrayBufferView,
 		byteOffset?: number,
 		byteLength?: number
 	) {
-		const view = new DataView(bin, byteOffset, byteLength);
+		const view = createDataView(bin, byteOffset, byteLength);
 		const totalSize = view.byteLength;
 
 		let headerSize = view.getUint32(0, true);
@@ -126,7 +127,7 @@ export default class IconItem {
 	 * @param byteLength available byte length for `bin` (from the offset `byteOffset`)
 	 */
 	public static from(
-		bin: ArrayBuffer,
+		bin: ArrayBuffer | ArrayBufferView,
 		byteOffset?: number,
 		byteLength?: number
 	): IconItem;
@@ -141,31 +142,31 @@ export default class IconItem {
 	public static from(
 		width: number,
 		height: number,
-		bin: ArrayBuffer,
+		bin: ArrayBuffer | ArrayBufferView,
 		byteOffset?: number,
 		byteLength?: number
 	): IconItem;
 
 	public static from(
-		arg1: ArrayBuffer | number,
+		arg1: ArrayBuffer | ArrayBufferView | number,
 		arg2?: number,
-		arg3?: number | ArrayBuffer,
+		arg3?: number | ArrayBuffer | ArrayBufferView,
 		byteOffset?: number,
 		byteLength?: number
 	): IconItem {
 		let width: number | null;
 		let height: number | null;
-		let bin: ArrayBuffer;
+		let bin: ArrayBuffer | ArrayBufferView;
 		if (typeof arg3 === 'object') {
 			// second overload
 			width = arg1 as number;
 			height = arg2!;
-			bin = arg3 as ArrayBuffer;
+			bin = arg3 as ArrayBuffer | ArrayBufferView;
 		} else {
 			// first overload
 			width = null;
 			height = null;
-			bin = arg1 as ArrayBuffer;
+			bin = arg1 as ArrayBuffer | ArrayBufferView;
 			byteOffset = arg2;
 			byteLength = arg3 as typeof byteLength;
 		}

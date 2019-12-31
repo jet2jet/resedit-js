@@ -8,12 +8,8 @@ import * as child_process from 'child_process';
 import NtExecutable from '@/NtExecutable';
 import ImageDirectoryEntry from '@/format/ImageDirectoryEntry';
 
-function loadBinary(filePath: string) {
-	const buffer = fs.readFileSync(filePath);
-	return buffer.buffer.slice(
-		buffer.byteOffset,
-		buffer.byteOffset + buffer.byteLength
-	);
+function loadBinary(filePath: string): ArrayBuffer | ArrayBufferView {
+	return fs.readFileSync(filePath);
 }
 
 export function mkdirp(dir: string) {
@@ -35,7 +31,10 @@ export function mkdirp(dir: string) {
 	});
 }
 
-export function loadExeBinary(name: string, platform: string): ArrayBuffer {
+export function loadExeBinary(
+	name: string,
+	platform: string
+): ArrayBuffer | ArrayBufferView {
 	return loadBinary(
 		path.resolve(__TEST_INPUT_ROOT__, name, platform, `${name}.exe`)
 	);
@@ -77,7 +76,7 @@ export function loadExecutableWithResourceCheck(
 	return exe;
 }
 
-export function loadIcon(name: string): ArrayBuffer {
+export function loadIcon(name: string): ArrayBuffer | ArrayBufferView {
 	return loadBinary(
 		path.resolve(__TEST_INPUT_ROOT__, 'icons', `${name}.ico`)
 	);

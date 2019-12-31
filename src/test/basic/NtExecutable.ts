@@ -158,7 +158,7 @@ const DUMMY_SECTION: NtExecutableSection = {
 describe('NtExecutable', () => {
 	describe('32-bit binary', () => {
 		it('should be parsed correctly', () => {
-			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32.buffer);
+			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32);
 			const sections = exe.getAllSections();
 			expect(exe.is32bit()).toBeTruthy();
 			// the following data is specified in DUMMY_EXECUTABLE_32 data
@@ -170,7 +170,7 @@ describe('NtExecutable', () => {
 			).not.toBeNull();
 		});
 		it('sections should be added', () => {
-			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32.buffer);
+			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32);
 			expect(exe.getSectionByEntry(ImageDirectoryEntry.Debug)).toBeNull();
 			exe.setSectionByEntry(ImageDirectoryEntry.Debug, DUMMY_SECTION);
 			const afterSec = exe.getSectionByEntry(ImageDirectoryEntry.Debug);
@@ -181,7 +181,7 @@ describe('NtExecutable', () => {
 			expect(afterSec!.info.name).toEqual(DUMMY_SECTION.info.name);
 		});
 		it('sections should be replaced', () => {
-			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32.buffer);
+			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32);
 			expect(
 				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
 			).not.toBeNull();
@@ -196,7 +196,7 @@ describe('NtExecutable', () => {
 			expect(afterSec!.info.name).toEqual(DUMMY_SECTION.info.name);
 		});
 		it('sections should be removed', () => {
-			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32.buffer);
+			const exe = NtExecutable.from(DUMMY_EXECUTABLE_32);
 			expect(
 				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
 			).not.toBeNull();
@@ -209,7 +209,7 @@ describe('NtExecutable', () => {
 	});
 	describe('64-bit binary', () => {
 		it('should be parsed correctly', () => {
-			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64.buffer);
+			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64);
 			const sections = exe.getAllSections();
 			expect(exe.is32bit()).toBeFalsy();
 			// the following data is specified in DUMMY_EXECUTABLE_32 data
@@ -221,7 +221,7 @@ describe('NtExecutable', () => {
 			).not.toBeNull();
 		});
 		it('sections should be added', () => {
-			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64.buffer);
+			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64);
 			expect(exe.getSectionByEntry(ImageDirectoryEntry.Debug)).toBeNull();
 			exe.setSectionByEntry(ImageDirectoryEntry.Debug, DUMMY_SECTION);
 			const afterSec = exe.getSectionByEntry(ImageDirectoryEntry.Debug);
@@ -232,7 +232,7 @@ describe('NtExecutable', () => {
 			expect(afterSec!.info.name).toEqual(DUMMY_SECTION.info.name);
 		});
 		it('sections should be replaced', () => {
-			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64.buffer);
+			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64);
 			expect(
 				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
 			).not.toBeNull();
@@ -247,7 +247,7 @@ describe('NtExecutable', () => {
 			expect(afterSec!.info.name).toEqual(DUMMY_SECTION.info.name);
 		});
 		it('sections should be removed', () => {
-			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64.buffer);
+			const exe = NtExecutable.from(DUMMY_EXECUTABLE_64);
 			expect(
 				exe.getSectionByEntry(ImageDirectoryEntry.Resource)
 			).not.toBeNull();

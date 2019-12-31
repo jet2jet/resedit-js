@@ -1,4 +1,5 @@
 import FormatBase from './FormatBase';
+import { createDataView } from '../util/functions';
 
 export default class ImageDosHeader extends FormatBase {
 	public static readonly size = 64;
@@ -8,8 +9,8 @@ export default class ImageDosHeader extends FormatBase {
 		super(view);
 	}
 
-	public static from(bin: ArrayBuffer, offset = 0) {
-		return new ImageDosHeader(new DataView(bin, offset, 64));
+	public static from(bin: ArrayBuffer | ArrayBufferView, offset = 0) {
+		return new ImageDosHeader(createDataView(bin, offset, 64));
 	}
 
 	public isValid() {

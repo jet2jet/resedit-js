@@ -6,6 +6,7 @@ import {
 	readUint16WithLastOffset,
 	readUint32WithLastOffset,
 	copyBuffer,
+	createDataView,
 } from '../util/functions';
 
 // struct ICON_GROUP {
@@ -135,15 +136,15 @@ export default class IconFile {
 
 	public constructor();
 	/** @internal */
-	public constructor(bin: ArrayBuffer);
+	public constructor(bin: ArrayBuffer | ArrayBufferView);
 
-	public constructor(bin?: ArrayBuffer) {
+	public constructor(bin?: ArrayBuffer | ArrayBufferView) {
 		if (!bin) {
 			this.icons = [];
 			return;
 		}
 
-		const view = new DataView(bin);
+		const view = createDataView(bin);
 		const totalSize = view.byteLength;
 		const icons: IconFileItem[] = [];
 
@@ -183,10 +184,12 @@ export default class IconFile {
 					);
 				} else {
 					data = RawIconItem.from(
-						bin.slice(dataOffset, dataOffset + dataSize),
+						bin,
 						width || 256,
 						height || 256,
-						bitCount
+						bitCount,
+						dataOffset,
+						dataSize
 					);
 				}
 				icons.push({
@@ -212,7 +215,7 @@ export default class IconFile {
 		this.icons = icons;
 	}
 
-	public static from(bin: ArrayBuffer): IconFile {
+	public static from(bin: ArrayBuffer | ArrayBufferView): IconFile {
 		return new IconFile(bin);
 	}
 
