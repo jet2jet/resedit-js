@@ -68,7 +68,7 @@ rules:
   '@typescript-eslint/no-useless-constructor': error
   '@typescript-eslint/no-unused-vars': off
 overrides:
-  - files: ['./*.js', 'tools/**/*.js']
+  - files: ['./*.js', 'examples/**/*.js', 'tools/**/*.js']
     env:
       browser: false
       node: true

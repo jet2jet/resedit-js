@@ -12,6 +12,10 @@ function loadBinary(filePath: string): ArrayBuffer | ArrayBufferView {
 	return fs.readFileSync(filePath);
 }
 
+function loadText(filePath: string): string {
+	return fs.readFileSync(filePath, 'utf8');
+}
+
 export function mkdirp(dir: string) {
 	const tokens = path.normalize(dir).split(path.sep);
 	let curDir: string = '';
@@ -40,14 +44,17 @@ export function loadExeBinary(
 	);
 }
 
-export function testExec(bin: ArrayBuffer, name: string, platform: string) {
-	const dir = path.resolve(__TEST_TEMPDIR_ROOT__, name, platform);
-	const file = path.join(dir, `${name}.exe`);
-
-	mkdirp(dir);
-	fs.writeFileSync(file, Buffer.from(bin));
-
-	const result = child_process.spawnSync(file, { encoding: 'ascii' });
+export function runExec(exePath: string, args?: readonly string[]) {
+	let result;
+	if (args) {
+		result = child_process.spawnSync(exePath, args, {
+			encoding: 'ascii',
+		});
+	} else {
+		result = child_process.spawnSync(exePath, {
+			encoding: 'ascii',
+		});
+	}
 	if (result.error) {
 		throw result.error;
 	}
@@ -55,6 +62,34 @@ export function testExec(bin: ArrayBuffer, name: string, platform: string) {
 		throw new Error(result.stderr);
 	}
 	return result.stdout;
+}
+
+export function writeBinary(
+	filePath: string,
+	bin: ArrayBuffer | ArrayBufferView
+) {
+	const dir = path.dirname(filePath);
+	mkdirp(dir);
+
+	let buffer: Buffer;
+	if ('buffer' in bin) {
+		buffer = Buffer.from(bin.buffer, bin.byteOffset, bin.byteLength);
+	} else {
+		buffer = Buffer.from(bin);
+	}
+	fs.writeFileSync(filePath, buffer);
+}
+
+export function testExec(bin: ArrayBuffer, name: string, platform: string) {
+	const file = path.resolve(
+		__TEST_TEMPDIR_ROOT__,
+		name,
+		platform,
+		`${name}.exe`
+	);
+	writeBinary(file, bin);
+
+	return runExec(file);
 }
 
 export function loadExecutableWithResourceCheck(
@@ -79,5 +114,17 @@ export function loadExecutableWithResourceCheck(
 export function loadIcon(name: string): ArrayBuffer | ArrayBufferView {
 	return loadBinary(
 		path.resolve(__TEST_INPUT_ROOT__, 'icons', `${name}.ico`)
+	);
+}
+
+export function loadCert(name: string): ArrayBuffer | ArrayBufferView {
+	return loadBinary(
+		path.resolve(__TEST_INPUT_ROOT__, 'certs', `${name}.cer`)
+	);
+}
+
+export function loadPrivatePem(name: string): string {
+	return loadText(
+		path.resolve(__TEST_INPUT_ROOT__, 'certs', `${name}.priv.pem`)
 	);
 }
