@@ -3,6 +3,8 @@ enum ImageDirectoryEntry {
 	Import = 1,
 	Resource = 2,
 	Exception = 3,
+	Certificate = 4,
+	// alias
 	Security = 4,
 	BaseRelocation = 5,
 	Debug = 6,

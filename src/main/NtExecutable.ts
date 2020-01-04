@@ -13,6 +13,11 @@ import {
 	roundUp,
 } from './util/functions';
 
+export interface NtExecutableFromOptions {
+	/** true to parse binary even if the binary contains Certificate data (i.e. 'signed') */
+	ignoreCert?: boolean;
+}
+
 export interface NtExecutableSection {
 	info: ImageSectionHeader;
 	data: ArrayBuffer | null;
@@ -52,9 +57,13 @@ export default class NtExecutable {
 	 * Parse the binary and create NtExecutable instance.
 	 * An error will be thrown if the binary data is invalid
 	 * @param bin binary data
+	 * @param options additional option for parsing
 	 * @return NtExecutable instance
 	 */
-	public static from(bin: ArrayBuffer | ArrayBufferView): NtExecutable {
+	public static from(
+		bin: ArrayBuffer | ArrayBufferView,
+		options?: NtExecutableFromOptions
+	): NtExecutable {
 		const dh = ImageDosHeader.from(bin);
 		const nh = ImageNtHeaders.from(bin, dh.newHeaderAddress);
 		if (!dh.isValid() || !nh.isValid()) {
@@ -63,13 +72,16 @@ export default class NtExecutable {
 		if (nh.fileHeader.numberOfSymbols > 0) {
 			throw new Error('Binary with symbols is not supported now');
 		}
-		// Currently we cannot treat signed executables properly
-		// (Signed executables may be supported with some restrictions in the future)
 		const securityEntry = nh.optionalHeaderDataDirectory.get(
-			ImageDirectoryEntry.Security
+			ImageDirectoryEntry.Certificate
 		);
 		if (securityEntry && securityEntry.size > 0) {
-			throw new Error('Signed executable binary is not supported now');
+			// Signed executables should be parsed only when `ignoreCert` is true
+			if (!options || !options.ignoreCert) {
+				throw new Error(
+					'Parsing signed executable binary is not allowed by default.'
+				);
+			}
 		}
 		const secOff = dh.newHeaderAddress + nh.getSectionHeaderOffset();
 		const secCount = nh.fileHeader.numberOfSections;
@@ -120,6 +132,19 @@ export default class NtExecutable {
 
 	public getTotalHeaderSize() {
 		return this._headers.byteLength;
+	}
+
+	public get dosHeader() {
+		return this._dh;
+	}
+
+	public get newHeader() {
+		return this._nh;
+	}
+
+	// @internal
+	public getRawHeader() {
+		return this._headers;
 	}
 
 	public getImageBase() {
@@ -269,13 +294,13 @@ export default class NtExecutable {
 	/**
 	 * Generates the executable binary data.
 	 */
-	public generate(): ArrayBuffer {
+	public generate(paddingSize?: number): ArrayBuffer {
 		// calculate binary size
 		const dh = this._dh;
 		const nh = this._nh;
 		const secOff = dh.newHeaderAddress + nh.getSectionHeaderOffset();
 		let size = secOff;
-		size += this._sections.length * 40;
+		size += this._sections.length * ImageSectionHeaderArray.itemSize;
 		const align = nh.optionalHeader.fileAlignment;
 		size = Math.floor((size + align - 1) / align) * align;
 
@@ -290,13 +315,27 @@ export default class NtExecutable {
 			}
 		});
 
+		if (typeof paddingSize === 'number') {
+			size += Math.floor((paddingSize + align - 1) / align) * align;
+		}
+
 		// make buffer
 		const bin = new ArrayBuffer(size);
 		const u8bin = new Uint8Array(bin);
 		u8bin.set(new Uint8Array(this._headers, 0, secOff));
+
+		// reset Security section offset (eliminate it)
+		ImageDataDirectoryArray.from(
+			bin,
+			dh.newHeaderAddress + nh.getDataDirectoryOffset()
+		).set(ImageDirectoryEntry.Certificate, {
+			size: 0,
+			virtualAddress: 0,
+		});
+
 		const secArray = ImageSectionHeaderArray.from(
 			bin,
-			this._sections.length * 40,
+			this._sections.length,
 			secOff
 		);
 		this._sections.forEach((sec, i) => {
