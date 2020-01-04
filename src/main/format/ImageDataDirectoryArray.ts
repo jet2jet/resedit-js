@@ -17,6 +17,7 @@ export default class ImageDataDirectoryArray extends ArrayFormatBase<
 		super(view);
 	}
 
+	/** @note This does not clone binary data; the changes to the array will modify the specified buffer `bin` */
 	public static from(bin: ArrayBuffer, offset = 0) {
 		return new ImageDataDirectoryArray(new DataView(bin, offset, 128));
 	}

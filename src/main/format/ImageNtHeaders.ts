@@ -62,19 +62,13 @@ export default class ImageNtHeaders extends FormatBase {
 		}
 	}
 	public get optionalHeaderDataDirectory() {
-		let off = ImageFileHeader.size + 4;
-		const magic = this.view.getUint16(off, true);
-		if (magic === ImageOptionalHeader64.DEFAULT_MAGIC) {
-			off += ImageOptionalHeader64.size;
-		} else {
-			off += ImageOptionalHeader.size;
-		}
 		return ImageDataDirectoryArray.from(
 			this.view.buffer,
-			this.view.byteOffset + off
+			this.view.byteOffset + this.getDataDirectoryOffset()
 		);
 	}
-	public getSectionHeaderOffset() {
+	// @internal
+	public getDataDirectoryOffset() {
 		let off = ImageFileHeader.size + 4;
 		const magic = this.view.getUint16(off, true);
 		if (magic === ImageOptionalHeader64.DEFAULT_MAGIC) {
@@ -82,6 +76,9 @@ export default class ImageNtHeaders extends FormatBase {
 		} else {
 			off += ImageOptionalHeader.size;
 		}
-		return off + ImageDataDirectoryArray.size;
+		return off;
+	}
+	public getSectionHeaderOffset() {
+		return this.getDataDirectoryOffset() + ImageDataDirectoryArray.size;
 	}
 }
