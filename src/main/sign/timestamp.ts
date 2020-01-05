@@ -147,7 +147,7 @@ export function pickSignedDataFromTimestampResponse(
 	// [0] IMPLICIT
 	if (ub[offset] !== 0xa0) {
 		throw new Error(
-			'Invalid or unexpected timestamp response (no contentType in TimeStampToken)'
+			'Invalid or unexpected timestamp response (no content in TimeStampToken)'
 		);
 	}
 	[len, offset] = calculateDERLength(ub, offset + 1);
