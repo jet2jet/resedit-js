@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.0
+
+- Added signing process function (#14), which enables to generate signed executable binaries
+  - Additionally, signed executables are now supported on `NtExecutable.from` with explicit option. (On `NtExecutable.generate` signed information will be lost.)
+- Support for `ArrayBufferView` as an input data for some methods (e.g. `NtExecutable.from` and `IconFile.from`)
+  - TypedArray (e.g. `Uint8Array`), `DataView`, and Node.js `Buffer` class are subclasses of `ArrayBufferView`, so these classes now can be used as input data directly.
+
 ## v0.3.1
 
 - Added missing string table rounding up for `VersionInfo` (#13, thanks to @AlexanderOMara)

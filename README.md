@@ -56,7 +56,7 @@ const fs = require('fs');
 
 // load and parse data
 let data = fs.readFileSync('MyApp.exe');
-let exe = ResEdit.NtExecutable.from(data.buffer);
+let exe = ResEdit.NtExecutable.from(data);
 let res = ResEdit.NtExecutableResource.from(exe);
 
 // rewrite resources
