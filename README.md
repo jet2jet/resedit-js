@@ -15,9 +15,31 @@ npm install resedit
 
 - Windows Executables (PE Format, such as `.exe` and `.dll`), both 32-bit and 64-bit, are supported.
   - Executables for 16-bit Windows is not supported.
-  - Signed executables are not supported and throw an error when calling `NtExecutable.from`.
 - `.res` file is not supported now.
 - PNG-based icon data is supported on `require('resedit').Resource.IconGroupEntry` class.
+
+## Parsing signed executables
+
+- Parsing signed executables (by using Authenticode or etc.) is not allowed by default and an exception will be thrown if `NtExecutable.from` receives a signed binary.
+- To parse signed, `{ ignoreCert: true }` object must be passed to the second argument of `NtExecutable.from`.
+- Although the base executable data is signed, `NtExecutable.generate` will generate unsigned executable binary. If you want to re-sign it, generate function with signing (see below) or any other signing tool such as Microsoft `signtool` must be used.
+
+## (Beta) Signing executables with resedit-js
+
+resedit-js provides basic signing process `generateExecutableWithSign` function, which is based on [Authenticode specification](https://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/authenticode_pe.docx) and related RFCs.
+
+To keep resedit-js generic library, the followings are required to use signing process.
+
+- Encryption / calculating hash (digest) process (e.g. Node.js built-in `crypto` module)
+  - A private key data is implicitly required to encrypt data.
+- DER-format public key binary (such as `*.cer` file data or `*.p7b` file data with DER-format), which is paired with the private key used by encryption process.
+- (optional) Generating timestamp data, especially communicating with TSA server (e.g. HTTP/HTTPS API)
+
+These requirements are represented as [`SignerObject`](./src/main/sign/SignerObject.ts). The caller of `generateExecutableWithSign` function must implement this object to sign executables.
+
+An example code is here: [signTest.js](./examples/sign/signTest.js)
+
+Note that resedit-js only provides basic signing process, and provides as beta version. For example adding more attributes/informations to certificates are not supported now.
 
 ## Notes
 

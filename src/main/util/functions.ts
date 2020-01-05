@@ -111,6 +111,26 @@ export function allocatePartialBinary(
 	return b;
 }
 
+export function cloneToArrayBuffer(
+	binBase: ArrayBuffer | ArrayBufferView
+): ArrayBuffer {
+	if ('buffer' in binBase) {
+		const b = new ArrayBuffer(binBase.byteLength);
+		new Uint8Array(b).set(
+			new Uint8Array(
+				binBase.buffer,
+				binBase.byteOffset,
+				binBase.byteLength
+			)
+		);
+		return b;
+	} else {
+		const b = new ArrayBuffer(binBase.byteLength);
+		new Uint8Array(b).set(new Uint8Array(binBase));
+		return b;
+	}
+}
+
 export function readInt32WithLastOffset(
 	view: DataView,
 	offset: number,

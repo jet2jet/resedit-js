@@ -99,22 +99,14 @@ export default class IconItem {
 		const absActualHeight = Math.abs(bi.height) / 2;
 		const size =
 			sizeImage || (bi.bitCount * absWidthRound * absActualHeight) / 8;
-		this.pixels = allocatePartialBinary(
-			bin,
-			view.byteOffset + offset,
-			size
-		);
+		this.pixels = allocatePartialBinary(view, offset, size);
 		offset += size;
 		let maskSize = calcMaskSize(bi.width, absActualHeight);
 		if (maskSize + offset > totalSize) {
 			maskSize = totalSize - offset;
 		}
 		if (maskSize) {
-			this.masks = allocatePartialBinary(
-				bin,
-				view.byteOffset + offset,
-				maskSize
-			);
+			this.masks = allocatePartialBinary(view, offset, maskSize);
 		} else {
 			this.masks = null;
 		}

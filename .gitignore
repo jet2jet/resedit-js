@@ -4,6 +4,9 @@ obj/
 /dist/
 /node_modules/
 *.aps
+*.iobj
+*.ipdb
+*.pdb
 *.user
 .github
 npm-debug.log

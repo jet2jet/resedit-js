@@ -326,11 +326,7 @@ function parseVersionEntry(view: DataView, entry: ResourceEntry): VersionEntry {
 				// unknown or unsupported type
 				d.unknowns.push({
 					name,
-					entireBin: allocatePartialBinary(
-						view.buffer,
-						view.byteOffset + offset,
-						childLen
-					),
+					entireBin: allocatePartialBinary(view, offset, childLen),
 				});
 				break;
 		}
