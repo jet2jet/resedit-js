@@ -28,7 +28,11 @@ import {
 	roundUp,
 } from '../util/functions';
 
-import { pickIssuerAndSerialNumberDERFromCert, toUint8Array } from './certUtil';
+import {
+	certBinToCertificatesDER,
+	pickIssuerAndSerialNumberDERFromCert,
+	toUint8Array,
+} from './certUtil';
 import AlgorithmIdentifier from './data/AlgorithmIdentifier';
 import CertificateDataRoot from './data/CertificateDataRoot';
 import { RawDERObject } from './data/DERObject';
@@ -362,7 +366,7 @@ export function generateExecutableWithSign(
 							// signerInfos
 							[signerInfo],
 							// certificates
-							[new RawDERObject(toUint8Array(cert))]
+							certBinToCertificatesDER(cert)
 						)
 					);
 					const certBin = new Uint8Array(root.toDER());

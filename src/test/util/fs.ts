@@ -118,9 +118,7 @@ export function loadIcon(name: string): ArrayBuffer | ArrayBufferView {
 }
 
 export function loadCert(name: string): ArrayBuffer | ArrayBufferView {
-	return loadBinary(
-		path.resolve(__TEST_INPUT_ROOT__, 'certs', `${name}.cer`)
-	);
+	return loadBinary(path.resolve(__TEST_INPUT_ROOT__, 'certs', name));
 }
 
 export function loadPrivatePem(name: string): string {

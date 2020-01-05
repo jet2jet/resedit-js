@@ -5,7 +5,7 @@ export default interface SignerObject {
 	getDigestAlgorithm(): DigestAlgorithmType;
 	getEncryptionAlgorithm(): EncryptionAlgorithmType;
 	/**
-	 * Returns the public key data, which format is DER binary (X.509 Public Key).
+	 * Returns the public key data, which format is DER binary (X.509 Public Key or '.p7b' file data which is based on DER).
 	 */
 	getPublicKeyData(): ArrayBuffer | ArrayBufferView;
 	/**
@@ -16,7 +16,7 @@ export default interface SignerObject {
 		dataIterator: Iterator<ArrayBuffer, void>
 	): PromiseLike<ArrayBuffer | ArrayBufferView>;
 	/**
-	 * Encrypts specified data with **private key**. The private key type (algorithm) must be same as the result of `getEncryptionAlgorithm`.
+	 * Encrypts specified data with **private key** (i.e. can be decrypted by the public key from `getPublicKeyData`). The private key type (algorithm) must be same as the result of `getEncryptionAlgorithm`.
 	 * Must pick all data from `dataIterator` (until `dataIterator.next().done` is `true`).
 	 */
 	encryptData(

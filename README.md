@@ -32,7 +32,7 @@ To keep resedit-js generic library, the followings are required to use signing p
 
 - Encryption / calculating hash (digest) process (e.g. Node.js built-in `crypto` module)
   - A private key data is implicitly required to encrypt data.
-- DER-format public key binary (such as `*.cer` file data), which is paired with the private key used by encryption process.
+- DER-format public key binary (such as `*.cer` file data or `*.p7b` file data with DER-format), which is paired with the private key used by encryption process.
 - (optional) Generating timestamp data, especially communicating with TSA server (e.g. HTTP/HTTPS API)
 
 These requirements are represented as [`SignerObject`](./src/main/sign/SignerObject.ts). The caller of `generateExecutableWithSign` function must implement this object to sign executables.
