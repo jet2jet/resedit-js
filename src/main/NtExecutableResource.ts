@@ -608,6 +608,25 @@ export default class NtExecutableResource {
 	}
 
 	/**
+	 * Add or replace the resource entry.
+	 * This method replaces the entry only if there is an entry with `type`, `id` and `lang` equal.
+	 */
+	public replaceResourceEntry(entry: ResourceEntry) {
+		for (let len = this.entries.length, i = 0; i < len; ++i) {
+			const e = this.entries[i];
+			if (
+				e.type === entry.type &&
+				e.id === entry.id &&
+				e.lang === entry.lang
+			) {
+				this.entries[i] = entry;
+				return;
+			}
+		}
+		this.entries.push(entry);
+	}
+
+	/**
 	 * Generates resource data binary for NtExecutable (not for .res file)
 	 */
 	public generateResourceData(
