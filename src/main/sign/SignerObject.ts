@@ -6,8 +6,15 @@ export default interface SignerObject {
 	getEncryptionAlgorithm(): EncryptionAlgorithmType;
 	/**
 	 * Returns the public key data, which format is DER binary (X.509 Public Key or '.p7b' file data which is based on DER).
+	 *
+	 * You can return an `Array` (not an `ArrayLike`), which contains one or more public keys in format above.
+	 * In this case, each public keys are stored to signed data in order.
+	 * Note that this library does not sort public keys, so the implementation should have responsible for the order of keys.
 	 */
-	getPublicKeyData(): ArrayBuffer | ArrayBufferView;
+	getPublicKeyData():
+		| ArrayBuffer
+		| ArrayBufferView
+		| Array<ArrayBuffer | ArrayBufferView>;
 	/**
 	 * Digests specified data. The digest algorithm type must be same as the result of `getDigestAlgorithm`.
 	 * Must pick all data from `dataIterator` (until `dataIterator.next().done` is `true`).

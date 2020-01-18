@@ -145,8 +145,15 @@ function pickCertificatesIfDERHasSignedData(ub: Uint8Array, offset: number) {
 
 /** @return [issuer, serialNumber] */
 export function pickIssuerAndSerialNumberDERFromCert(
-	bin: ArrayBuffer | ArrayBufferView
+	bin: ArrayBuffer | ArrayBufferView | Array<ArrayBuffer | ArrayBufferView>
 ): [number[], number[]] {
+	if (Array.isArray(bin)) {
+		// use first one and call again
+		if (!bin[0]) {
+			throw new Error('No data is specified.');
+		}
+		return pickIssuerAndSerialNumberDERFromCert(bin[0]);
+	}
 	const ub = toUint8Array(bin);
 	if (ub.length < 2) {
 		throw new Error('Invalid certificate data');
@@ -266,8 +273,14 @@ export function pickIssuerAndSerialNumberDERFromCert(
 }
 
 export function certBinToCertificatesDER(
-	bin: ArrayBuffer | ArrayBufferView
+	bin: ArrayBuffer | ArrayBufferView | Array<ArrayBuffer | ArrayBufferView>
 ): DERObject[] {
+	if (Array.isArray(bin)) {
+		// use all items, map with `certBinToCertificatesDER`, and concat all
+		return bin
+			.map(certBinToCertificatesDER)
+			.reduce((prev, cur) => prev.concat(cur), []);
+	}
 	const ub = toUint8Array(bin);
 	const certsBin = pickCertificatesIfDERHasSignedData(ub, 0);
 	if (certsBin) {
