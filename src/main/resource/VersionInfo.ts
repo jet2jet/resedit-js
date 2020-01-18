@@ -25,7 +25,7 @@ interface VersionUnknownData {
 	entireBin: ArrayBuffer;
 }
 
-/** Fixed version info, containing file version, product version, etc. */
+/** Fixed version info, containing file version, product version, etc. (`VS_FIXEDFILEINFO`) */
 export interface VersionFixedInfo {
 	/** usually major version in HIWORD(fileVersionMS), minor version in LOWORD(fileVersionMS) */
 	fileVersionMS: number;
@@ -43,7 +43,7 @@ export interface VersionFixedInfo {
 	fileType: number;
 	/**
 	 * subtype values depended on fileType, such as
-	 * VersionFileDriverSubtype or VersionFileFontSubtype.
+	 * `VersionFileDriverSubtype` or `VersionFileFontSubtype`.
 	 * (if no suitable value, zero is stored)
 	 */
 	fileSubtype: number;
@@ -501,6 +501,9 @@ function generateVersionEntryBinary(entry: VersionEntry): ArrayBuffer {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Treats 'Version information' (`VS_VERSIONINFO`) resource data.
+ */
 export default class VersionInfo {
 	private data: VersionEntry;
 
@@ -519,6 +522,7 @@ export default class VersionInfo {
 		}
 	}
 
+	/** Returns new `VersionInfo` instance with empty data. */
 	public static createEmpty() {
 		return new VersionInfo();
 	}
@@ -530,6 +534,7 @@ export default class VersionInfo {
 		return entries.filter(e => e.type === 16).map(e => new VersionInfo(e));
 	}
 
+	/** A language value for this resource entry. */
 	public get lang() {
 		return this.data.lang;
 	}
@@ -539,6 +544,8 @@ export default class VersionInfo {
 
 	/**
 	 * The property of fixed version info, containing file version, product version, etc.
+	 * (data: `VS_FIXEDFILEINFO`)
+	 *
 	 * Although this property is read-only, you can rewrite
 	 * each child fields directly to apply data.
 	 */
@@ -546,9 +553,25 @@ export default class VersionInfo {
 		return this.data.fixedInfo;
 	}
 
+	/**
+	 * Returns all languages that the executable supports. (data: `VarFileInfo`)
+	 *
+	 * Usually the returned array is equal to the one returned by `getAllLanguagesForStringValues`,
+	 * but some resource-generating tools doesn't generate same values.
+	 */
 	public getAvailableLanguages() {
 		return this.data.translations.slice(0);
 	}
+	/**
+	 * Replaces all languages that the executable supports.
+	 */
+	public replaceAvailableLanguages(languages: readonly VersionTranslation[]) {
+		this.data.translations = languages.slice(0);
+	}
+
+	/**
+	 * Returns all string values for the specified language. (data: values in lang-charset block of `StringFileInfo`)
+	 */
 	public getStringValues(
 		language: VersionTranslation
 	): { [key: string]: string } {
@@ -560,14 +583,30 @@ export default class VersionInfo {
 			.map(e => e.values);
 		return a.length > 0 ? a[0] : {};
 	}
+
+	/**
+	 * Returns all languages used by string values. (data: lang-charset name of `StringFileInfo`)
+	 *
+	 * Usually the returned array is equal to the one returned by `getAvailableLanguages`,
+	 * but some resource-generating tools doesn't generate same values.
+	 */
+	public getAllLanguagesForStringValues(): VersionTranslation[] {
+		return this.data.strings.map(
+			({ codepage, lang }): VersionTranslation => ({ codepage, lang })
+		);
+	}
+
 	/**
 	 * Add or replace the string values.
-	 * @param language language info (if not in getAvailableLanguages(), then add it)
+	 * @param language language info
 	 * @param values string values (key-value pairs)
+	 * @param addToAvailableLanguage set `true` to add `language` into available languages
+	 *     if not existing in `getAvailableLanguages()` (default: `true`)
 	 */
 	public setStringValues(
 		language: VersionTranslation,
-		values: { [key: string]: string }
+		values: { [key: string]: string },
+		addToAvailableLanguage: boolean = true
 	) {
 		const a = this.data.strings.filter(
 			e => e.lang === language.lang && e.codepage === language.codepage
@@ -587,50 +626,67 @@ export default class VersionInfo {
 			table.values[key] = values[key];
 		}
 
-		// if no translation is available, then add it
-		const t = this.data.translations.filter(
-			e => e.lang === language.lang && e.codepage === language.codepage
-		);
-		if (t.length === 0) {
-			this.data.translations.push({
-				lang: language.lang,
-				codepage: language.codepage,
-			});
+		if (addToAvailableLanguage) {
+			// if no translation is available, then add it
+			const t = this.data.translations.filter(
+				e =>
+					e.lang === language.lang && e.codepage === language.codepage
+			);
+			if (t.length === 0) {
+				this.data.translations.push({
+					lang: language.lang,
+					codepage: language.codepage,
+				});
+			}
 		}
 	}
 	/**
 	 * Add or replace the string value.
-	 * @param language language info (if not in getAvailableLanguages(), then add it)
+	 * @param language language info
 	 * @param key the key name of string value
 	 * @param value the string value
+	 * @param addToAvailableLanguage set `true` to add `language` into available languages
+	 *     if not existing in `getAvailableLanguages()` (default: `true`)
 	 */
 	public setStringValue(
 		language: VersionTranslation,
 		key: string,
-		value: string
+		value: string,
+		addToAvailableLanguage: boolean = true
 	) {
-		this.setStringValues(language, { [key]: value });
+		this.setStringValues(
+			language,
+			{ [key]: value },
+			addToAvailableLanguage
+		);
 	}
 	/**
 	 * Remove all string values for specified language.
 	 * @param language language info
+	 * @param removeFromAvailableLanguage set `true` to remove `language` from available languages
+	 *     if existing in `getAvailableLanguages()` (default: `true`)
 	 */
-	public removeAllStringValues(language: VersionTranslation) {
+	public removeAllStringValues(
+		language: VersionTranslation,
+		removeFromAvailableLanguage: boolean = true
+	) {
 		const strings = this.data.strings;
 		const len = strings.length;
 		for (let i = 0; i < len; ++i) {
 			const e = strings[i];
 			if (e.lang === language.lang && e.codepage === language.codepage) {
 				strings.splice(i, 1);
-				const translations = this.data.translations;
-				for (let j = 0; j < translations.length; j++) {
-					const t = translations[j];
-					if (
-						t.lang === language.lang &&
-						t.codepage === language.codepage
-					) {
-						translations.splice(j, 1);
-						break;
+				if (removeFromAvailableLanguage) {
+					const translations = this.data.translations;
+					for (let j = 0; j < translations.length; j++) {
+						const t = translations[j];
+						if (
+							t.lang === language.lang &&
+							t.codepage === language.codepage
+						) {
+							translations.splice(j, 1);
+							break;
+						}
 					}
 				}
 				break;
@@ -641,8 +697,14 @@ export default class VersionInfo {
 	 * Remove specified string value for specified language.
 	 * @param language language info
 	 * @param key the key name of string value to be removed
+	 * @param removeFromAvailableLanguage set `true` to remove `language` from available languages
+	 *     if no more string values exist for `language` (default: `true`)
 	 */
-	public removeStringValue(language: VersionTranslation, key: string) {
+	public removeStringValue(
+		language: VersionTranslation,
+		key: string,
+		removeFromAvailableLanguage: boolean = true
+	) {
 		const strings = this.data.strings;
 		const len = strings.length;
 		for (let i = 0; i < len; ++i) {
@@ -651,7 +713,10 @@ export default class VersionInfo {
 				try {
 					delete e.values[key];
 				} catch (_ex) {}
-				if (Object.keys(e.values).length === 0) {
+				if (
+					removeFromAvailableLanguage &&
+					Object.keys(e.values).length === 0
+				) {
 					// if no entries are left, remove table and translations
 					strings.splice(i, 1);
 					const translations = this.data.translations;
@@ -671,6 +736,11 @@ export default class VersionInfo {
 		}
 	}
 
+	/**
+	 * Creates `ResourceEntry` object for this instance.
+	 * Usually `outputToResourceEntries` is suitable for generating resource data
+	 * into executables, but you can use this method if necessary.
+	 */
 	public generateResource(): ResourceEntry {
 		const bin = generateVersionEntryBinary(this.data);
 
@@ -683,6 +753,11 @@ export default class VersionInfo {
 		};
 	}
 
+	/**
+	 * Generates version info resource data (using `generateResource()`) and emits into `entries` array.
+	 * If version info resource already exists in `entries`, this method replaces it with the new one.
+	 * @param entries resource entry array for output
+	 */
 	public outputToResourceEntries(entries: ResourceEntry[]) {
 		const res = this.generateResource();
 
