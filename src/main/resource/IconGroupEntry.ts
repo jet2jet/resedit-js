@@ -99,6 +99,15 @@ function findUnusedIconID(
 	};
 }
 
+/**
+ * A class that treats icon-group resource data (`RT_ICON_GROUP`).
+ * Note that this class does not treat `RT_ICON` data.
+ *
+ * - To pick all icons, use `IconGroupEntry.fromEntries`
+ *   and `IconGroupEntry.prototype.getIconItemsFromEntries`.
+ * - The easiest way to add/replace icons is using `IconGroupEntry.replaceIconsForResource`,
+ *   which treats both `RT_ICON_GROUP` and `RT_ICON` entries.
+ */
 export default class IconGroupEntry {
 	public id: string | number;
 	public lang: string | number;
@@ -175,7 +184,7 @@ export default class IconGroupEntry {
 	}
 
 	/**
-	 * Return an array of IconItem, which is used by this IconGroupEntry instance,
+	 * Return an array of `IconItem` / `RawIconItem`, which are in the group of this `IconGroupEntry` instance,
 	 * from specified resource entries.
 	 */
 	public getIconItemsFromEntries(
@@ -209,8 +218,8 @@ export default class IconGroupEntry {
 	}
 
 	/**
-	 * Replace icon resource entries with specified icon data.
-	 * The IDs of individual icon resources (RT_ICON) are calculated automatically.
+	 * Add or replace icon resource entries with specified icon data.
+	 * The IDs of individual icon resources (`RT_ICON`) are calculated automatically.
 	 * @param destEntries base (destination) resource entries.
 	 * @param iconGroupID the icon ID for the new resource data.
 	 *     If the icon-group resource of the ID and 'lang' value already exists,
