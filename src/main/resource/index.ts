@@ -10,6 +10,8 @@ import {
 import VersionFileType from './VersionFileType';
 import VersionInfo, {
 	VersionFixedInfo,
+	VersionStringTable,
+	VersionStringValues,
 	VersionTranslation,
 } from './VersionInfo';
 
@@ -24,5 +26,7 @@ export {
 	VersionFileType,
 	VersionFixedInfo,
 	VersionInfo,
+	VersionStringTable,
+	VersionStringValues,
 	VersionTranslation,
 };

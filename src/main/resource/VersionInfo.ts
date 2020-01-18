@@ -2,15 +2,28 @@ import ResourceEntry from './ResourceEntry';
 
 import {
 	allocatePartialBinary,
+	cloneObject,
 	copyBuffer,
 	readUint32WithLastOffset,
 	roundUp,
 } from '../util/functions';
 
-interface VersionStringTable {
+/**
+ * String values for the version information.
+ * In most cases predefined names are used for the key names (such as 'FileDescription', 'FileVersion', etc.)
+ * Note that the key names are case-sensitive; this library does not convert keys
+ * (e.g. `'fileVersion'` --> `'FileVersion'`).
+ */
+export interface VersionStringValues {
+	[key: string]: string;
+}
+
+/** Used by `VersionInfo.create` */
+export interface VersionStringTable {
 	lang: number;
 	codepage: number;
-	values: { [key: string]: string };
+	/** Any string values */
+	values: VersionStringValues;
 }
 
 /** Translation information, containing LANGID and codepage value. */
@@ -499,6 +512,13 @@ function generateVersionEntryBinary(entry: VersionEntry): ArrayBuffer {
 	return bin;
 }
 
+export interface VersionInfoCreateParam {
+	lang: string | number;
+	/** This field can be as a partial object; default values (zero) are used for all unspecified field. */
+	fixedInfo: Partial<Readonly<VersionFixedInfo>>;
+	strings: readonly VersionStringTable[];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -525,6 +545,56 @@ export default class VersionInfo {
 	/** Returns new `VersionInfo` instance with empty data. */
 	public static createEmpty() {
 		return new VersionInfo();
+	}
+
+	/**
+	 * Returns new `VersionInfo` instance with specified parameters.
+	 * `fixedInfo` can be specified as a partial object;
+	 * default values (zero) are used for all unspecified field.
+	 */
+	public static create(
+		lang: string | number,
+		fixedInfo: Partial<Readonly<VersionFixedInfo>>,
+		strings: readonly VersionStringTable[]
+	): VersionInfo;
+	/** Returns new `VersionInfo` instance with specified parameters. */
+	public static create(param: Readonly<VersionInfoCreateParam>): VersionInfo;
+
+	public static create(
+		arg1: string | number | Readonly<VersionInfoCreateParam>,
+		fixedInfo?: Partial<Readonly<VersionFixedInfo>>,
+		strings?: readonly VersionStringTable[]
+	): VersionInfo {
+		let lang: string | number;
+		if (typeof arg1 === 'object') {
+			lang = arg1.lang;
+			fixedInfo = arg1.fixedInfo;
+			strings = arg1.strings;
+		} else {
+			lang = arg1;
+		}
+		const vi = new VersionInfo();
+		vi.data.lang = lang;
+		// copy all specified values
+		// (if unspecified, use default value set by `createFixedInfo`)
+		for (const fixedInfoKey in fixedInfo!) {
+			if (fixedInfoKey in fixedInfo!) {
+				(vi.data.fixedInfo as any)[fixedInfoKey] = (fixedInfo! as any)[
+					fixedInfoKey
+				];
+			}
+		}
+		vi.data.strings = strings!.map(
+			({ lang, codepage, values }): VersionStringTable => ({
+				lang,
+				codepage,
+				values: cloneObject(values),
+			})
+		);
+		vi.data.translations = strings!.map(
+			({ lang, codepage }): VersionTranslation => ({ lang, codepage })
+		);
+		return vi;
 	}
 
 	/** Pick up all version-info entries */
@@ -572,9 +642,7 @@ export default class VersionInfo {
 	/**
 	 * Returns all string values for the specified language. (data: values in lang-charset block of `StringFileInfo`)
 	 */
-	public getStringValues(
-		language: VersionTranslation
-	): { [key: string]: string } {
+	public getStringValues(language: VersionTranslation): VersionStringValues {
 		const a = this.data.strings
 			.filter(
 				e =>
@@ -605,7 +673,7 @@ export default class VersionInfo {
 	 */
 	public setStringValues(
 		language: VersionTranslation,
-		values: { [key: string]: string },
+		values: VersionStringValues,
 		addToAvailableLanguage: boolean = true
 	) {
 		const a = this.data.strings.filter(
