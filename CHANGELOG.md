@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.0
+
+- Improve usability for some classes, such as `VersionInfo` and `IconGroupEntry`
+- Update descriptions for some types / methods
+- Add support for multiple public keys on `SignerObject.getPublicKeyData`
+
 ## v0.4.0
 
 - Added signing process function (#14), which enables to generate signed executable binaries
