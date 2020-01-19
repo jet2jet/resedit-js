@@ -43,7 +43,7 @@ Note that resedit-js only provides basic signing process, and provides as beta v
 
 ## Notes
 
-- **It is not strongly recommended that the destination executable file is equal to the source executable file.**
+- **It is not strongly recommended that the destination executable file is equal to the source executable file (which is not an intermediate data).**
 - Using from command-line is not supported now.
 
 ## Examples
@@ -64,6 +64,26 @@ let res = ResEdit.NtExecutableResource.from(exe);
 //   - ResEdit.Resource.IconGroupEntry: access icon resource data
 //   - ResEdit.Resource.StringTable: access string resource data
 //   - ResEdit.Resource.VersionInfo: access version info data
+
+// -- replace icons
+
+// load icon data from file
+// (you can use ResEdit.Data.IconFile to parse icon data)
+let iconFile = ResEdit.Data.IconFile.from(fs.readFileSync('MyIcon.ico'));
+
+ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
+  // destEntries
+  res.entries,
+  // iconGroupID
+  101,
+  // lang ('lang: 1033' means 'en-US')
+  1033,
+  // icons (map IconFileItem to IconItem/RawIconItem)
+  iconFile.icons.map(item => item.data)
+);
+
+// -- replace version
+
 let viList = ResEdit.Resource.VersionInfo.fromEntries(res.entries);
 let vi = viList[0];
 vi.fixedInfo.fileVersionMS = 0x10001; // '1.1'
