@@ -1,10 +1,16 @@
 # Changelog
 
+## v0.5.1
+
+- Rename `getPublicKeyData` to `getCertificateData`
+  - `getPublicKeyData` can still be used now, but will be no longer called in the future.
+- Re-export types used by `SignerObject`
+
 ## v0.5.0
 
 - Improve usability for some classes, such as `VersionInfo` and `IconGroupEntry`
 - Update descriptions for some types / methods
-- Add support for multiple public keys on `SignerObject.getPublicKeyData`
+- Add support for multiple certificates on `SignerObject.getPublicKeyData`
 
 ## v0.4.0
 
