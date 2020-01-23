@@ -14,7 +14,10 @@
 // - mono/AuthenticodeDeformatter.cs
 //   https://github.com/mono/mono/blob/master/mcs/class/Mono.Security/Mono.Security.Authenticode/AuthenticodeDeformatter.cs
 
-import SignerObject, { DigestAlgorithmType } from './SignerObject';
+import SignerObject, {
+	DigestAlgorithmType,
+	EncryptionAlgorithmType,
+} from './SignerObject';
 
 import NtExecutable from '../NtExecutable';
 import ImageDataDirectoryArray from '../format/ImageDataDirectoryArray';
@@ -412,4 +415,4 @@ export function generateExecutableWithSign(
 	);
 }
 
-export { SignerObject };
+export { SignerObject, DigestAlgorithmType, EncryptionAlgorithmType };

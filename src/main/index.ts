@@ -6,7 +6,12 @@ import * as Data from './data';
 import * as Format from './format';
 import * as Resource from './resource';
 
-import { generateExecutableWithSign, SignerObject } from './sign';
+import {
+	generateExecutableWithSign,
+	SignerObject,
+	DigestAlgorithmType,
+	EncryptionAlgorithmType,
+} from './sign';
 
 export {
 	NtExecutable,
@@ -17,4 +22,6 @@ export {
 	Resource,
 	generateExecutableWithSign,
 	SignerObject,
+	DigestAlgorithmType,
+	EncryptionAlgorithmType,
 };
