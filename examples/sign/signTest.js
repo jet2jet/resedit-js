@@ -63,7 +63,7 @@ function main() {
 		getEncryptionAlgorithm() {
 			return 'rsa';
 		},
-		getPublicKeyData() {
+		getCertificateData() {
 			return fs.readFileSync(CERT);
 		},
 		// digestData and encryptData must return PromiseLike object, so

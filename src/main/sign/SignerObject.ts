@@ -5,13 +5,28 @@ export default interface SignerObject {
 	getDigestAlgorithm(): DigestAlgorithmType;
 	getEncryptionAlgorithm(): EncryptionAlgorithmType;
 	/**
+	 * Returns the certificate data, which format is DER binary (X.509 certificate data
+	 * or '.p7b' file data which is based on DER and contains certificates).
+	 *
+	 * You can return an `Array` (not an `ArrayLike`), which contains one or more certificates in format above.
+	 * In this case, each certificates are stored to signed data in order.
+	 * Note that this library does not sort certificates, so the implementation should have responsible for the order of certificates.
+	 */
+	getCertificateData():
+		| ArrayBuffer
+		| ArrayBufferView
+		| Array<ArrayBuffer | ArrayBufferView>;
+	/**
 	 * Returns the public key data, which format is DER binary (X.509 Public Key or '.p7b' file data which is based on DER).
 	 *
 	 * You can return an `Array` (not an `ArrayLike`), which contains one or more public keys in format above.
 	 * In this case, each public keys are stored to signed data in order.
 	 * Note that this library does not sort public keys, so the implementation should have responsible for the order of keys.
+	 *
+	 * @deprecated This method is renamed to {@link getCertificateData} due to the actual purpose of this method
+	 *   and `getPublicKeyData` will no longer be used in the future.
 	 */
-	getPublicKeyData():
+	getPublicKeyData?():
 		| ArrayBuffer
 		| ArrayBufferView
 		| Array<ArrayBuffer | ArrayBufferView>;
@@ -23,7 +38,7 @@ export default interface SignerObject {
 		dataIterator: Iterator<ArrayBuffer, void>
 	): PromiseLike<ArrayBuffer | ArrayBufferView>;
 	/**
-	 * Encrypts specified data with **private key** (i.e. can be decrypted by the public key from `getPublicKeyData`). The private key type (algorithm) must be same as the result of `getEncryptionAlgorithm`.
+	 * Encrypts specified data with **private key** (i.e. can be decrypted by the public key from `getCertificateData`). The private key type (algorithm) must be same as the result of `getEncryptionAlgorithm`.
 	 * Must pick all data from `dataIterator` (until `dataIterator.next().done` is `true`).
 	 */
 	encryptData(

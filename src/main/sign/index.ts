@@ -201,7 +201,9 @@ export function generateExecutableWithSign(
 			);
 	}
 
-	const cert = signer.getPublicKeyData();
+	const cert = signer.getCertificateData
+		? signer.getCertificateData()
+		: signer.getPublicKeyData!();
 	const [issuer, serialNumber] = pickIssuerAndSerialNumberDERFromCert(cert);
 
 	return (

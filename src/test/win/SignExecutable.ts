@@ -56,7 +56,7 @@ const signerObjectBase: SignerObject = {
 	getEncryptionAlgorithm() {
 		return 'rsa';
 	},
-	getPublicKeyData() {
+	getCertificateData() {
 		throw new Error('Unimplemented');
 	},
 	async digestData(dataIterator) {
@@ -91,7 +91,7 @@ describe('generateExecutableWithSign', () => {
 			const appName = 'ReadVersionApp_HasVersion';
 			const signerObject: SignerObject = {
 				...signerObjectBase,
-				getPublicKeyData() {
+				getCertificateData() {
 					return loadCert(certFile);
 				},
 				encryptData(dataIterator) {
