@@ -1,5 +1,5 @@
-import IconGroupEntry from './IconGroupEntry';
-import ResourceEntry from './ResourceEntry';
+import IconGroupEntry, { IconGroupItem } from './IconGroupEntry';
+import ResourceEntry, { ResourceEntryBaseType } from './ResourceEntry';
 import StringTable from './StringTable';
 import VersionFileFlags from './VersionFileFlags';
 import VersionFileOS from './VersionFileOS';
@@ -9,6 +9,7 @@ import {
 } from './VersionFileSubtypes';
 import VersionFileType from './VersionFileType';
 import VersionInfo, {
+	VersionInfoCreateParam,
 	VersionFixedInfo,
 	VersionStringTable,
 	VersionStringValues,
@@ -17,8 +18,11 @@ import VersionInfo, {
 
 export {
 	IconGroupEntry,
+	IconGroupItem,
 	ResourceEntry,
+	ResourceEntryBaseType,
 	StringTable,
+	VersionInfoCreateParam,
 	VersionFileFlags,
 	VersionFileOS,
 	VersionFileDriverSubtype,

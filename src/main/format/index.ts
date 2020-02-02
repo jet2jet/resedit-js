@@ -1,17 +1,22 @@
 import ArrayFormatBase from './ArrayFormatBase';
 import FormatBase from './FormatBase';
-import ImageDataDirectoryArray from './ImageDataDirectoryArray';
+import ImageDataDirectoryArray, {
+	ImageDataDirectory,
+} from './ImageDataDirectoryArray';
 import ImageDirectoryEntry from './ImageDirectoryEntry';
 import ImageDosHeader from './ImageDosHeader';
 import ImageFileHeader from './ImageFileHeader';
 import ImageNtHeaders from './ImageNtHeaders';
 import ImageOptionalHeader from './ImageOptionalHeader';
 import ImageOptionalHeader64 from './ImageOptionalHeader64';
-import ImageSectionHeaderArray from './ImageSectionHeaderArray';
+import ImageSectionHeaderArray, {
+	ImageSectionHeader,
+} from './ImageSectionHeaderArray';
 
 export {
 	ArrayFormatBase,
 	FormatBase,
+	ImageDataDirectory,
 	ImageDataDirectoryArray,
 	ImageDirectoryEntry,
 	ImageDosHeader,
@@ -19,6 +24,7 @@ export {
 	ImageNtHeaders,
 	ImageOptionalHeader,
 	ImageOptionalHeader64,
+	ImageSectionHeader,
 	ImageSectionHeaderArray,
 };
 
