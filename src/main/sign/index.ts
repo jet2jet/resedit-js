@@ -60,6 +60,7 @@ import {
 	makeDERSequence,
 } from './data/derUtil';
 import ContentInfo from './data/ContentInfo';
+import ObjectIdentifier from './data/ObjectIdentifier';
 import {
 	createTimestampRequest,
 	pickSignedDataFromTimestampResponse,
@@ -164,7 +165,10 @@ function calculateExecutableDigest(
 	return signer.digestData(inner());
 }
 
-function getAlgorithmIdentifierObject(type: DigestAlgorithmType) {
+function getAlgorithmIdentifierObject(type: DigestAlgorithmType | number[]) {
+	if (typeof type !== 'string') {
+		return new AlgorithmIdentifier(new ObjectIdentifier(type));
+	}
 	switch (type) {
 		case 'sha1':
 		case 'SHA1':
@@ -172,6 +176,39 @@ function getAlgorithmIdentifierObject(type: DigestAlgorithmType) {
 		case 'sha256':
 		case 'SHA256':
 			return new AlgorithmIdentifier(KnownOids.OID_SHA256_NO_SIGN);
+		case 'sha384':
+		case 'SHA384':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA384_NO_SIGN);
+		case 'sha512':
+		case 'SHA512':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA512_NO_SIGN);
+		case 'sha224':
+		case 'SHA224':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA224_NO_SIGN);
+		case 'sha512-224':
+		case 'SHA512-224':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA512_224_NO_SIGN);
+		case 'sha512-256':
+		case 'SHA512-256':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA512_256_NO_SIGN);
+		case 'sha3-224':
+		case 'SHA3-224':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA3_224_NO_SIGN);
+		case 'sha3-256':
+		case 'SHA3-256':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA3_256_NO_SIGN);
+		case 'sha3-384':
+		case 'SHA3-384':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA3_384_NO_SIGN);
+		case 'sha3-512':
+		case 'SHA3-512':
+			return new AlgorithmIdentifier(KnownOids.OID_SHA3_512_NO_SIGN);
+		case 'shake128':
+		case 'SHAKE128':
+			return new AlgorithmIdentifier(KnownOids.OID_SHAKE128_NO_SIGN);
+		case 'shake256':
+		case 'SHAKE256':
+			return new AlgorithmIdentifier(KnownOids.OID_SHAKE256_NO_SIGN);
 		default:
 			throw new Error('Invalid or unsupported digest algorithm');
 	}
@@ -185,23 +222,30 @@ export function generateExecutableWithSign(
 		signer.getDigestAlgorithm()
 	);
 	let digestEncryptionAlgorithm: AlgorithmIdentifier;
-	switch (signer.getEncryptionAlgorithm()) {
-		case 'rsa':
-		case 'RSA':
-			digestEncryptionAlgorithm = new AlgorithmIdentifier(
-				KnownOids.OID_RSA
-			);
-			break;
-		case 'dsa':
-		case 'DSA':
-			digestEncryptionAlgorithm = new AlgorithmIdentifier(
-				KnownOids.OID_DSA
-			);
-			break;
-		default:
-			throw new Error(
-				'Invalid or unsupported digest encryption algorithm'
-			);
+	const a = signer.getEncryptionAlgorithm();
+	if (typeof a !== 'string') {
+		digestEncryptionAlgorithm = new AlgorithmIdentifier(
+			new ObjectIdentifier(a)
+		);
+	} else {
+		switch (a) {
+			case 'rsa':
+			case 'RSA':
+				digestEncryptionAlgorithm = new AlgorithmIdentifier(
+					KnownOids.OID_RSA
+				);
+				break;
+			case 'dsa':
+			case 'DSA':
+				digestEncryptionAlgorithm = new AlgorithmIdentifier(
+					KnownOids.OID_DSA
+				);
+				break;
+			default:
+				throw new Error(
+					'Invalid or unsupported digest encryption algorithm'
+				);
+		}
 	}
 
 	const cert = signer.getCertificateData

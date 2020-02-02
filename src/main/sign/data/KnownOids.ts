@@ -8,6 +8,50 @@ export const OID_SHA1_NO_SIGN = new ObjectIdentifier([1,3,14,3,2,26]);
 // prettier-ignore
 export const OID_SHA256_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,1]);
 
+// 2.16.840.1.101.3.4.2.2
+// prettier-ignore
+export const OID_SHA384_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,2]);
+
+// 2.16.840.1.101.3.4.2.3
+// prettier-ignore
+export const OID_SHA512_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,3]);
+
+// 2.16.840.1.101.3.4.2.4
+// prettier-ignore
+export const OID_SHA224_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,4]);
+
+// 2.16.840.1.101.3.4.2.5
+// prettier-ignore
+export const OID_SHA512_224_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,5]);
+
+// 2.16.840.1.101.3.4.2.6
+// prettier-ignore
+export const OID_SHA512_256_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,6]);
+
+// 2.16.840.1.101.3.4.2.7
+// prettier-ignore
+export const OID_SHA3_224_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,7]);
+
+// 2.16.840.1.101.3.4.2.8
+// prettier-ignore
+export const OID_SHA3_256_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,8]);
+
+// 2.16.840.1.101.3.4.2.9
+// prettier-ignore
+export const OID_SHA3_384_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,9]);
+
+// 2.16.840.1.101.3.4.2.10
+// prettier-ignore
+export const OID_SHA3_512_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,10]);
+
+// 2.16.840.1.101.3.4.2.11
+// prettier-ignore
+export const OID_SHAKE128_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,11]);
+
+// 2.16.840.1.101.3.4.2.12
+// prettier-ignore
+export const OID_SHAKE256_NO_SIGN = new ObjectIdentifier([2,16,840,1,101,3,4,2,12]);
+
 // 1.2.840.113549.1.1.1
 // prettier-ignore
 export const OID_RSA = new ObjectIdentifier([1,2,840,113549,1,1,1]);

@@ -1,9 +1,52 @@
-export type DigestAlgorithmType = 'sha1' | 'sha256' | 'SHA1' | 'SHA256';
+/** Predefined algorithm types */
+export type DigestAlgorithmType =
+	| 'sha1'
+	| 'sha224'
+	| 'sha256'
+	| 'sha384'
+	| 'sha512'
+	| 'sha512-224'
+	| 'sha512-256'
+	| 'sha3-224'
+	| 'sha3-256'
+	| 'sha3-384'
+	| 'sha3-512'
+	| 'shake128'
+	| 'shake256'
+	| 'SHA1'
+	| 'SHA224'
+	| 'SHA256'
+	| 'SHA384'
+	| 'SHA512'
+	| 'SHA512-224'
+	| 'SHA512-256'
+	| 'SHA3-224'
+	| 'SHA3-256'
+	| 'SHA3-384'
+	| 'SHA3-512'
+	| 'SHAKE128'
+	| 'SHAKE256';
 export type EncryptionAlgorithmType = 'rsa' | 'dsa' | 'RSA' | 'DSA';
 
 export default interface SignerObject {
-	getDigestAlgorithm(): DigestAlgorithmType;
-	getEncryptionAlgorithm(): EncryptionAlgorithmType;
+	/**
+	 * Returns the digest algorithm used in `digestData`.
+	 * To use the algorithm other than defined in `DigestAlgorithmType`,
+	 * return an integer array of values from OID string.
+	 * (e.g. [1,3,14,3,2,26] for 'sha1')
+	 *
+	 * @note
+	 * The newer digest algorithm (including SHA224, SHA512-256, SHA3 algorithms, etc.)
+	 * might not be supported by Windows.
+	 */
+	getDigestAlgorithm(): DigestAlgorithmType | number[];
+	/**
+	 * Returns the encryption algorithm used in `encryptData`.
+	 * To use the algorithm other than defined in `EncryptionAlgorithmType`,
+	 * return an integer array of values from OID string.
+	 * (e.g. [1,2,840,113549,1,1,1] for 'rsa')
+	 */
+	getEncryptionAlgorithm(): EncryptionAlgorithmType | number[];
 	/**
 	 * Returns the certificate data, which format is DER binary (X.509 certificate data
 	 * or '.p7b' file data which is based on DER and contains certificates).
