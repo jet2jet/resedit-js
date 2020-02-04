@@ -129,4 +129,51 @@ describe('generateExecutableWithSign', () => {
 			expect(resultValue).toBe(0);
 		}
 	);
+	it('should sign and return an executable validated by Windows (re-sign)', async () => {
+		// use executable with resource
+		const appName = 'ReadVersionApp_HasVersion';
+		const signerObject: SignerObject = {
+			...signerObjectBase,
+			getCertificateData() {
+				return loadCert(CERT_KEY_NAME);
+			},
+			encryptData(dataIterator) {
+				return encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
+			},
+		};
+
+		const binBase = loadExeBinary(appName, platform);
+		const exe1 = NtExecutable.from(binBase, { ignoreCert: true });
+
+		const newBin1 = await generateExecutableWithSign(exe1, signerObject);
+
+		// re-sign
+		const exe2 = NtExecutable.from(newBin1, { ignoreCert: true });
+
+		const newBin2 = await generateExecutableWithSign(exe2, signerObject);
+
+		const tempExe = path.resolve(
+			__TEST_TEMPDIR_ROOT__,
+			'sign',
+			platform,
+			`${appName}.exe`
+		);
+		writeBinary(tempExe, newBin2);
+
+		const result = runExec(VERIFY_TOOL, [tempExe]);
+		const resultLines = result
+			.replace(/(?:\r\n|[\r\n])$/g, '')
+			.split(/\r\n|[\r\n]/g);
+
+		const ra = /^Result:([0-9]+)$/.exec(resultLines[0]);
+		if (!ra) {
+			fail(`Unexpected output from VerifyTool: ${result}`);
+		}
+		let resultValue = Number(ra[1]);
+		// ignore 2148204809 (CERT_E_UNTRUSTEDROOT)
+		if (resultValue === 2148204809) {
+			resultValue = 0;
+		}
+		expect(resultValue).toBe(0);
+	});
 });

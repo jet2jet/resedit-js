@@ -100,13 +100,10 @@ function calculateExecutableDigest(
 			ImageDataDirectoryArray.itemSize * ImageDirectoryEntry.Certificate;
 
 		const rawHeader = executable.getRawHeader();
-		const certSec = executable.getSectionByEntry(
-			ImageDirectoryEntry.Certificate
-		);
-		// gather sections without 'Certificate Table'
-		const targetSections = executable
-			.getAllSections()
-			.filter(section => section !== certSec);
+		// gather sections
+		// NOTE: 'Certificate Table' section is not a real section, so
+		// getAllSections() does not contain 'Certificate Table'
+		const targetSections = executable.getAllSections();
 		const sectionCount = targetSections.length;
 		// section start offset is not aligned, but
 		// end offset is aligned, because the immediate next data is
