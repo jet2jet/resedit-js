@@ -3,7 +3,11 @@
 
 # resedit-js
 
-(Beta) resedit-js is a library that manipulates resouces contained by Windows Executable files. All implementations are written in JavaScript (TypeScript), so there are no further restrictions for running environment.
+resedit-js is a library that manipulates resouces contained by Windows Executable files. All implementations are written in JavaScript (TypeScript), so there are no further restrictions for running environment.
+
+This library is not tested well for modifying and/or signing executables yet. Please be careful with the emitted binaries.
+
+To use in command line, consider using [resedit-js-cli](https://www.npmjs.com/package/resedit-cli).
 
 ## Install
 
@@ -24,7 +28,7 @@ npm install resedit
 - To parse signed, `{ ignoreCert: true }` object must be passed to the second argument of `NtExecutable.from`.
 - Although the base executable data is signed, `NtExecutable.generate` will generate unsigned executable binary. If you want to re-sign it, generate function with signing (see below) or any other signing tool such as Microsoft `signtool` must be used.
 
-## (Beta) Signing executables with resedit-js
+## Signing executables with resedit-js
 
 resedit-js provides basic signing process `generateExecutableWithSign` function, which is based on [Authenticode specification](https://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/authenticode_pe.docx) and related RFCs.
 
@@ -41,10 +45,12 @@ An example code is here: [signTest.js](./examples/sign/signTest.js)
 
 Note that resedit-js only provides basic signing process, and provides as beta version. For example adding more attributes/informations to certificates are not supported now.
 
+> Some digest algorithms, such as SHA3 algorithms, might not be supported by current Windows.
+
 ## Notes
 
 - **It is not strongly recommended that the destination executable file is equal to the source executable file (which is not an intermediate data).**
-- Using from command-line is not supported now.
+- Executables containing extra data (which is not a part of any sections) are not supported and may be corrupt on generating.
 
 ## Examples
 

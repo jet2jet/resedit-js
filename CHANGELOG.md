@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.2
+
+- Add predefined digest algorithms and support OIDs for `getDigestAlgorithm` and `getEncryptionAlgorithm`
+- Fix calculating executable digest for binaries which previously contained signed information
+
 ## v0.5.1
 
 - Rename `getPublicKeyData` to `getCertificateData`
