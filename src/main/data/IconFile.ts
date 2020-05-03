@@ -43,7 +43,7 @@ function generateEntryBinary(icons: readonly IconFileItem[]): ArrayBuffer {
 	if (count > 65535) {
 		count = 65535;
 	}
-	const tmpIcons = icons.map(item => {
+	const tmpIcons = icons.map((item) => {
 		if (item.data.isIcon()) {
 			return {
 				item: item,
@@ -70,7 +70,7 @@ function generateEntryBinary(icons: readonly IconFileItem[]): ArrayBuffer {
 	view.setUint16(4, count, true);
 
 	let offset = 6;
-	tmpIcons.forEach(icon => {
+	tmpIcons.forEach((icon) => {
 		const item = icon.item;
 		let width: number;
 		let height: number;

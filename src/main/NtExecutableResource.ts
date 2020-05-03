@@ -195,7 +195,7 @@ function divideEntriesImplByID<
 	const entriesByNumber: {
 		[key: number]: ResourceEntryBaseType<TType, TID, number>;
 	} = {};
-	entries.forEach(e => {
+	entries.forEach((e) => {
 		if (typeof e.lang === 'string') {
 			entriesByString[e.lang] = e as ResourceEntryBaseType<
 				TType,
@@ -212,14 +212,14 @@ function divideEntriesImplByID<
 		}
 	});
 	const strKeys = Object.keys(entriesByString);
-	strKeys.sort().forEach(type => {
+	strKeys.sort().forEach((type) => {
 		r.s.push(entriesByString[type]);
 	});
 	const numKeys = Object.keys(entriesByNumber);
 	numKeys
-		.map(k => Number(k))
+		.map((k) => Number(k))
 		.sort((a, b) => a - b)
-		.forEach(type => {
+		.forEach((type) => {
 			r.n.push(entriesByNumber[type]);
 		});
 	return 16 + 8 * (strKeys.length + numKeys.length);
@@ -236,7 +236,7 @@ function divideEntriesImplByName<TType extends string | number>(
 	const entriesByNumber: {
 		[key: number]: Array<ResourceEntryTT<TType, number>>;
 	} = {};
-	entries.forEach(e => {
+	entries.forEach((e) => {
 		if (typeof e.id === 'string') {
 			const a = entriesByString[e.id] || (entriesByString[e.id] = []);
 			names.push(e.id);
@@ -248,7 +248,7 @@ function divideEntriesImplByName<TType extends string | number>(
 	});
 	const sSum = Object.keys(entriesByString)
 		.sort()
-		.map(id => {
+		.map((id) => {
 			const o: DivideEntriesResultTypeCC<TType, string> = {
 				id,
 				s: [],
@@ -259,9 +259,9 @@ function divideEntriesImplByName<TType extends string | number>(
 		})
 		.reduce((p, c) => p + 8 + c, 0);
 	const nSum = Object.keys(entriesByNumber)
-		.map(k => Number(k))
+		.map((k) => Number(k))
 		.sort((a, b) => a - b)
-		.map(id => {
+		.map((id) => {
 			const o: DivideEntriesResultTypeCC<TType, number> = {
 				id,
 				s: [],
@@ -285,7 +285,7 @@ function divideEntriesImplByType(
 	const entriesByNumber: {
 		[key: number]: Array<ResourceEntryT<number>>;
 	} = {};
-	entries.forEach(e => {
+	entries.forEach((e) => {
 		if (typeof e.type === 'string') {
 			const a = entriesByString[e.type] || (entriesByString[e.type] = []);
 			names.push(e.type);
@@ -297,16 +297,16 @@ function divideEntriesImplByType(
 	});
 	const sSum = Object.keys(entriesByString)
 		.sort()
-		.map(type => {
+		.map((type) => {
 			const o: DivideEntriesResultTypeC<string> = { type, s: [], n: [] };
 			r.s.push(o);
 			return divideEntriesImplByName(o, names, entriesByString[type]);
 		})
 		.reduce((p, c) => p + 8 + c, 0);
 	const nSum = Object.keys(entriesByNumber)
-		.map(k => Number(k))
+		.map((k) => Number(k))
 		.sort((a, b) => a - b)
-		.map(type => {
+		.map((type) => {
 			const o: DivideEntriesResultTypeC<number> = { type, s: [], n: [] };
 			r.n.push(o);
 			return divideEntriesImplByName(o, names, entriesByNumber[type]);
@@ -369,14 +369,14 @@ function writeLanguageTable<
 
 	offset += 16;
 	// name entries (not in specification)
-	data.s.forEach(e => {
+	data.s.forEach((e) => {
 		const strOff = getStringOffset(e.lang, strings);
 		view.setUint32(offset, strOff, true);
 		view.setUint32(offset + 4, e.offset!, true);
 		offset += 8;
 	});
 	// id entries
-	data.n.forEach(e => {
+	data.n.forEach((e) => {
 		view.setUint32(offset, e.lang, true);
 		view.setUint32(offset + 4, e.offset!, true);
 		offset += 8;
@@ -403,22 +403,22 @@ function writeNameTable<TType extends string | number>(
 	view.setUint16(offset + 14, data.n.length, true);
 	offset += 16;
 
-	data.s.forEach(e => {
+	data.s.forEach((e) => {
 		e.offset = leafOffset;
 		leafOffset = writeLanguageTable(view, leafOffset, strings, e);
 	});
-	data.n.forEach(e => {
+	data.n.forEach((e) => {
 		e.offset = leafOffset;
 		leafOffset = writeLanguageTable(view, leafOffset, strings, e);
 	});
 
-	data.s.forEach(e => {
+	data.s.forEach((e) => {
 		const strOff = getStringOffset(e.id, strings);
 		view.setUint32(offset, strOff + 0x80000000, true);
 		view.setUint32(offset + 4, e.offset! + 0x80000000, true);
 		offset += 8;
 	});
-	data.n.forEach(e => {
+	data.n.forEach((e) => {
 		view.setUint32(offset, e.id, true);
 		view.setUint32(offset + 4, e.offset! + 0x80000000, true);
 		offset += 8;
@@ -446,16 +446,16 @@ function writeTypeTable(
 	offset += 16;
 
 	let nextTableOffset = offset + 8 * (data.s.length + data.n.length);
-	data.s.forEach(e => {
+	data.s.forEach((e) => {
 		e.offset = nextTableOffset;
 		nextTableOffset += 16 + 8 * (e.s.length + e.n.length);
 	});
-	data.n.forEach(e => {
+	data.n.forEach((e) => {
 		e.offset = nextTableOffset;
 		nextTableOffset += 16 + 8 * (e.s.length + e.n.length);
 	});
 
-	data.s.forEach(e => {
+	data.s.forEach((e) => {
 		const strOff = getStringOffset(e.type, strings);
 		view.setUint32(offset, strOff + 0x80000000, true);
 		view.setUint32(offset + 4, e.offset! + 0x80000000, true);
@@ -468,7 +468,7 @@ function writeTypeTable(
 			e
 		);
 	});
-	data.n.forEach(e => {
+	data.n.forEach((e) => {
 		view.setUint32(offset, e.type, true);
 		view.setUint32(offset + 4, e.offset! + 0x80000000, true);
 		offset += 8;
@@ -670,7 +670,7 @@ export default class NtExecutableResource {
 
 		let o = descOffset;
 		let va = virtualAddress + dataOffset;
-		this.entries.forEach(e => {
+		this.entries.forEach((e) => {
 			const len = e.bin.byteLength;
 			va = roundUp(va, 8);
 			// RVA
@@ -686,7 +686,7 @@ export default class NtExecutableResource {
 		});
 
 		o = dataOffset;
-		this.entries.forEach(e => {
+		this.entries.forEach((e) => {
 			const len = e.bin.byteLength;
 			copyBuffer(bin, o, e.bin, 0, len);
 			o += roundUp(len, 8);
@@ -694,7 +694,7 @@ export default class NtExecutableResource {
 
 		const stringsData: StringData[] = [];
 		o = stringsOffset;
-		strings.forEach(s => {
+		strings.forEach((s) => {
 			stringsData.push({
 				offset: o,
 				text: s,

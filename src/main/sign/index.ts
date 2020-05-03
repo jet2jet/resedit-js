@@ -254,7 +254,7 @@ export function generateExecutableWithSign(
 		// calculate digest
 		calculateExecutableDigest(executable, signer)
 			// make content, content's digest, and sign
-			.then(digest => {
+			.then((digest) => {
 				const content = new SpcIndirectDataContent(
 					new SpcPeImageAttributeTypeAndOptionalValue(
 						new SpcPeImageData(
@@ -274,7 +274,7 @@ export function generateExecutableWithSign(
 							)
 						)
 						// make sign
-						.then(contentDigest => {
+						.then((contentDigest) => {
 							const attributes = [
 								new Attribute(
 									KnownOids.OID_SPC_SP_OPUS_INFO_OBJID,
@@ -308,7 +308,7 @@ export function generateExecutableWithSign(
 							).buffer;
 							return signer
 								.digestData(makeSimpleIterator(attrBin))
-								.then(digestAttributes => {
+								.then((digestAttributes) => {
 									// encrypting DigestInfo with digest of 'attributes' set
 									const digestInfoBin = new Uint8Array(
 										new DigestInfo(
@@ -361,7 +361,7 @@ export function generateExecutableWithSign(
 						.digestData(
 							makeSimpleIterator(cloneToArrayBuffer(signed))
 						)
-						.then(digestEncryptedBase => {
+						.then((digestEncryptedBase) => {
 							const digestEncrypted = createTimestampRequest(
 								digestEncryptedBase,
 								digestAlgorithm
@@ -430,7 +430,7 @@ export function generateExecutableWithSign(
 					return resultBin;
 				}
 			)
-			.then(certBin => {
+			.then((certBin) => {
 				const alignedSize = roundUp(
 					certBin.byteLength,
 					executable.getFileAlignment()

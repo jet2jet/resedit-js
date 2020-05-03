@@ -34,9 +34,9 @@ function requestTimestamp(data) {
 				'Content-Length': bin.byteLength,
 			},
 		};
-		const req = https.request(TIMESTAMP_SERVER, options, res => {
+		const req = https.request(TIMESTAMP_SERVER, options, (res) => {
 			const results = [];
-			res.on('data', chunk => {
+			res.on('data', (chunk) => {
 				results.push(chunk);
 			});
 			res.on('end', () => {
@@ -46,7 +46,7 @@ function requestTimestamp(data) {
 		req.write(bin);
 		req.end();
 
-		req.on('error', e => reject(e));
+		req.on('error', (e) => reject(e));
 	});
 }
 
@@ -111,7 +111,7 @@ function main() {
 
 	console.log('Make sign...');
 	ResEdit.generateExecutableWithSign(executable, signerObject).then(
-		newBin => {
+		(newBin) => {
 			const dir = path.dirname(DEST_EXE);
 			if (!fs.existsSync(dir)) {
 				fs.mkdirSync(dir);
@@ -121,7 +121,7 @@ function main() {
 			console.log(`Done. (exe = '${DEST_EXE}')`);
 			process.exit(0);
 		},
-		e => {
+		(e) => {
 			console.error('Error:', e);
 			process.exit(1);
 		}

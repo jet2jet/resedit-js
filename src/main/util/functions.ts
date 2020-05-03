@@ -5,7 +5,7 @@ export function cloneObject<T extends object>(object: T): T;
 
 export function cloneObject<T extends object>(object: any): T {
 	const r: any = {};
-	Object.keys(object).forEach(key => {
+	Object.keys(object).forEach((key) => {
 		r[key] = object[key as keyof T];
 	});
 	return r;

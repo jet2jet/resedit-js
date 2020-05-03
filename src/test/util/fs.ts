@@ -19,7 +19,7 @@ function loadText(filePath: string): string {
 export function mkdirp(dir: string) {
 	const tokens = path.normalize(dir).split(path.sep);
 	let curDir: string = '';
-	tokens.forEach(token => {
+	tokens.forEach((token) => {
 		if (!curDir) {
 			curDir = token;
 		} else {

@@ -49,7 +49,7 @@ function generateEntryBinary(icons: readonly IconGroupItem[]): ArrayBuffer {
 	view.setUint16(4, count, true);
 
 	let offset = 6;
-	icons.forEach(icon => {
+	icons.forEach((icon) => {
 		view.setUint8(offset, icon.width >= 256 ? 0 : icon.width);
 		view.setUint8(offset + 1, icon.height >= 256 ? 0 : icon.height);
 		view.setUint8(offset + 2, icon.colors >= 256 ? 0 : icon.colors);
@@ -79,7 +79,7 @@ function findUnusedIconID(
 			(e): e is ResourceEntryBaseType<number, number, string | number> =>
 				e.type === type && e.lang === lang && typeof e.id === 'number'
 		)
-		.map(e => e.id)
+		.map((e) => e.id)
 		.sort((a, b) => a - b);
 	let idCurrent = 1;
 	for (let i = 0; i < filteredIDs.length; ++i) {
@@ -168,8 +168,8 @@ export default class IconGroupEntry {
 		entries: readonly ResourceEntry[]
 	): IconGroupEntry[] {
 		return entries
-			.filter(e => e.type === 14)
-			.map(e => new IconGroupEntry(e));
+			.filter((e) => e.type === 14)
+			.map((e) => new IconGroupEntry(e));
 	}
 
 	public generateEntry(): ResourceEntry {
@@ -191,11 +191,11 @@ export default class IconGroupEntry {
 		entries: readonly ResourceEntry[]
 	): Array<IconItem | RawIconItem> {
 		return entries
-			.map(e => {
+			.map((e) => {
 				if (e.type !== 3 || e.lang !== this.lang) {
 					return null;
 				}
-				const c = this.icons.filter(icon => e.id === icon.iconID)[0];
+				const c = this.icons.filter((icon) => e.id === icon.iconID)[0];
 				if (!c) {
 					return null;
 				}
@@ -205,7 +205,7 @@ export default class IconGroupEntry {
 				};
 			})
 			.filter((item): item is Exclude<typeof item, null> => !!item)
-			.map(item => {
+			.map((item) => {
 				const bin = item.entry.bin;
 				const view = new DataView(bin);
 				if (view.getUint32(0, true) === 0x28) {
@@ -235,7 +235,7 @@ export default class IconGroupEntry {
 	) {
 		// find existing entry
 		let entry: ResourceEntry | undefined = destEntries.filter(
-			e => e.type === 14 && e.id === iconGroupID && e.lang === lang
+			(e) => e.type === 14 && e.id === iconGroupID && e.lang === lang
 		)[0];
 		interface TempIconData {
 			base: IconItem | RawIconItem;
@@ -315,7 +315,7 @@ export default class IconGroupEntry {
 
 		// append icons
 		let idInfo: ReturnType<typeof findUnusedIconID> | undefined;
-		tmpIconArray.forEach(icon => {
+		tmpIconArray.forEach((icon) => {
 			if (!idInfo || !idInfo.last) {
 				idInfo = findUnusedIconID(destEntries, lang, false);
 			} else {
@@ -384,7 +384,7 @@ export default class IconGroupEntry {
 			allEntries: readonly ResourceEntry[],
 			excludeGroup: ResourceEntry
 		) {
-			return allEntries.some(e => {
+			return allEntries.some((e) => {
 				if (
 					e.type !== 14 ||
 					(e.id === excludeGroup.id && e.lang === excludeGroup.lang)
@@ -393,7 +393,7 @@ export default class IconGroupEntry {
 				}
 
 				const g = new IconGroupEntry(e);
-				return g.icons.some(c => {
+				return g.icons.some((c) => {
 					return c.iconID === icon.id;
 				});
 			});

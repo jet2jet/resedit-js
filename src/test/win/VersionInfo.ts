@@ -13,7 +13,7 @@ const platform = __TEST_PLATFORM__;
 
 function copyValues<T extends object>(dest: T, src: Readonly<T>) {
 	type TKeys = keyof T;
-	Object.keys(src).forEach(key => {
+	Object.keys(src).forEach((key) => {
 		dest[key as TKeys] = src[key as TKeys];
 	});
 }
@@ -37,7 +37,7 @@ function doTestExecWithVersionValues(
 		.split(/\r\n|[\r\n]/g);
 
 	let versionStringsChecked = false;
-	output.forEach(line => {
+	output.forEach((line) => {
 		if (!line) {
 			return;
 		}
@@ -212,12 +212,12 @@ describe(`VersionInfo - ${platform}`, () => {
 		// check entries
 		const baseVersions = VersionInfo.fromEntries(res.entries);
 		expect(baseVersions.length).toBeGreaterThan(0);
-		expect(baseVersions.some(v => v.lang === lang)).toBeTruthy();
+		expect(baseVersions.some((v) => v.lang === lang)).toBeTruthy();
 		expect(
 			baseVersions
-				.filter(v => v.lang === lang)[0]
+				.filter((v) => v.lang === lang)[0]
 				.getAvailableLanguages()
-				.some(v => v.lang === lang)
+				.some((v) => v.lang === lang)
 		).toBeTruthy();
 
 		const version = VersionInfo.createEmpty();
@@ -261,12 +261,12 @@ describe(`VersionInfo - ${platform}`, () => {
 		// check entries
 		const baseVersions = VersionInfo.fromEntries(res.entries);
 		expect(baseVersions.length).toBeGreaterThan(0);
-		expect(baseVersions.some(v => v.lang === lang)).toBeTruthy();
+		expect(baseVersions.some((v) => v.lang === lang)).toBeTruthy();
 
-		const version = baseVersions.filter(v => v.lang === lang).shift()!;
+		const version = baseVersions.filter((v) => v.lang === lang).shift()!;
 		const verLangs = version.getAvailableLanguages().length;
 		expect(
-			version.getAvailableLanguages().some(v => v.lang === lang)
+			version.getAvailableLanguages().some((v) => v.lang === lang)
 		).toBeTruthy();
 
 		copyValues(version.fixedInfo, versionFixedValues);
@@ -309,11 +309,11 @@ describe(`VersionInfo - ${platform}`, () => {
 		// check entries
 		const baseVersions = VersionInfo.fromEntries(res.entries);
 		expect(baseVersions.length).toBeGreaterThan(0);
-		expect(baseVersions.some(v => v.lang === lang)).toBeTruthy();
-		const version = baseVersions.filter(v => v.lang === lang)[0];
+		expect(baseVersions.some((v) => v.lang === lang)).toBeTruthy();
+		const version = baseVersions.filter((v) => v.lang === lang)[0];
 		const verLangs = version.getAvailableLanguages().length;
 		expect(
-			version.getAvailableLanguages().some(v => v.lang === lang)
+			version.getAvailableLanguages().some((v) => v.lang === lang)
 		).toBeTruthy();
 		expect(verLangs).toBeGreaterThanOrEqual(2);
 

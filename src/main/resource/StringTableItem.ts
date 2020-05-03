@@ -38,7 +38,7 @@ export default class StringTableItem {
 		return this._a[index] || null;
 	}
 	public getAll(): Array<string | null> {
-		return this._a.map(s => s || null);
+		return this._a.map((s) => s || null);
 	}
 	public set(index: number, val: string | null) {
 		this._a[index] = `${val || ''}`.substr(0, 4097); // length must be no longer than 4097

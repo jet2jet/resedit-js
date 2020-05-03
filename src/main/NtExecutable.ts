@@ -97,7 +97,7 @@ export default class NtExecutable {
 			0
 		);
 		// console.log(`from data size 0x${bin.byteLength.toString(16)}:`);
-		secArray.forEach(info => {
+		secArray.forEach((info) => {
 			if (!info.pointerToRawData || !info.sizeOfRawData) {
 				info.pointerToRawData = 0;
 				info.sizeOfRawData = 0;
@@ -176,7 +176,7 @@ export default class NtExecutable {
 		if (!dd) {
 			return null;
 		}
-		const r = this._sections.filter(sec => {
+		const r = this._sections.filter((sec) => {
 			const vaEnd = sec.info.virtualAddress + sec.info.virtualSize;
 			return (
 				dd.virtualAddress >= sec.info.virtualAddress &&
@@ -249,7 +249,7 @@ export default class NtExecutable {
 				let virtAddr = 0;
 				let rawAddr = this._headers.byteLength;
 				// get largest addresses
-				this._sections.forEach(secExist => {
+				this._sections.forEach((secExist) => {
 					if (secExist.info.pointerToRawData) {
 						if (rawAddr <= secExist.info.pointerToRawData) {
 							rawAddr =
@@ -304,7 +304,7 @@ export default class NtExecutable {
 		const align = nh.optionalHeader.fileAlignment;
 		size = Math.floor((size + align - 1) / align) * align;
 
-		this._sections.forEach(sec => {
+		this._sections.forEach((sec) => {
 			if (!sec.info.pointerToRawData) {
 				return;
 			}

@@ -85,7 +85,7 @@ ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
   // lang ('lang: 1033' means 'en-US')
   1033,
   // icons (map IconFileItem to IconItem/RawIconItem)
-  iconFile.icons.map(item => item.data)
+  iconFile.icons.map((item) => item.data)
 );
 
 // -- replace version

@@ -6,7 +6,7 @@ export default class ObjectIdentifier implements DERObject {
 
 	constructor(value: number[] | string) {
 		if (typeof value === 'string') {
-			this.value = value.split(/\./g).map(s => Number(s));
+			this.value = value.split(/\./g).map((s) => Number(s));
 		} else {
 			this.value = value;
 		}

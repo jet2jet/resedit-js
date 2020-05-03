@@ -21,7 +21,7 @@ export default class StringTable {
 		entries: readonly ResourceEntry[]
 	): StringTable {
 		const r = new StringTable();
-		entries.forEach(e => {
+		entries.forEach((e) => {
 			// 6: RT_STRING
 			if (
 				e.type !== 6 ||

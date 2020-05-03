@@ -203,7 +203,7 @@ export default class IconItem {
 		);
 
 		let offset = 40;
-		bi.colors.forEach(c => {
+		bi.colors.forEach((c) => {
 			view.setUint8(offset, c.b);
 			view.setUint8(offset + 1, c.g);
 			view.setUint8(offset + 2, c.r);

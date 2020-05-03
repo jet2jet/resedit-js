@@ -21,9 +21,9 @@ export function makeDERIA5String(text: string): number[] {
 	const r = [].map
 		.call<string[], [(v: string) => number], number[]>(
 			(text as unknown) as string[],
-			c => c.charCodeAt(0)
+			(c) => c.charCodeAt(0)
 		)
-		.filter(n => n < 128);
+		.filter((n) => n < 128);
 	return [0x16].concat(makeDERLength(r.length)).concat(r);
 }
 
@@ -33,7 +33,7 @@ export function makeDERBMPString(text: string): number[] {
 	//   and surrogate pair is valid for BMPString data
 	const r = [].map.call<string[], [(v: string) => number], number[]>(
 		(text as unknown) as string[],
-		c => c.charCodeAt(0)
+		(c) => c.charCodeAt(0)
 	);
 	const ua = new Uint8Array(r.length * 2);
 	const dv = new DataView(ua.buffer);

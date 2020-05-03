@@ -19,7 +19,7 @@ function testExecWithResultData(bin: ArrayBuffer, appName: string) {
 		''
 	);
 	const result: { [type: string]: { [key: string]: string } } = {};
-	output.split(/\r\n|[\r\n]/g).forEach(token => {
+	output.split(/\r\n|[\r\n]/g).forEach((token) => {
 		const data = token.split(/:/g, 2);
 		const pairs = data[0].split(/\./g, 2);
 		const obj = result[pairs[0]] || (result[pairs[0]] = {});
@@ -70,7 +70,7 @@ describe(`IconGroupEntry - ${platform}`, () => {
 			res.entries,
 			101,
 			1033,
-			iconFile.icons.map(icon => icon.data)
+			iconFile.icons.map((icon) => icon.data)
 		);
 
 		expect(res.entries.length).toEqual(1 + iconFile.icons.length);
@@ -101,7 +101,7 @@ describe(`IconGroupEntry - ${platform}`, () => {
 			res.entries,
 			101,
 			1033,
-			iconFile.icons.map(icon => icon.data)
+			iconFile.icons.map((icon) => icon.data)
 		);
 
 		expect(res.entries.length).toEqual(
@@ -132,7 +132,7 @@ describe(`IconGroupEntry - ${platform}`, () => {
 		const existEntryCount = existEntries.length;
 		expect(existEntryCount).toBeGreaterThan(0);
 		expect(
-			existEntries.some(e => e.id === 101 && e.lang === 1033)
+			existEntries.some((e) => e.id === 101 && e.lang === 1033)
 		).toBeTruthy();
 		const totalIconCount = existEntries.reduce(
 			(p, c) => p + c.icons.length,
@@ -145,7 +145,7 @@ describe(`IconGroupEntry - ${platform}`, () => {
 			res.entries,
 			101,
 			1033,
-			iconFile.icons.map(icon => icon.data)
+			iconFile.icons.map((icon) => icon.data)
 		);
 
 		// icon-group count should not be changed

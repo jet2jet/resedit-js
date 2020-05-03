@@ -18,7 +18,7 @@ function testExecWithStringTable(bin: ArrayBuffer, appName: string) {
 		''
 	);
 	const result: { [id: number]: string } = {};
-	output.split(/\r\n|[\r\n]/g).forEach(token => {
+	output.split(/\r\n|[\r\n]/g).forEach((token) => {
 		const pairs = token.split(/:/g, 2);
 		result[Number(pairs[0])] = pairs[1];
 	});
@@ -98,7 +98,7 @@ describe(`StringTable - ${platform}`, () => {
 		const existData = strings.getById(101);
 		expect(existData).not.toEqual(null);
 		expect(existData).toEqual(
-			allStrings.filter(o => o.id === 101).map(o => o.text)[0]
+			allStrings.filter((o) => o.id === 101).map((o) => o.text)[0]
 		);
 
 		// add string with id = 102
@@ -143,7 +143,7 @@ describe(`StringTable - ${platform}`, () => {
 		const existData = strings.getById(101);
 		expect(existData).not.toEqual(null);
 		expect(existData).toEqual(
-			allStrings.filter(o => o.id === 101).map(o => o.text)[0]
+			allStrings.filter((o) => o.id === 101).map((o) => o.text)[0]
 		);
 
 		// replace string with id = 101
@@ -186,7 +186,7 @@ describe(`StringTable - ${platform}`, () => {
 		const existData = strings.getById(101);
 		expect(existData).not.toEqual(null);
 		expect(existData).toEqual(
-			allStrings.filter(o => o.id === 101).map(o => o.text)[0]
+			allStrings.filter((o) => o.id === 101).map((o) => o.text)[0]
 		);
 
 		// replace string with id = 101

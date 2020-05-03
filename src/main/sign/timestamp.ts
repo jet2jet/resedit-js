@@ -90,7 +90,7 @@ export function pickSignedDataFromTimestampResponse(
 									offset + len
 								)
 								// map 0x20<=x<=0x7e values to chars, and other values to '%xx' to be parsed by decodeURIComponent
-								.map(val => {
+								.map((val) => {
 									if (val >= 0x20 && val <= 0x7e) {
 										return String.fromCharCode(val);
 									} else {
