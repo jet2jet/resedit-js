@@ -50,7 +50,6 @@ Note that resedit-js only provides basic signing process, and provides as beta v
 ## Notes
 
 - **It is not strongly recommended that the destination executable file is equal to the source executable file (which is not an intermediate data).**
-- Executables containing extra data (which is not a part of any sections) are not supported and may be corrupt on generating.
 
 ## Examples
 
@@ -62,6 +61,7 @@ const fs = require('fs');
 
 // load and parse data
 let data = fs.readFileSync('MyApp.exe');
+// (the Node.js Buffer instance can be specified directly to NtExecutable.from)
 let exe = ResEdit.NtExecutable.from(data);
 let res = ResEdit.NtExecutableResource.from(exe);
 

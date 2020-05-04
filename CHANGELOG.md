@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.6.0
+
+- Add support for extra data, which is not a part of any sections, on parsing/generating executables
+- Add `alignment` parameter for `generateExecutableWithSign`
+
 ## v0.5.2
 
 - Add predefined digest algorithms and support OIDs for `getDigestAlgorithm` and `getEncryptionAlgorithm`
