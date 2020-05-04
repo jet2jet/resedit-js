@@ -156,6 +156,23 @@ function calculateExecutableDigest(
 				yield section.data;
 			}
 		}
+
+		// pick extra data
+		const exData = executable.getExtraData();
+		if (exData !== null) {
+			yield exData;
+			// The extra data may not be aligned, but the certificate data must be aligned,
+			// so the padding between them must be included for calculating digests.
+			const alignedLength = roundUp(
+				exData.byteLength,
+				executable.getFileAlignment()
+			);
+			const diff = alignedLength - exData.byteLength;
+			if (diff !== 0) {
+				yield new Uint8Array(diff).buffer;
+			}
+		}
+
 		// (if there is another data, then `yield` it)
 	}
 
@@ -435,9 +452,21 @@ export function generateExecutableWithSign(
 					certBin.byteLength,
 					executable.getFileAlignment()
 				);
-				const newBin = executable.generate(alignedSize);
+				// NOTE: The certificate data must follow the extra data.
+				// To achieve this, the another size between them must be added to the padding size.
+				// (The extra data may not be aligned, but the certificate data must be aligned.)
+				let paddingSize = alignedSize;
+				const exData = executable.getExtraData();
+				if (exData !== null) {
+					const diffSize =
+						roundUp(
+							exData.byteLength,
+							executable.getFileAlignment()
+						) - exData.byteLength;
+					paddingSize += diffSize;
+				}
+				const newBin = executable.generate(paddingSize);
 				const certOffset = newBin.byteLength - alignedSize;
-				// rewrite directory data
 				const dirArray = ImageDataDirectoryArray.from(
 					newBin,
 					executable.dosHeader.newHeaderAddress +

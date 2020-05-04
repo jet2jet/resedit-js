@@ -10,6 +10,7 @@ import {
 	allocatePartialBinary,
 	calculateCheckSumForPE,
 	cloneObject,
+	cloneToArrayBuffer,
 	roundUp,
 } from './util/functions';
 
@@ -30,7 +31,8 @@ export default class NtExecutable {
 
 	private constructor(
 		private _headers: ArrayBuffer,
-		private _sections: NtExecutableSection[]
+		private _sections: NtExecutableSection[],
+		private _ex: ArrayBuffer | null
 	) {
 		const dh = ImageDosHeader.from(_headers);
 		const nh = ImageNtHeaders.from(_headers, dh.newHeaderAddress);
@@ -72,6 +74,7 @@ export default class NtExecutable {
 		if (nh.fileHeader.numberOfSymbols > 0) {
 			throw new Error('Binary with symbols is not supported now');
 		}
+		const fileAlignment = nh.optionalHeader.fileAlignment;
 		const securityEntry = nh.optionalHeaderDataDirectory.get(
 			ImageDirectoryEntry.Certificate
 		);
@@ -96,6 +99,10 @@ export default class NtExecutable {
 			secCount,
 			0
 		);
+		let lastOffset = roundUp(
+			secOff + secCount * ImageSectionHeaderArray.itemSize,
+			fileAlignment
+		);
 		// console.log(`from data size 0x${bin.byteLength.toString(16)}:`);
 		secArray.forEach((info) => {
 			if (!info.pointerToRawData || !info.sizeOfRawData) {
@@ -116,11 +123,35 @@ export default class NtExecutable {
 					info,
 					data: secBin,
 				});
+				const secEndOffset = roundUp(
+					info.pointerToRawData + info.sizeOfRawData,
+					fileAlignment
+				);
+				if (secEndOffset > lastOffset) {
+					lastOffset = secEndOffset;
+				}
 			}
 		});
 		// the size of DOS and NT headers is equal to section offset
 		const headers = allocatePartialBinary(bin, 0, secOff);
-		return new NtExecutable(headers, sections);
+
+		// extra data
+		let exData: ArrayBuffer | null = null;
+		let lastExDataOffset = bin.byteLength;
+		// It may contain that both extra data and certificate data are available.
+		// In this case the extra data is followed by the certificate data.
+		if (securityEntry && securityEntry.size > 0) {
+			lastExDataOffset = securityEntry.virtualAddress;
+		}
+		if (lastOffset < lastExDataOffset) {
+			exData = allocatePartialBinary(
+				bin,
+				lastOffset,
+				lastExDataOffset - lastOffset
+			);
+		}
+
+		return new NtExecutable(headers, sections, exData);
 	}
 
 	/**
@@ -292,6 +323,30 @@ export default class NtExecutable {
 	}
 
 	/**
+	 * Returns the extra data in the executable, or `null` if nothing.
+	 * You can rewrite the returned buffer without using `setExtraData` if
+	 * the size of the new data is equal to the old data.
+	 */
+	public getExtraData(): ArrayBuffer | null {
+		return this._ex;
+	}
+
+	/**
+	 * Specifies the new extra data in the executable.
+	 * The specified buffer will be cloned and you can release it after calling this method.
+	 * @param bin buffer containing the new data
+	 * @note
+	 * The extra data will not be aligned by `NtExecutable`.
+	 */
+	public setExtraData(bin: ArrayBuffer | ArrayBufferView | null) {
+		if (bin === null) {
+			this._ex = null;
+		} else {
+			this._ex = cloneToArrayBuffer(bin);
+		}
+	}
+
+	/**
 	 * Generates the executable binary data.
 	 */
 	public generate(paddingSize?: number): ArrayBuffer {
@@ -302,7 +357,7 @@ export default class NtExecutable {
 		let size = secOff;
 		size += this._sections.length * ImageSectionHeaderArray.itemSize;
 		const align = nh.optionalHeader.fileAlignment;
-		size = Math.floor((size + align - 1) / align) * align;
+		size = roundUp(size, align);
 
 		this._sections.forEach((sec) => {
 			if (!sec.info.pointerToRawData) {
@@ -311,12 +366,17 @@ export default class NtExecutable {
 			const lastOff = sec.info.pointerToRawData + sec.info.sizeOfRawData;
 			if (size < lastOff) {
 				size = lastOff;
-				size = Math.floor((size + align - 1) / align) * align;
+				size = roundUp(size, align);
 			}
 		});
 
+		const lastPosition = size;
+		if (this._ex !== null) {
+			size += this._ex.byteLength;
+		}
+
 		if (typeof paddingSize === 'number') {
-			size += Math.floor((paddingSize + align - 1) / align) * align;
+			size += paddingSize;
 		}
 
 		// make buffer
@@ -349,6 +409,10 @@ export default class NtExecutable {
 			}
 			u8bin.set(new Uint8Array(sec.data), sec.info.pointerToRawData);
 		});
+
+		if (this._ex !== null) {
+			u8bin.set(new Uint8Array(this._ex), lastPosition);
+		}
 
 		// re-calc checksum
 		if (nh.optionalHeader.checkSum !== 0) {
