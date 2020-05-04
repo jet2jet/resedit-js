@@ -90,7 +90,8 @@ function makeSimpleIterator<T>(data: T): Iterator<T> {
 
 function calculateExecutableDigest(
 	executable: NtExecutable,
-	signer: SignerObject
+	signer: SignerObject,
+	alignment: number
 ) {
 	function* inner() {
 		const checkSumOffset = executable.dosHeader.newHeaderAddress + 88;
@@ -161,12 +162,9 @@ function calculateExecutableDigest(
 		const exData = executable.getExtraData();
 		if (exData !== null) {
 			yield exData;
-			// The extra data may not be aligned, but the certificate data must be aligned,
+			// The extra data may not be aligned, but the certificate data should be aligned,
 			// so the padding between them must be included for calculating digests.
-			const alignedLength = roundUp(
-				exData.byteLength,
-				executable.getFileAlignment()
-			);
+			const alignedLength = roundUp(exData.byteLength, alignment);
 			const diff = alignedLength - exData.byteLength;
 			if (diff !== 0) {
 				yield new Uint8Array(diff).buffer;
@@ -228,10 +226,29 @@ function getAlgorithmIdentifierObject(type: DigestAlgorithmType | number[]) {
 	}
 }
 
+/**
+ * Generates the executable binary data with signed info.
+ * This function is like an extension of `generate` method of `NtExecutable`.
+ * @param executable a valid instance of `NtExecutable`
+ * @param signer user-defined `SignerObject` instance for signing
+ * @param alignment alignment value for placing certificate data
+ *     (using `executable.getFileAlignment()` if omitted)
+ * @return Promise-like (Thenable) object which will resolve with generated executable binary
+ */
 export function generateExecutableWithSign(
 	executable: NtExecutable,
-	signer: SignerObject
+	signer: SignerObject,
+	alignment?: number
 ): PromiseLike<ArrayBuffer> {
+	let certAlignment: number;
+	if (typeof alignment === 'number') {
+		if (alignment <= 0) {
+			throw new Error('Invalid alignment value');
+		}
+		certAlignment = alignment;
+	} else {
+		certAlignment = executable.getFileAlignment();
+	}
 	const digestAlgorithm = getAlgorithmIdentifierObject(
 		signer.getDigestAlgorithm()
 	);
@@ -269,7 +286,7 @@ export function generateExecutableWithSign(
 
 	return (
 		// calculate digest
-		calculateExecutableDigest(executable, signer)
+		calculateExecutableDigest(executable, signer, certAlignment)
 			// make content, content's digest, and sign
 			.then((digest) => {
 				const content = new SpcIndirectDataContent(
@@ -448,21 +465,16 @@ export function generateExecutableWithSign(
 				}
 			)
 			.then((certBin) => {
-				const alignedSize = roundUp(
-					certBin.byteLength,
-					executable.getFileAlignment()
-				);
+				const alignedSize = roundUp(certBin.byteLength, certAlignment);
 				// NOTE: The certificate data must follow the extra data.
 				// To achieve this, the another size between them must be added to the padding size.
-				// (The extra data may not be aligned, but the certificate data must be aligned.)
+				// (The extra data may not be aligned, but the certificate data should be aligned.)
 				let paddingSize = alignedSize;
 				const exData = executable.getExtraData();
 				if (exData !== null) {
 					const diffSize =
-						roundUp(
-							exData.byteLength,
-							executable.getFileAlignment()
-						) - exData.byteLength;
+						roundUp(exData.byteLength, certAlignment) -
+						exData.byteLength;
 					paddingSize += diffSize;
 				}
 				const newBin = executable.generate(paddingSize);
