@@ -13,7 +13,7 @@ module.exports = {
 		__TEST_TEMPDIR_ROOT__: path.resolve(__dirname, '.work/test'),
 		__TEST_TOOL_ROOT__: path.resolve(__dirname, 'tools'),
 		'ts-jest': {
-			tsConfig: 'tsconfig.test.json',
+			tsconfig: 'tsconfig.test.json',
 		},
 	},
 };
