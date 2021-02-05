@@ -9,7 +9,7 @@ import {
  * Abstract data SpcLink. Must use either `SpcLinkUrl` or `SpcLinkFile` instead.
  */
 export default abstract class SpcLink implements DERObject {
-	constructor(private tag: number, public value: DERObject) {}
+	constructor(private readonly tag: number, public value: DERObject) {}
 
 	public toDER(): number[] {
 		const v = this.value.toDER();

@@ -149,7 +149,7 @@ export function pickIssuerAndSerialNumberDERFromCert(
 ): [number[], number[]] {
 	if (Array.isArray(bin)) {
 		// use first one and call again
-		if (!bin[0]) {
+		if (bin.length === 0) {
 			throw new Error('No data is specified.');
 		}
 		return pickIssuerAndSerialNumberDERFromCert(bin[0]);

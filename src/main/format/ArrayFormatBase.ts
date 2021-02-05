@@ -1,5 +1,3 @@
-/// <reference lib='es2015.collection' />
-
 import FormatBase from './FormatBase';
 
 /** abstract class that support array-like methods and 'for...of' operation */
@@ -27,7 +25,7 @@ abstract class ArrayFormatBase<T> extends FormatBase {
 	public _iterator(): Iterator<Readonly<T>> {
 		return new (class {
 			private i: number = 0;
-			constructor(private base: ArrayFormatBase<T>) {}
+			constructor(private readonly base: ArrayFormatBase<T>) {}
 			public next(): IteratorResult<Readonly<T>, void> {
 				if (this.i === this.base.length) {
 					return {
@@ -45,7 +43,7 @@ abstract class ArrayFormatBase<T> extends FormatBase {
 	}
 }
 interface ArrayFormatBase<T> {
-	[Symbol.iterator](): Iterator<Readonly<T>>;
+	[Symbol.iterator]: () => Iterator<Readonly<T>>;
 }
 if (typeof Symbol !== 'undefined') {
 	(ArrayFormatBase.prototype as any)[(Symbol as any).iterator] =

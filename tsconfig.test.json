@@ -5,7 +5,8 @@
     "rootDir": "../..",
     "paths": {
       "@/*": ["../../src/main/*"]
-    }
+    },
+    "types": ["node", "jest"]
   },
   "include": [
     "./src/main/**/*.ts",

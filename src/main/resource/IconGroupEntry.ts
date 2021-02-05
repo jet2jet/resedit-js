@@ -195,7 +195,9 @@ export default class IconGroupEntry {
 				if (e.type !== 3 || e.lang !== this.lang) {
 					return null;
 				}
-				const c = this.icons.filter((icon) => e.id === icon.iconID)[0];
+				const c = this.icons
+					.filter((icon) => e.id === icon.iconID)
+					.shift();
 				if (!c) {
 					return null;
 				}
@@ -234,9 +236,11 @@ export default class IconGroupEntry {
 		icons: Array<IconItem | RawIconItem>
 	): void {
 		// find existing entry
-		let entry: ResourceEntry | undefined = destEntries.filter(
-			(e) => e.type === 14 && e.id === iconGroupID && e.lang === lang
-		)[0];
+		let entry: ResourceEntry | undefined = destEntries
+			.filter(
+				(e) => e.type === 14 && e.id === iconGroupID && e.lang === lang
+			)
+			.shift();
 		interface TempIconData {
 			base: IconItem | RawIconItem;
 			bm: {

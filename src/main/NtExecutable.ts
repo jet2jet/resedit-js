@@ -25,13 +25,13 @@ export interface NtExecutableSection {
 }
 
 export default class NtExecutable {
-	private _dh: ImageDosHeader;
-	private _nh: ImageNtHeaders;
-	private _dda: ImageDataDirectoryArray;
+	private readonly _dh: ImageDosHeader;
+	private readonly _nh: ImageNtHeaders;
+	private readonly _dda: ImageDataDirectoryArray;
 
 	private constructor(
-		private _headers: ArrayBuffer,
-		private _sections: NtExecutableSection[],
+		private readonly _headers: ArrayBuffer,
+		private readonly _sections: NtExecutableSection[],
 		private _ex: ArrayBuffer | null
 	) {
 		const dh = ImageDosHeader.from(_headers);
@@ -78,7 +78,7 @@ export default class NtExecutable {
 		const securityEntry = nh.optionalHeaderDataDirectory.get(
 			ImageDirectoryEntry.Certificate
 		);
-		if (securityEntry && securityEntry.size > 0) {
+		if (securityEntry.size > 0) {
 			// Signed executables should be parsed only when `ignoreCert` is true
 			if (!options || !options.ignoreCert) {
 				throw new Error(
@@ -140,7 +140,7 @@ export default class NtExecutable {
 		let lastExDataOffset = bin.byteLength;
 		// It may contain that both extra data and certificate data are available.
 		// In this case the extra data is followed by the certificate data.
-		if (securityEntry && securityEntry.size > 0) {
+		if (securityEntry.size > 0) {
 			lastExDataOffset = securityEntry.virtualAddress;
 		}
 		if (lastOffset < lastExDataOffset) {
@@ -204,17 +204,16 @@ export default class NtExecutable {
 		entry: ImageDirectoryEntry
 	): Readonly<NtExecutableSection> | null {
 		const dd = this._dda.get(entry);
-		if (!dd) {
-			return null;
-		}
-		const r = this._sections.filter((sec) => {
-			const vaEnd = sec.info.virtualAddress + sec.info.virtualSize;
-			return (
-				dd.virtualAddress >= sec.info.virtualAddress &&
-				dd.virtualAddress < vaEnd
-			);
-		})[0];
-		return r || null;
+		const r = this._sections
+			.filter((sec) => {
+				const vaEnd = sec.info.virtualAddress + sec.info.virtualSize;
+				return (
+					dd.virtualAddress >= sec.info.virtualAddress &&
+					dd.virtualAddress < vaEnd
+				);
+			})
+			.shift();
+		return r !== undefined ? r : null;
 	}
 
 	/**
@@ -237,7 +236,7 @@ export default class NtExecutable {
 			? { data: section.data, info: section.info }
 			: null;
 		const dd = this._dda.get(entry);
-		const hasEntry = !!(dd && dd.size);
+		const hasEntry = dd.size > 0;
 
 		if (!sec) {
 			if (!hasEntry) {

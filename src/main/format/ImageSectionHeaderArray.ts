@@ -1,5 +1,3 @@
-/// <reference types='node' />
-
 import ArrayFormatBase from './ArrayFormatBase';
 
 export interface ImageSectionHeader {

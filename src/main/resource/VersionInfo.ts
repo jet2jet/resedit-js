@@ -578,8 +578,8 @@ export default class VersionInfo {
 		// copy all specified values
 		// (if unspecified, use default value set by `createFixedInfo`)
 		for (const fixedInfoKey in fixedInfo!) {
-			if (fixedInfoKey in fixedInfo!) {
-				(vi.data.fixedInfo as any)[fixedInfoKey] = (fixedInfo! as any)[
+			if (fixedInfoKey in fixedInfo) {
+				(vi.data.fixedInfo as any)[fixedInfoKey] = (fixedInfo as any)[
 					fixedInfoKey
 				];
 			}
@@ -783,6 +783,7 @@ export default class VersionInfo {
 			const e = strings[i];
 			if (e.lang === language.lang && e.codepage === language.codepage) {
 				try {
+					// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 					delete e.values[key];
 				} catch (_ex) {}
 				if (

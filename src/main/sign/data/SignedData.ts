@@ -17,7 +17,7 @@ export default class SignedData implements DERObject {
 		let r = [0x02, 0x01, this.version & 0xff]
 			.concat(arrayToDERSet(this.digestAlgorithms))
 			.concat(this.contentInfo.toDER());
-		if (this.certificates && this.certificates.length) {
+		if (this.certificates && this.certificates.length > 0) {
 			const allCertsDER = arrayToDERSet(this.certificates);
 			// IMPLICIT SET
 			allCertsDER[0] = 0xa0;

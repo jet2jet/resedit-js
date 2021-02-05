@@ -1,5 +1,3 @@
-/// <reference types='jest' />
-
 import NtExecutable, { NtExecutableSection } from '@/NtExecutable';
 import ImageDirectoryEntry from '@/format/ImageDirectoryEntry';
 

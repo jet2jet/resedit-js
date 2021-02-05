@@ -153,14 +153,14 @@ export default class IconItem {
 			// second overload
 			width = arg1 as number;
 			height = arg2!;
-			bin = arg3 as ArrayBuffer | ArrayBufferView;
+			bin = arg3;
 		} else {
 			// first overload
 			width = null;
 			height = null;
 			bin = arg1 as ArrayBuffer | ArrayBufferView;
 			byteOffset = arg2;
-			byteLength = arg3 as typeof byteLength;
+			byteLength = arg3;
 		}
 		return new IconItem(width, height, bin, byteOffset, byteLength);
 	}

@@ -1,19 +1,17 @@
-/// <reference types='jest' />
-
 import { loadIcon } from '../util/fs';
 
 import IconFile, { IconFileItem } from '@/data/IconFile';
 
 function getIconWidth(icon: IconFileItem) {
 	return (
-		icon.width ||
+		icon.width ??
 		(icon.data.isIcon() ? icon.data.bitmapInfo.width : icon.data.width)
 	);
 }
 
 function getIconHeight(icon: IconFileItem) {
 	return (
-		icon.height ||
+		icon.height ??
 		(icon.data.isIcon() ? icon.data.bitmapInfo.height : icon.data.height)
 	);
 }

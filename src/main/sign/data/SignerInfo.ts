@@ -21,7 +21,7 @@ export default class SignerInfo implements DERObject {
 			.concat(this.digestAlgorithm.toDER());
 		if (
 			this.authenticatedAttributes &&
-			this.authenticatedAttributes.length
+			this.authenticatedAttributes.length > 0
 		) {
 			const a = arrayToDERSet(this.authenticatedAttributes);
 			// [0] IMPLICIT
@@ -33,7 +33,7 @@ export default class SignerInfo implements DERObject {
 			.concat(makeDEROctetString(this.encryptedDigest));
 		if (
 			this.unauthenticatedAttributes &&
-			this.unauthenticatedAttributes.length
+			this.unauthenticatedAttributes.length > 0
 		) {
 			const u = arrayToDERSet(this.unauthenticatedAttributes);
 			// [1] IMPLICIT

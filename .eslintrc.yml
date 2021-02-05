@@ -4,6 +4,7 @@ plugins:
 extends:
   - standard
   - 'plugin:@typescript-eslint/recommended'
+  - standard-with-typescript
   - prettier
   - 'prettier/@typescript-eslint'
 env:
@@ -67,6 +68,7 @@ rules:
         match: true
   '@typescript-eslint/explicit-function-return-type': off
   '@typescript-eslint/explicit-module-boundary-types': error
+  '@typescript-eslint/lines-between-class-members': off
   '@typescript-eslint/member-ordering':
     - error
     - default:
@@ -87,6 +89,7 @@ rules:
   '@typescript-eslint/no-use-before-define': off
   '@typescript-eslint/no-useless-constructor': error
   '@typescript-eslint/no-unused-vars': off
+  '@typescript-eslint/prefer-includes': off
 overrides:
   - files: ['./*.js', 'examples/**/*.js', 'tools/**/*.js']
     env:
@@ -99,4 +102,6 @@ overrides:
     parserOptions:
       project: ./tsconfig.json
     rules:
-      no-redeclare: off
+      '@typescript-eslint/strict-boolean-expressions':
+        - error
+        - allowNullableBoolean: true

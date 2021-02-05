@@ -45,12 +45,13 @@ export default class StringTable {
 	public getAllStrings(): Array<{ id: number; text: string }> {
 		return this.items
 			.map((e, i) => {
-				if (!e) {
-					return [];
-				}
 				return e
 					.getAll()
-					.map((x, j) => (x ? { id: (i << 4) + j, text: x } : null))
+					.map((x, j) =>
+						x !== null && x !== ''
+							? { id: (i << 4) + j, text: x }
+							: null
+					)
 					.filter((x): x is Exclude<typeof x, null> => !!x);
 			})
 			.reduce((p, c) => p.concat(c), []);
@@ -62,8 +63,8 @@ export default class StringTable {
 		}
 		const entryIndex = id >> 4;
 		const entryPos = id & 15;
-		const e = this.items[entryIndex];
-		return (e && e.get(entryPos)) || null;
+		const e = this.items[entryIndex] as StringTableItem | undefined;
+		return e?.get(entryPos) ?? null;
 	}
 	/**
 	 * Set/overwide the string data for ID value, which can be used for Win32API LoadString.
@@ -76,7 +77,7 @@ export default class StringTable {
 		}
 		const entryIndex = id >> 4;
 		const entryPos = id & 15;
-		let e = this.items[entryIndex];
+		let e = this.items[entryIndex] as StringTableItem | undefined;
 		if (!e) {
 			this.items[entryIndex] = e = new StringTableItem();
 		}
@@ -87,9 +88,6 @@ export default class StringTable {
 	public generateEntries(): ResourceEntry[] {
 		return this.items
 			.map((e, i): ResourceEntry | null => {
-				if (!e) {
-					return null;
-				}
 				const len = e.calcByteLength();
 				const bin = new ArrayBuffer(len);
 				e.generate(bin, 0);

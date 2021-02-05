@@ -1,5 +1,3 @@
-/// <reference types='jest' />
-
 import * as crypto from 'crypto';
 import * as path from 'path';
 
@@ -94,8 +92,8 @@ describe('generateExecutableWithSign', () => {
 				getCertificateData() {
 					return loadCert(certFile);
 				},
-				encryptData(dataIterator) {
-					return encryptDataBase(privFile, dataIterator);
+				async encryptData(dataIterator) {
+					return await encryptDataBase(privFile, dataIterator);
 				},
 			};
 
@@ -137,8 +135,8 @@ describe('generateExecutableWithSign', () => {
 			getCertificateData() {
 				return loadCert(CERT_KEY_NAME);
 			},
-			encryptData(dataIterator) {
-				return encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
+			async encryptData(dataIterator) {
+				return await encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
 			},
 		};
 
@@ -184,8 +182,8 @@ describe('generateExecutableWithSign', () => {
 			getCertificateData() {
 				return loadCert(CERT_KEY_NAME);
 			},
-			encryptData(dataIterator) {
-				return encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
+			async encryptData(dataIterator) {
+				return await encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
 			},
 		};
 

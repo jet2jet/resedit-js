@@ -279,6 +279,8 @@ export function generateExecutableWithSign(
 		}
 	}
 
+	// (for compatibility)
+	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	const cert = signer.getCertificateData
 		? signer.getCertificateData()
 		: signer.getPublicKeyData!();

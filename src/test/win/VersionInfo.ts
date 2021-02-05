@@ -1,5 +1,3 @@
-/// <reference types='jest' />
-
 import { loadExecutableWithResourceCheck, testExec } from '../util/fs';
 
 import NtExecutableResource from '@/NtExecutableResource';
@@ -11,10 +9,8 @@ import VersionInfo, { VersionFixedInfo } from '@/resource/VersionInfo';
 
 const platform = __TEST_PLATFORM__;
 
-function copyValues<T extends Record<string, unknown>>(
-	dest: T,
-	src: Readonly<T>
-) {
+// eslint-disable-next-line @typescript-eslint/ban-types
+function copyValues<T extends object>(dest: T, src: Readonly<T>) {
 	type TKeys = keyof T;
 	Object.keys(src).forEach((key) => {
 		dest[key as TKeys] = src[key as TKeys];
@@ -53,6 +49,7 @@ function doTestExecWithVersionValues(
 				if (versionStrings) {
 					expect(value).toEqual(versionStrings[stringKey]);
 					try {
+						// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 						delete copiedVersionStrings[stringKey];
 					} catch (_e) {}
 				} else {

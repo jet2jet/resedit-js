@@ -1,6 +1,3 @@
-/// <reference types='node' />
-/// <reference types='jest' />
-
 import * as fs from 'fs';
 import * as path from 'path';
 import * as child_process from 'child_process';
@@ -23,7 +20,7 @@ export function mkdirp(dir: string): void {
 		if (!curDir) {
 			curDir = token;
 		} else {
-			curDir += path.sep + token;
+			curDir += `${path.sep}${token}`;
 		}
 		try {
 			const stat = fs.statSync(curDir);

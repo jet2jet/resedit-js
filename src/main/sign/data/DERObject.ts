@@ -1,5 +1,5 @@
 export default interface DERObject {
-	toDER(): number[];
+	toDER: () => number[];
 }
 
 export class RawDERObject implements DERObject {

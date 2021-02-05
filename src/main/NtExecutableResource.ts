@@ -231,18 +231,18 @@ function divideEntriesImplByName<TType extends string | number>(
 	entries: Array<ResourceEntryT<TType>>
 ) {
 	const entriesByString: {
-		[key: string]: Array<ResourceEntryTT<TType, string>>;
+		[key: string]: Array<ResourceEntryTT<TType, string>> | undefined;
 	} = {};
 	const entriesByNumber: {
-		[key: number]: Array<ResourceEntryTT<TType, number>>;
+		[key: number]: Array<ResourceEntryTT<TType, number>> | undefined;
 	} = {};
 	entries.forEach((e) => {
 		if (typeof e.id === 'string') {
-			const a = entriesByString[e.id] || (entriesByString[e.id] = []);
+			const a = entriesByString[e.id] ?? (entriesByString[e.id] = []);
 			names.push(e.id);
 			a.push(e as ResourceEntryTT<TType, string>);
 		} else {
-			const a = entriesByNumber[e.id] || (entriesByNumber[e.id] = []);
+			const a = entriesByNumber[e.id] ?? (entriesByNumber[e.id] = []);
 			a.push(e as ResourceEntryTT<TType, number>);
 		}
 	});
@@ -255,7 +255,7 @@ function divideEntriesImplByName<TType extends string | number>(
 				n: [],
 			};
 			r.s.push(o);
-			return divideEntriesImplByID(o, names, entriesByString[id]);
+			return divideEntriesImplByID(o, names, entriesByString[id]!);
 		})
 		.reduce((p, c) => p + 8 + c, 0);
 	const nSum = Object.keys(entriesByNumber)
@@ -268,7 +268,7 @@ function divideEntriesImplByName<TType extends string | number>(
 				n: [],
 			};
 			r.n.push(o);
-			return divideEntriesImplByID(o, names, entriesByNumber[id]);
+			return divideEntriesImplByID(o, names, entriesByNumber[id]!);
 		})
 		.reduce((p, c) => p + 8 + c, 0);
 	return 16 + sSum + nSum;
@@ -280,18 +280,18 @@ function divideEntriesImplByType(
 	entries: ResourceEntry[]
 ) {
 	const entriesByString: {
-		[key: string]: Array<ResourceEntryT<string>>;
+		[key: string]: Array<ResourceEntryT<string>> | undefined;
 	} = {};
 	const entriesByNumber: {
-		[key: number]: Array<ResourceEntryT<number>>;
+		[key: number]: Array<ResourceEntryT<number>> | undefined;
 	} = {};
 	entries.forEach((e) => {
 		if (typeof e.type === 'string') {
-			const a = entriesByString[e.type] || (entriesByString[e.type] = []);
+			const a = entriesByString[e.type] ?? (entriesByString[e.type] = []);
 			names.push(e.type);
 			a.push(e as ResourceEntryT<string>);
 		} else {
-			const a = entriesByNumber[e.type] || (entriesByNumber[e.type] = []);
+			const a = entriesByNumber[e.type] ?? (entriesByNumber[e.type] = []);
 			a.push(e as ResourceEntryT<number>);
 		}
 	});
@@ -300,7 +300,7 @@ function divideEntriesImplByType(
 		.map((type) => {
 			const o: DivideEntriesResultTypeC<string> = { type, s: [], n: [] };
 			r.s.push(o);
-			return divideEntriesImplByName(o, names, entriesByString[type]);
+			return divideEntriesImplByName(o, names, entriesByString[type]!);
 		})
 		.reduce((p, c) => p + 8 + c, 0);
 	const nSum = Object.keys(entriesByNumber)
@@ -309,7 +309,7 @@ function divideEntriesImplByType(
 		.map((type) => {
 			const o: DivideEntriesResultTypeC<number> = { type, s: [], n: [] };
 			r.n.push(o);
-			return divideEntriesImplByName(o, names, entriesByNumber[type]);
+			return divideEntriesImplByName(o, names, entriesByNumber[type]!);
 		})
 		.reduce((p, c) => p + 8 + c, 0);
 	return 16 + sSum + nSum;

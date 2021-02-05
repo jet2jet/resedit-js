@@ -1,5 +1,3 @@
-/// <reference types='jest' />
-
 import { loadExecutableWithResourceCheck, testExec } from '../util/fs';
 
 import NtExecutableResource from '@/NtExecutableResource';
