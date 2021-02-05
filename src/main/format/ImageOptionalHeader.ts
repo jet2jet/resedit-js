@@ -21,8 +21,14 @@ export default class ImageOptionalHeader extends FormatBase {
 	public get majorLinkerVersion(): number {
 		return this.view.getUint8(2);
 	}
+	public set majorLinkerVersion(val: number) {
+		this.view.setUint8(2, val);
+	}
 	public get minorLinkerVersion(): number {
 		return this.view.getUint8(3);
+	}
+	public set minorLinkerVersion(val: number) {
+		this.view.setUint8(3, val);
 	}
 	public get sizeOfCode(): number {
 		return this.view.getUint32(4, true);
