@@ -5,6 +5,7 @@ extends:
   - standard
   - 'plugin:@typescript-eslint/recommended'
   - prettier
+  - 'prettier/@typescript-eslint'
 env:
   browser: true
   node: false
@@ -15,16 +16,7 @@ rules:
   camelcase: off
   'import/export': off
   lines-between-class-members: off
-  max-len:
-    - error
-    - code: 140
-      ignoreComments: true
-      ignoreUrls: true
-      ignoreRegExpLiterals: true
-      ignoreTemplateLiterals: true
   no-dupe-class-members: off
-  no-tabs: off
-  no-undef: off
   # using @typescript-eslint/no-useless-constructor instead
   no-useless-constructor: off
   spaced-comment:
@@ -77,9 +69,6 @@ rules:
   '@typescript-eslint/explicit-function-return-type': off
   # TODO: enable
   '@typescript-eslint/explicit-module-boundary-types': off
-  '@typescript-eslint/indent': off
-  '@typescript-eslint/interface-name-prefix': off
-  '@typescript-eslint/member-delimiter-style': off
   '@typescript-eslint/member-ordering':
     - error
     - default:
