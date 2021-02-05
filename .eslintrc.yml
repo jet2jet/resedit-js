@@ -1,11 +1,10 @@
 root: true
 plugins:
-  - prettier
   - '@typescript-eslint'
 extends:
-  - semistandard
-  - 'plugin:prettier/recommended'
+  - standard
   - 'plugin:@typescript-eslint/recommended'
+  - prettier
 env:
   browser: true
   node: false
