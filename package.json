@@ -8,6 +8,7 @@
   "engineStrict": true,
   "description": "Node.js library editing Windows Resource data",
   "main": "./dist/index.js",
+  "module": "./dist/_esm/index.js",
   "types": "./dist/index.d.ts",
   "author": "jet",
   "license": "MIT",
@@ -26,7 +27,9 @@
     "url": "https://github.com/jet2jet/resedit-js.git"
   },
   "scripts": {
-    "build": "tsc -p ./tsconfig.app.json",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -p ./tsconfig.app.json",
+    "build:esm": "tsc -p ./tsconfig.app.esm.json",
     "lint": "npm run lint:prettier && npm run lint:eslint",
     "lint:eslint": "eslint -c .eslintrc.yml --ext .js,.jsx,.ts,.tsx .",
     "lint:eslint:fix": "eslint -c .eslintrc.yml --fix --ext .js,.jsx,.ts,.tsx .",
