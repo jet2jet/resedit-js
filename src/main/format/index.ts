@@ -28,20 +28,20 @@ export {
 	ImageSectionHeaderArray,
 };
 
-export function getImageDosHeader(bin: ArrayBuffer) {
+export function getImageDosHeader(bin: ArrayBuffer): ImageDosHeader {
 	return ImageDosHeader.from(bin);
 }
 export function getImageNtHeadersByDosHeader(
 	bin: ArrayBuffer,
 	dosHeader: ImageDosHeader
-) {
+): ImageNtHeaders {
 	return ImageNtHeaders.from(bin, dosHeader.newHeaderAddress);
 }
 export function getImageSectionHeadersByNtHeaders(
 	bin: ArrayBuffer,
 	dosHeader: ImageDosHeader,
 	ntHeaders: ImageNtHeaders
-) {
+): ImageSectionHeaderArray {
 	return ImageSectionHeaderArray.from(
 		bin,
 		ntHeaders.fileHeader.numberOfSections,
@@ -53,7 +53,7 @@ export function findImageSectionBlockByDirectoryEntry(
 	dosHeader: ImageDosHeader,
 	ntHeaders: ImageNtHeaders,
 	entryType: ImageDirectoryEntry
-) {
+): ArrayBuffer | null {
 	const arr = ImageSectionHeaderArray.from(
 		bin,
 		ntHeaders.fileHeader.numberOfSections,

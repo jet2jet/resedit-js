@@ -16,7 +16,7 @@ function loadText(filePath: string): string {
 	return fs.readFileSync(filePath, 'utf8');
 }
 
-export function mkdirp(dir: string) {
+export function mkdirp(dir: string): void {
 	const tokens = path.normalize(dir).split(path.sep);
 	let curDir: string = '';
 	tokens.forEach((token) => {
@@ -44,7 +44,7 @@ export function loadExeBinary(
 	);
 }
 
-export function runExec(exePath: string, args?: readonly string[]) {
+export function runExec(exePath: string, args?: readonly string[]): string {
 	let result;
 	if (args) {
 		result = child_process.spawnSync(exePath, args, {
@@ -67,7 +67,7 @@ export function runExec(exePath: string, args?: readonly string[]) {
 export function writeBinary(
 	filePath: string,
 	bin: ArrayBuffer | ArrayBufferView
-) {
+): void {
 	const dir = path.dirname(filePath);
 	mkdirp(dir);
 
@@ -80,7 +80,11 @@ export function writeBinary(
 	fs.writeFileSync(filePath, buffer);
 }
 
-export function testExec(bin: ArrayBuffer, name: string, platform: string) {
+export function testExec(
+	bin: ArrayBuffer,
+	name: string,
+	platform: string
+): string {
 	const file = path.resolve(
 		__TEST_TEMPDIR_ROOT__,
 		name,

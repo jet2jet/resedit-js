@@ -11,7 +11,10 @@ import VersionInfo, { VersionFixedInfo } from '@/resource/VersionInfo';
 
 const platform = __TEST_PLATFORM__;
 
-function copyValues<T extends object>(dest: T, src: Readonly<T>) {
+function copyValues<T extends Record<string, unknown>>(
+	dest: T,
+	src: Readonly<T>
+) {
 	type TKeys = keyof T;
 	Object.keys(src).forEach((key) => {
 		dest[key as TKeys] = src[key as TKeys];

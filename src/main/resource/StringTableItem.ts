@@ -40,7 +40,7 @@ export default class StringTableItem {
 	public getAll(): Array<string | null> {
 		return this._a.map((s) => s || null);
 	}
-	public set(index: number, val: string | null) {
+	public set(index: number, val: string | null): void {
 		this._a[index] = `${val || ''}`.substr(0, 4097); // length must be no longer than 4097
 	}
 	public calcByteLength(): number {
@@ -52,7 +52,7 @@ export default class StringTableItem {
 		// 16 alignment
 		return Math.floor((len + 15) / 16) * 16;
 	}
-	public generate(bin: ArrayBuffer, offset: number) {
+	public generate(bin: ArrayBuffer, offset: number): number {
 		const out = new DataView(bin, offset);
 		let len = 0;
 		for (let i = 0; i < 16; ++i) {

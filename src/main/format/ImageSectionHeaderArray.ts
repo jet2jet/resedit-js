@@ -105,7 +105,11 @@ export default class ImageSectionHeaderArray extends ArrayFormatBase<ImageSectio
 		super(view);
 	}
 
-	public static from(bin: ArrayBuffer, length: number, offset = 0) {
+	public static from(
+		bin: ArrayBuffer,
+		length: number,
+		offset = 0
+	): ImageSectionHeaderArray {
 		const size = length * 40;
 		return new ImageSectionHeaderArray(
 			new DataView(bin, offset, size),
@@ -127,7 +131,7 @@ export default class ImageSectionHeaderArray extends ArrayFormatBase<ImageSectio
 			characteristics: this.view.getUint32(36 + index * 40, true),
 		};
 	}
-	public set(index: number, data: ImageSectionHeader) {
+	public set(index: number, data: ImageSectionHeader): void {
 		setFixedString(this.view, index * 40, 8, data.name);
 		this.view.setUint32(8 + index * 40, data.virtualSize, true);
 		this.view.setUint32(12 + index * 40, data.virtualAddress, true);

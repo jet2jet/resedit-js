@@ -1,6 +1,6 @@
 export default abstract class FormatBase {
 	protected constructor(protected readonly view: DataView) {}
-	public copyTo(bin: ArrayBuffer, offset: number) {
+	public copyTo(bin: ArrayBuffer, offset: number): void {
 		new Uint8Array(bin, offset, this.view.byteLength).set(
 			new Uint8Array(
 				this.view.buffer,
@@ -9,7 +9,7 @@ export default abstract class FormatBase {
 			)
 		);
 	}
-	public get byteLength() {
+	public get byteLength(): number {
 		return this.view.byteLength;
 	}
 }

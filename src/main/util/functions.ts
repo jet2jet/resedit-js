@@ -1,15 +1,18 @@
 import ImageDosHeader from '../format/ImageDosHeader';
 
+// We must use 'object' for this function (Record<string, unknown> is not usable here)
+/* eslint-disable @typescript-eslint/ban-types */
 export function cloneObject<T extends object>(object: Readonly<T>): T;
 export function cloneObject<T extends object>(object: T): T;
 
-export function cloneObject<T extends object>(object: any): T {
+export function cloneObject<T extends object>(object: object): T {
 	const r: any = {};
 	Object.keys(object).forEach((key) => {
-		r[key] = object[key as keyof T];
+		r[key] = object[key as keyof typeof object];
 	});
 	return r;
 }
+/* eslint-enable @typescript-eslint/ban-types */
 
 export function createDataView(
 	bin: ArrayBuffer | ArrayBufferView,
@@ -85,7 +88,7 @@ export function copyBuffer(
 	src: ArrayBuffer | ArrayBufferView,
 	srcOffset: number,
 	length: number
-) {
+): void {
 	if ('buffer' in src) {
 		new Uint8Array(dest, destOffset, length).set(
 			new Uint8Array(

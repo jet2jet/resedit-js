@@ -7,7 +7,7 @@ import { OID_SIGNED_DATA } from './data/KnownOids';
 export function createTimestampRequest(
 	data: ArrayBuffer | ArrayBufferView,
 	algorithmIdentifier: AlgorithmIdentifier
-) {
+): ArrayBufferLike {
 	return new Uint8Array(
 		makeDERSequence(
 			// version
@@ -28,7 +28,7 @@ export function createTimestampRequest(
 
 export function pickSignedDataFromTimestampResponse(
 	data: ArrayBuffer | ArrayBufferView
-) {
+): ArrayBuffer {
 	const ub = toUint8Array(data);
 	if (ub.length < 2 || ub[0] !== 0x30) {
 		throw new Error('Invalid or unexpected timestamp response');

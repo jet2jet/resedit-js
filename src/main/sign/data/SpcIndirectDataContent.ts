@@ -28,7 +28,7 @@ export default class SpcIndirectDataContent implements DERObject {
 	}
 
 	// this is used for calculating 'messageDigest'
-	public toDERWithoutHeader() {
+	public toDERWithoutHeader(): number[] {
 		return this.data.toDER().concat(this.messageDigest.toDER());
 	}
 }

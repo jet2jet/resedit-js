@@ -108,7 +108,7 @@ export default class StringTable {
 	 * Replace all string entries for NtExecutableResource with containing resource data.
 	 * The only entries of same language are replaced.
 	 */
-	public replaceStringEntriesForExecutable(res: NtExecutableResource) {
+	public replaceStringEntriesForExecutable(res: NtExecutableResource): void {
 		const entries = this.generateEntries();
 		const dest = res.entries;
 		// first try -- replace same type and same language

@@ -11,7 +11,9 @@ abstract class ArrayFormatBase<T> extends FormatBase {
 	public abstract readonly length: number;
 	public abstract get(index: number): Readonly<T>;
 	public abstract set(index: number, data: T): void;
-	public forEach(callback: (value: T, index: number, base: this) => void) {
+	public forEach(
+		callback: (value: T, index: number, base: this) => void
+	): void {
 		const len = this.length;
 		const a: T[] = [];
 		a.length = len;

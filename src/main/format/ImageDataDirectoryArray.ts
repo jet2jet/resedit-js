@@ -16,7 +16,7 @@ export default class ImageDataDirectoryArray extends ArrayFormatBase<ImageDataDi
 	}
 
 	/** @note This does not clone binary data; the changes to the array will modify the specified buffer `bin` */
-	public static from(bin: ArrayBuffer, offset = 0) {
+	public static from(bin: ArrayBuffer, offset = 0): ImageDataDirectoryArray {
 		return new ImageDataDirectoryArray(new DataView(bin, offset, 128));
 	}
 
@@ -26,7 +26,7 @@ export default class ImageDataDirectoryArray extends ArrayFormatBase<ImageDataDi
 			size: this.view.getUint32(4 + index * 8, true),
 		};
 	}
-	public set(index: number, data: ImageDataDirectory) {
+	public set(index: number, data: ImageDataDirectory): void {
 		this.view.setUint32(index * 8, data.virtualAddress, true);
 		this.view.setUint32(4 + index * 8, data.size, true);
 	}

@@ -611,7 +611,7 @@ export default class NtExecutableResource {
 	 * Add or replace the resource entry.
 	 * This method replaces the entry only if there is an entry with `type`, `id` and `lang` equal.
 	 */
-	public replaceResourceEntry(entry: ResourceEntry) {
+	public replaceResourceEntry(entry: ResourceEntry): void {
 		for (let len = this.entries.length, i = 0; i < len; ++i) {
 			const e = this.entries[i];
 			if (
@@ -727,7 +727,7 @@ export default class NtExecutableResource {
 	/**
 	 * Writes holding resource data to specified NtExecutable instance.
 	 */
-	public outputResource(exeDest: NtExecutable) {
+	public outputResource(exeDest: NtExecutable): void {
 		// make section data
 		const fileAlign = exeDest.getFileAlignment();
 		let sectionData: NtExecutableSection;

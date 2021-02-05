@@ -30,7 +30,7 @@ export default class RawIconItem {
 		bitCount: number,
 		byteOffset?: number,
 		byteLength?: number
-	) {
+	): RawIconItem {
 		return new RawIconItem(
 			bin,
 			width,

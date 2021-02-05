@@ -232,7 +232,7 @@ export default class IconGroupEntry {
 		iconGroupID: string | number,
 		lang: string | number,
 		icons: Array<IconItem | RawIconItem>
-	) {
+	): void {
 		// find existing entry
 		let entry: ResourceEntry | undefined = destEntries.filter(
 			(e) => e.type === 14 && e.id === iconGroupID && e.lang === lang

@@ -12,7 +12,10 @@ export default class ImageNtHeaders extends FormatBase {
 		super(view);
 	}
 
-	public static from(bin: ArrayBuffer | ArrayBufferView, offset = 0) {
+	public static from(
+		bin: ArrayBuffer | ArrayBufferView,
+		offset = 0
+	): ImageNtHeaders {
 		const magic = createDataView(
 			bin,
 			offset + ImageFileHeader.size,
@@ -27,26 +30,26 @@ export default class ImageNtHeaders extends FormatBase {
 		return new ImageNtHeaders(createDataView(bin, offset, len));
 	}
 
-	public isValid() {
+	public isValid(): boolean {
 		return this.signature === ImageNtHeaders.DEFAULT_SIGNATURE;
 	}
-	public is32bit() {
+	public is32bit(): boolean {
 		return (
 			this.view.getUint16(ImageFileHeader.size + 4, true) ===
 			ImageOptionalHeader.DEFAULT_MAGIC
 		);
 	}
 
-	public get signature() {
+	public get signature(): number {
 		return this.view.getUint32(0, true);
 	}
 	public set signature(val: number) {
 		this.view.setUint32(0, val, true);
 	}
-	public get fileHeader() {
+	public get fileHeader(): ImageFileHeader {
 		return ImageFileHeader.from(this.view.buffer, this.view.byteOffset + 4);
 	}
-	public get optionalHeader() {
+	public get optionalHeader(): ImageOptionalHeader | ImageOptionalHeader64 {
 		const off = ImageFileHeader.size + 4;
 		const magic = this.view.getUint16(off, true);
 		if (magic === ImageOptionalHeader64.DEFAULT_MAGIC) {
@@ -61,14 +64,14 @@ export default class ImageNtHeaders extends FormatBase {
 			);
 		}
 	}
-	public get optionalHeaderDataDirectory() {
+	public get optionalHeaderDataDirectory(): ImageDataDirectoryArray {
 		return ImageDataDirectoryArray.from(
 			this.view.buffer,
 			this.view.byteOffset + this.getDataDirectoryOffset()
 		);
 	}
 	// @internal
-	public getDataDirectoryOffset() {
+	public getDataDirectoryOffset(): number {
 		let off = ImageFileHeader.size + 4;
 		const magic = this.view.getUint16(off, true);
 		if (magic === ImageOptionalHeader64.DEFAULT_MAGIC) {
@@ -78,7 +81,7 @@ export default class ImageNtHeaders extends FormatBase {
 		}
 		return off;
 	}
-	public getSectionHeaderOffset() {
+	public getSectionHeaderOffset(): number {
 		return this.getDataDirectoryOffset() + ImageDataDirectoryArray.size;
 	}
 }

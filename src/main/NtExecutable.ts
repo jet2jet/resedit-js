@@ -157,36 +157,36 @@ export default class NtExecutable {
 	/**
 	 * Returns whether the executable is for 32-bit architecture
 	 */
-	public is32bit() {
+	public is32bit(): boolean {
 		return this._nh.is32bit();
 	}
 
-	public getTotalHeaderSize() {
+	public getTotalHeaderSize(): number {
 		return this._headers.byteLength;
 	}
 
-	public get dosHeader() {
+	public get dosHeader(): ImageDosHeader {
 		return this._dh;
 	}
 
-	public get newHeader() {
+	public get newHeader(): ImageNtHeaders {
 		return this._nh;
 	}
 
 	// @internal
-	public getRawHeader() {
+	public getRawHeader(): ArrayBuffer {
 		return this._headers;
 	}
 
-	public getImageBase() {
+	public getImageBase(): number {
 		return this._nh.optionalHeader.imageBase;
 	}
 
-	public getFileAlignment() {
+	public getFileAlignment(): number {
 		return this._nh.optionalHeader.fileAlignment;
 	}
 
-	public getSectionAlignment() {
+	public getSectionAlignment(): number {
 		return this._nh.optionalHeader.sectionAlignment;
 	}
 
@@ -232,7 +232,7 @@ export default class NtExecutable {
 	public setSectionByEntry(
 		entry: ImageDirectoryEntry,
 		section: Readonly<NtExecutableSection> | null
-	) {
+	): void {
 		const sec: NtExecutableSection | null = section
 			? { data: section.data, info: section.info }
 			: null;
@@ -338,7 +338,7 @@ export default class NtExecutable {
 	 * @note
 	 * The extra data will not be aligned by `NtExecutable`.
 	 */
-	public setExtraData(bin: ArrayBuffer | ArrayBufferView | null) {
+	public setExtraData(bin: ArrayBuffer | ArrayBufferView | null): void {
 		if (bin === null) {
 			this._ex = null;
 		} else {

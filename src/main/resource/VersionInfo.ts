@@ -543,7 +543,7 @@ export default class VersionInfo {
 	}
 
 	/** Returns new `VersionInfo` instance with empty data. */
-	public static createEmpty() {
+	public static createEmpty(): VersionInfo {
 		return new VersionInfo();
 	}
 
@@ -607,7 +607,7 @@ export default class VersionInfo {
 	}
 
 	/** A language value for this resource entry. */
-	public get lang() {
+	public get lang(): string | number {
 		return this.data.lang;
 	}
 	public set lang(value: string | number) {
@@ -621,7 +621,7 @@ export default class VersionInfo {
 	 * Although this property is read-only, you can rewrite
 	 * each child fields directly to apply data.
 	 */
-	public get fixedInfo() {
+	public get fixedInfo(): VersionFixedInfo {
 		return this.data.fixedInfo;
 	}
 
@@ -631,13 +631,15 @@ export default class VersionInfo {
 	 * Usually the returned array is equal to the one returned by `getAllLanguagesForStringValues`,
 	 * but some resource-generating tools doesn't generate same values.
 	 */
-	public getAvailableLanguages() {
+	public getAvailableLanguages(): VersionTranslation[] {
 		return this.data.translations.slice(0);
 	}
 	/**
 	 * Replaces all languages that the executable supports.
 	 */
-	public replaceAvailableLanguages(languages: readonly VersionTranslation[]) {
+	public replaceAvailableLanguages(
+		languages: readonly VersionTranslation[]
+	): void {
 		this.data.translations = languages.slice(0);
 	}
 
@@ -677,7 +679,7 @@ export default class VersionInfo {
 		language: VersionTranslation,
 		values: VersionStringValues,
 		addToAvailableLanguage: boolean = true
-	) {
+	): void {
 		const a = this.data.strings.filter(
 			(e) => e.lang === language.lang && e.codepage === language.codepage
 		);
@@ -723,7 +725,7 @@ export default class VersionInfo {
 		key: string,
 		value: string,
 		addToAvailableLanguage: boolean = true
-	) {
+	): void {
 		this.setStringValues(
 			language,
 			{ [key]: value },
@@ -739,7 +741,7 @@ export default class VersionInfo {
 	public removeAllStringValues(
 		language: VersionTranslation,
 		removeFromAvailableLanguage: boolean = true
-	) {
+	): void {
 		const strings = this.data.strings;
 		const len = strings.length;
 		for (let i = 0; i < len; ++i) {
@@ -774,7 +776,7 @@ export default class VersionInfo {
 		language: VersionTranslation,
 		key: string,
 		removeFromAvailableLanguage: boolean = true
-	) {
+	): void {
 		const strings = this.data.strings;
 		const len = strings.length;
 		for (let i = 0; i < len; ++i) {
@@ -828,7 +830,7 @@ export default class VersionInfo {
 	 * If version info resource already exists in `entries`, this method replaces it with the new one.
 	 * @param entries resource entry array for output
 	 */
-	public outputToResourceEntries(entries: ResourceEntry[]) {
+	public outputToResourceEntries(entries: ResourceEntry[]): void {
 		const res = this.generateResource();
 
 		const len = entries.length;

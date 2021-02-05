@@ -61,7 +61,7 @@ export function makeDERSequence(body: number[]): number[] {
 	return [0x30].concat(makeDERLength(body.length)).concat(body);
 }
 
-export function arrayToDERSet(items: Array<DERObject | number[]>) {
+export function arrayToDERSet(items: Array<DERObject | number[]>): number[] {
 	const r = items.reduce<number[]>(
 		(prev, item) =>
 			prev.concat(item instanceof Array ? item : item.toDER()),
