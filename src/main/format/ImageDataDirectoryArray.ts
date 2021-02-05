@@ -5,9 +5,7 @@ export interface ImageDataDirectory {
 	size: number;
 }
 
-export default class ImageDataDirectoryArray extends ArrayFormatBase<
-	ImageDataDirectory
-> {
+export default class ImageDataDirectoryArray extends ArrayFormatBase<ImageDataDirectory> {
 	public static readonly size = 128; // 16 * 8
 	public static readonly itemSize = 8;
 

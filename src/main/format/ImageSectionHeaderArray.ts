@@ -98,9 +98,7 @@ function setFixedString(
 	}
 }
 
-export default class ImageSectionHeaderArray extends ArrayFormatBase<
-	ImageSectionHeader
-> {
+export default class ImageSectionHeaderArray extends ArrayFormatBase<ImageSectionHeader> {
 	public static readonly itemSize = 40;
 
 	private constructor(view: DataView, public readonly length: number) {

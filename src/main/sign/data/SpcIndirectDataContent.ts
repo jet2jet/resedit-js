@@ -7,9 +7,7 @@ import { makeDERSequence } from './derUtil';
 // prettier-ignore
 export const SPC_INDIRECT_DATA_OBJID = new ObjectIdentifier([1,3,6,1,4,1,311,2,1,4]);
 
-export class SpcIndirectDataContentInfo extends ContentInfo<
-	SpcIndirectDataContent
-> {
+export class SpcIndirectDataContentInfo extends ContentInfo<SpcIndirectDataContent> {
 	constructor(content: SpcIndirectDataContent) {
 		super(SPC_INDIRECT_DATA_OBJID, content);
 	}
