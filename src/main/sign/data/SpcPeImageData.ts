@@ -7,12 +7,6 @@ import { makeDERSequence, makeDERTaggedData } from './derUtil';
 // prettier-ignore
 export const SPC_PE_IMAGE_DATA_OBJID = new ObjectIdentifier([1,3,6,1,4,1,311,2,1,15]);
 
-export class SpcPeImageAttributeTypeAndOptionalValue extends SpcAttributeTypeAndOptionalValue<SpcPeImageData> {
-	constructor(value: SpcPeImageData) {
-		super(SPC_PE_IMAGE_DATA_OBJID, value);
-	}
-}
-
 export const enum SpcPeImageFlags {
 	IncludeResources = 0,
 	IncludeDebugInfo = 1,
@@ -29,5 +23,11 @@ export default class SpcPeImageData implements DERObject {
 				makeDERTaggedData(0, this.file.toDER())
 			)
 		);
+	}
+}
+
+export class SpcPeImageAttributeTypeAndOptionalValue extends SpcAttributeTypeAndOptionalValue<SpcPeImageData> {
+	constructor(value: SpcPeImageData) {
+		super(SPC_PE_IMAGE_DATA_OBJID, value);
 	}
 }
