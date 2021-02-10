@@ -2,12 +2,13 @@ import FormatBase from './FormatBase';
 
 function getUint64LE(view: DataView, offset: number) {
 	return (
-		(view.getUint32(offset + 4, true) << 32) + view.getUint32(offset, true)
+		view.getUint32(offset + 4, true) * 0x100000000 +
+		view.getUint32(offset, true)
 	);
 }
-function setUint64LE(view: DataView, val: number, offset: number) {
+function setUint64LE(view: DataView, offset: number, val: number) {
 	view.setUint32(offset, val & 0xffffffff, true);
-	view.setUint32(offset + 4, val >> 32, true);
+	view.setUint32(offset + 4, Math.floor(val / 0x100000000), true);
 }
 
 export default class ImageOptionalHeader64 extends FormatBase {
