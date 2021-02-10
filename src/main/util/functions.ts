@@ -83,25 +83,30 @@ export function roundUp(val: number, align: number): number {
 }
 
 export function copyBuffer(
-	dest: ArrayBuffer,
+	dest: ArrayBuffer | ArrayBufferView,
 	destOffset: number,
 	src: ArrayBuffer | ArrayBufferView,
 	srcOffset: number,
 	length: number
 ): void {
-	if ('buffer' in src) {
-		new Uint8Array(dest, destOffset, length).set(
-			new Uint8Array(
-				src.buffer,
-				src.byteOffset + (srcOffset || 0),
-				length
-			)
-		);
-	} else {
-		new Uint8Array(dest, destOffset, length).set(
-			new Uint8Array(src, srcOffset, length)
-		);
-	}
+	const ua8Dest =
+		'buffer' in dest
+			? new Uint8Array(
+					dest.buffer,
+					dest.byteOffset + (destOffset || 0),
+					length
+			  )
+			: new Uint8Array(dest, destOffset, length);
+	const ua8Src =
+		'buffer' in src
+			? new Uint8Array(
+					src.buffer,
+					src.byteOffset + (srcOffset || 0),
+					length
+			  )
+			: new Uint8Array(src, srcOffset, length);
+
+	ua8Dest.set(ua8Src);
 }
 
 export function allocatePartialBinary(
