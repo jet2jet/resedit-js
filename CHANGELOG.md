@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.7.0
+
+- Add `NtExecutable.createEmpty` which creates 'empty' executable data
+- Add ESM (ES Module) support
+- Fix some minor bugs
+
 ## v0.6.0
 
 - Add support for extra data, which is not a part of any sections, on parsing/generating executables
