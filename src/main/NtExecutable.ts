@@ -13,6 +13,7 @@ import {
 	cloneToArrayBuffer,
 	roundUp,
 } from './util/functions';
+import { makeEmptyNtExecutableBinary } from './util/generate';
 
 export interface NtExecutableFromOptions {
 	/** true to parse binary even if the binary contains Certificate data (i.e. 'signed') */
@@ -53,6 +54,19 @@ export default class NtExecutable {
 			}
 			return va - vb;
 		});
+	}
+
+	/**
+	 * Creates an NtExecutable instance with an 'empty' executable binary.
+	 * @param is32Bit set true if the binary is for 32-bit (default: false)
+	 * @param isDLL set true if the binary is DLL (default: true)
+	 * @return NtExecutable instance
+	 */
+	public static createEmpty(
+		is32Bit: boolean = false,
+		isDLL: boolean = true
+	): NtExecutable {
+		return this.from(makeEmptyNtExecutableBinary(is32Bit, isDLL));
 	}
 
 	/**
@@ -262,10 +276,9 @@ export default class NtExecutable {
 			}
 		} else {
 			const rawSize = !sec.data ? 0 : sec.data.byteLength;
+			const fileAlign = this._nh.optionalHeader.fileAlignment;
 			const secAlign = this._nh.optionalHeader.sectionAlignment;
-			let alignedFileSize = !sec.data
-				? 0
-				: roundUp(rawSize, this._nh.optionalHeader.fileAlignment);
+			let alignedFileSize = !sec.data ? 0 : roundUp(rawSize, fileAlign);
 			const alignedSecSize = !sec.data
 				? 0
 				: roundUp(sec.info.virtualSize, secAlign);
@@ -277,7 +290,7 @@ export default class NtExecutable {
 
 			if (!hasEntry) {
 				let virtAddr = 0;
-				let rawAddr = this._headers.byteLength;
+				let rawAddr = roundUp(this._headers.byteLength, fileAlign);
 				// get largest addresses
 				this._sections.forEach((secExist) => {
 					if (secExist.info.pointerToRawData) {
@@ -295,6 +308,9 @@ export default class NtExecutable {
 				});
 				if (!alignedFileSize) {
 					rawAddr = 0;
+				}
+				if (!virtAddr) {
+					virtAddr = this.newHeader.optionalHeader.baseOfCode;
 				}
 				virtAddr = roundUp(virtAddr, secAlign);
 				sec.info.pointerToRawData = rawAddr;

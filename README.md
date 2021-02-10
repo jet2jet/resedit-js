@@ -9,6 +9,14 @@ This library is not tested well for modifying and/or signing executables yet. Pl
 
 To use in command line, consider using [resedit-js-cli](https://www.npmjs.com/package/resedit-cli).
 
+- [Install](#install)
+- [Supported formats](#supported-formats)
+- [Parsing signed executables](#parsing-signed-executables)
+- [Signing executables with resedit-js](#signing-executables-with-resedit-js)
+- [Notes](#notes)
+- [Examples](#examples)
+- [License](#license)
+
 ## Install
 
 ```
@@ -113,4 +121,7 @@ fs.writeFileSync('MyApp_modified.exe', new Buffer(newBinary));
 
 ## License
 
-[MIT License](./LICENSE)
+- All programs / source codes / binaries in this package, EXCEPT FOLLOWINGS, are licensed with [MIT License](./LICENSE).
+- The followings are licensed with 0-BSD license:
+  - [tools/dos-stub/dos-stub.asm](./tools/dos-stub/dos-stub.asm)
+  - The bit code, generated from tools/dos-stub/dos-stub.asm, written in [src/main/util/generate.ts](./src/main/util/generate.ts) as `DOS_STUB_PROGRAM`
