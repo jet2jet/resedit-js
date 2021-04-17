@@ -5,7 +5,7 @@ import * as child_process from 'child_process';
 import NtExecutable from '@/NtExecutable';
 import ImageDirectoryEntry from '@/format/ImageDirectoryEntry';
 
-function loadBinary(filePath: string): ArrayBuffer | ArrayBufferView {
+function loadBinary(filePath: string): Buffer {
 	return fs.readFileSync(filePath);
 }
 
@@ -32,10 +32,7 @@ export function mkdirp(dir: string): void {
 	});
 }
 
-export function loadExeBinary(
-	name: string,
-	platform: string
-): ArrayBuffer | ArrayBufferView {
+export function loadExeBinary(name: string, platform: string): Buffer {
 	return loadBinary(
 		path.resolve(__TEST_INPUT_ROOT__, name, platform, `${name}.exe`)
 	);
@@ -112,13 +109,13 @@ export function loadExecutableWithResourceCheck(
 	return exe;
 }
 
-export function loadIcon(name: string): ArrayBuffer | ArrayBufferView {
+export function loadIcon(name: string): Buffer {
 	return loadBinary(
 		path.resolve(__TEST_INPUT_ROOT__, 'icons', `${name}.ico`)
 	);
 }
 
-export function loadCert(name: string): ArrayBuffer | ArrayBufferView {
+export function loadCert(name: string): Buffer {
 	return loadBinary(path.resolve(__TEST_INPUT_ROOT__, 'certs', name));
 }
 
