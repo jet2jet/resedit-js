@@ -16,7 +16,7 @@ function getUint64LEBigInt(view: DataView, offset: number) {
 		throw new Error('BigInt not supported');
 	}
 	return (
-		BigInt('0x100000000') * BigInt(view.getUint32(offset + 4, true)) +
+		BigInt(0x100000000) * BigInt(view.getUint32(offset + 4, true)) +
 		BigInt(view.getUint32(offset, true))
 	);
 }
@@ -25,12 +25,10 @@ function setUint64LEBigInt(view: DataView, offset: number, val: bigint) {
 	if (typeof BigInt === 'undefined') {
 		throw new Error('BigInt not supported');
 	}
-	view.setUint32(offset, Number(val & BigInt('0xffffffff')), true);
+	view.setUint32(offset, Number(val & BigInt(0xffffffff)), true);
 	view.setUint32(
 		offset + 4,
-		Math.floor(
-			Number((val / BigInt('0x100000000')) & BigInt('0xffffffff'))
-		),
+		Math.floor(Number((val / BigInt(0x100000000)) & BigInt(0xffffffff))),
 		true
 	);
 }
