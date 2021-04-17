@@ -6,7 +6,6 @@ extends:
   - 'plugin:@typescript-eslint/recommended'
   - standard-with-typescript
   - prettier
-  - 'prettier/@typescript-eslint'
 env:
   browser: true
   node: false
