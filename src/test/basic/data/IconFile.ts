@@ -1,4 +1,4 @@
-import { loadIcon } from '../util/fs';
+import { loadIcon } from '../../util/fs';
 
 import IconFile, { IconFileItem } from '@/data/IconFile';
 
