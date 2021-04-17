@@ -35,7 +35,7 @@ export default class IconItem {
 	 * Bitmap pixel data used for mask
 	 * (the data will be appended immediately after `pixels` when generating icon binary)
 	 */
-	public masks: ArrayBuffer | null;
+	public masks: ArrayBuffer;
 	/**
 	 * Bitmap pixel data
 	 */
@@ -102,14 +102,12 @@ export default class IconItem {
 			sizeImage || (bi.bitCount * absWidthRound * absActualHeight) / 8;
 		this._pixels = allocatePartialBinary(view, offset, size);
 		offset += size;
-		let maskSize = calcMaskSize(bi.width, absActualHeight);
-		if (maskSize + offset > totalSize) {
-			maskSize = totalSize - offset;
-		}
-		if (maskSize) {
+		const maskSize = calcMaskSize(bi.width, absActualHeight);
+		if (maskSize + offset <= totalSize) {
 			this.masks = allocatePartialBinary(view, offset, maskSize);
 		} else {
-			this.masks = null;
+			// create a zero buffer (no mask is not allowed)
+			this.masks = new ArrayBuffer(maskSize);
 		}
 	}
 	/**
@@ -198,9 +196,7 @@ export default class IconItem {
 		const absActualHeight = Math.abs(bi.height) / 2;
 		const actualSizeImage =
 			(bi.bitCount * absWidthRound * absActualHeight) / 8;
-		const sizeMask = this.masks
-			? calcMaskSize(bi.width, absActualHeight)
-			: 0;
+		const sizeMask = calcMaskSize(bi.width, absActualHeight);
 		const colorCount = bi.colors.length;
 		const totalSize = 40 + 4 * colorCount + actualSizeImage + sizeMask;
 		const bin = new ArrayBuffer(totalSize);
@@ -231,9 +227,7 @@ export default class IconItem {
 		});
 
 		copyBuffer(bin, offset, this.pixels, 0, actualSizeImage);
-		if (this.masks) {
-			copyBuffer(bin, offset + actualSizeImage, this.masks, 0, sizeMask);
-		}
+		copyBuffer(bin, offset + actualSizeImage, this.masks, 0, sizeMask);
 		return bin;
 	}
 }

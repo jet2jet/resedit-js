@@ -40,6 +40,7 @@ export interface IconFileItem {
 
 function generateEntryBinary(icons: readonly IconFileItem[]): ArrayBuffer {
 	let count = icons.length;
+	/* istanbul ignore if */
 	if (count > 65535) {
 		count = 65535;
 	}
@@ -86,7 +87,7 @@ function generateEntryBinary(icons: readonly IconFileItem[]): ArrayBuffer {
 			height =
 				typeof item.height !== 'undefined'
 					? item.height
-					: Math.abs(bi.height);
+					: Math.abs(bi.height / 2);
 			colors =
 				typeof item.colors !== 'undefined'
 					? item.colors
@@ -148,6 +149,7 @@ export default class IconFile {
 		const totalSize = view.byteLength;
 		const icons: IconFileItem[] = [];
 
+		/* istanbul ignore else */
 		if (view.getUint16(2, true) === 1) {
 			const count = view.getUint16(4, true);
 			let offset = 6;
