@@ -10,6 +10,30 @@ function setUint64LE(view: DataView, offset: number, val: number) {
 	view.setUint32(offset, val & 0xffffffff, true);
 	view.setUint32(offset + 4, Math.floor(val / 0x100000000), true);
 }
+function getUint64LEBigInt(view: DataView, offset: number) {
+	/* istanbul ignore if */
+	if (typeof BigInt === 'undefined') {
+		throw new Error('BigInt not supported');
+	}
+	return (
+		BigInt('0x100000000') * BigInt(view.getUint32(offset + 4, true)) +
+		BigInt(view.getUint32(offset, true))
+	);
+}
+function setUint64LEBigInt(view: DataView, offset: number, val: bigint) {
+	/* istanbul ignore if */
+	if (typeof BigInt === 'undefined') {
+		throw new Error('BigInt not supported');
+	}
+	view.setUint32(offset, Number(val & BigInt('0xffffffff')), true);
+	view.setUint32(
+		offset + 4,
+		Math.floor(
+			Number((val / BigInt('0x100000000')) & BigInt('0xffffffff'))
+		),
+		true
+	);
+}
 
 export default class ImageOptionalHeader64 extends FormatBase {
 	public static readonly size = 112;
@@ -76,6 +100,12 @@ export default class ImageOptionalHeader64 extends FormatBase {
 	}
 	public set imageBase(val: number) {
 		setUint64LE(this.view, 24, val);
+	}
+	public get imageBaseBigInt(): bigint {
+		return getUint64LEBigInt(this.view, 24);
+	}
+	public set imageBaseBigInt(val: bigint) {
+		setUint64LEBigInt(this.view, 24, val);
 	}
 	public get sectionAlignment(): number {
 		return this.view.getUint32(32, true);
@@ -167,11 +197,23 @@ export default class ImageOptionalHeader64 extends FormatBase {
 	public set sizeOfStackReserve(val: number) {
 		setUint64LE(this.view, 72, val);
 	}
+	public get sizeOfStackReserveBigInt(): bigint {
+		return getUint64LEBigInt(this.view, 72);
+	}
+	public set sizeOfStackReserveBigInt(val: bigint) {
+		setUint64LEBigInt(this.view, 72, val);
+	}
 	public get sizeOfStackCommit(): number {
 		return getUint64LE(this.view, 80);
 	}
 	public set sizeOfStackCommit(val: number) {
 		setUint64LE(this.view, 80, val);
+	}
+	public get sizeOfStackCommitBigInt(): bigint {
+		return getUint64LEBigInt(this.view, 80);
+	}
+	public set sizeOfStackCommitBigInt(val: bigint) {
+		setUint64LEBigInt(this.view, 80, val);
 	}
 	public get sizeOfHeapReserve(): number {
 		return getUint64LE(this.view, 88);
@@ -179,11 +221,23 @@ export default class ImageOptionalHeader64 extends FormatBase {
 	public set sizeOfHeapReserve(val: number) {
 		setUint64LE(this.view, 88, val);
 	}
+	public get sizeOfHeapReserveBigInt(): bigint {
+		return getUint64LEBigInt(this.view, 88);
+	}
+	public set sizeOfHeapReserveBigInt(val: bigint) {
+		setUint64LEBigInt(this.view, 88, val);
+	}
 	public get sizeOfHeapCommit(): number {
 		return getUint64LE(this.view, 96);
 	}
 	public set sizeOfHeapCommit(val: number) {
 		setUint64LE(this.view, 96, val);
+	}
+	public get sizeOfHeapCommitBigInt(): bigint {
+		return getUint64LEBigInt(this.view, 96);
+	}
+	public set sizeOfHeapCommitBigInt(val: bigint) {
+		setUint64LEBigInt(this.view, 96, val);
 	}
 	public get loaderFlags(): number {
 		return this.view.getUint32(104, true);
