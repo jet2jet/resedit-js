@@ -32,14 +32,14 @@ export default class IconItem {
 	 */
 	public height: number | null;
 	/**
-	 * Bitmap pixel data
-	 */
-	public pixels: ArrayBuffer;
-	/**
 	 * Bitmap pixel data used for mask
 	 * (the data will be appended immediately after `pixels` when generating icon binary)
 	 */
 	public masks: ArrayBuffer | null;
+	/**
+	 * Bitmap pixel data
+	 */
+	private _pixels: ArrayBuffer;
 
 	private constructor(
 		width: number | null,
@@ -62,6 +62,7 @@ export default class IconItem {
 			planes: readUint16WithLastOffset(view, 12, headerSize),
 			bitCount: readUint16WithLastOffset(view, 14, headerSize),
 			compression: readUint32WithLastOffset(view, 16, headerSize),
+			sizeImage: sizeImage,
 			xPelsPerMeter: readInt32WithLastOffset(view, 24, headerSize),
 			yPelsPerMeter: readInt32WithLastOffset(view, 28, headerSize),
 			colorUsed: readUint32WithLastOffset(view, 32, headerSize),
@@ -99,7 +100,7 @@ export default class IconItem {
 		const absActualHeight = Math.abs(bi.height) / 2;
 		const size =
 			sizeImage || (bi.bitCount * absWidthRound * absActualHeight) / 8;
-		this.pixels = allocatePartialBinary(view, offset, size);
+		this._pixels = allocatePartialBinary(view, offset, size);
 		offset += size;
 		let maskSize = calcMaskSize(bi.width, absActualHeight);
 		if (maskSize + offset > totalSize) {
@@ -111,7 +112,25 @@ export default class IconItem {
 			this.masks = null;
 		}
 	}
-
+	/**
+	 * Bitmap pixel data.
+	 * @note
+	 * On set, if `bitmapInfo.sizeImage` is non-zero, `bitmapInfo.sizeImage` will be updated.
+	 */
+	public get pixels(): ArrayBuffer {
+		return this._pixels;
+	}
+	/**
+	 * Bitmap pixel data.
+	 * @note
+	 * On set, if `bitmapInfo.sizeImage` is non-zero, `bitmapInfo.sizeImage` will be updated.
+	 */
+	public set pixels(newValue: ArrayBuffer) {
+		this._pixels = newValue;
+		if (this.bitmapInfo.sizeImage !== 0) {
+			this.bitmapInfo.sizeImage = newValue.byteLength;
+		}
+	}
 	/**
 	 * Generates `IconItem` instance from bitmap data binary.
 	 * @param bin binary data containing the bitmap data
@@ -177,12 +196,13 @@ export default class IconItem {
 		const absWidth = Math.abs(bi.width);
 		const absWidthRound = roundUp(absWidth, 8);
 		const absActualHeight = Math.abs(bi.height) / 2;
-		const sizeImage = (bi.bitCount * absWidthRound * absActualHeight) / 8;
+		const actualSizeImage =
+			(bi.bitCount * absWidthRound * absActualHeight) / 8;
 		const sizeMask = this.masks
 			? calcMaskSize(bi.width, absActualHeight)
 			: 0;
 		const colorCount = bi.colors.length;
-		const totalSize = 40 + 4 * colorCount + sizeImage + sizeMask;
+		const totalSize = 40 + 4 * colorCount + actualSizeImage + sizeMask;
 		const bin = new ArrayBuffer(totalSize);
 		const view = new DataView(bin);
 		view.setUint32(0, 40, true);
@@ -192,7 +212,7 @@ export default class IconItem {
 		view.setUint16(14, bi.bitCount, true);
 		view.setUint32(16, bi.compression, true);
 		// image size
-		view.setUint32(20, sizeImage, true);
+		view.setUint32(20, bi.sizeImage, true);
 		view.setInt32(24, bi.xPelsPerMeter, true);
 		view.setInt32(28, bi.yPelsPerMeter, true);
 		view.setUint32(32, bi.colorUsed, true);
@@ -210,9 +230,9 @@ export default class IconItem {
 			offset += 4;
 		});
 
-		copyBuffer(bin, offset, this.pixels, 0, sizeImage);
+		copyBuffer(bin, offset, this.pixels, 0, actualSizeImage);
 		if (this.masks) {
-			copyBuffer(bin, offset + sizeImage, this.masks, 0, sizeMask);
+			copyBuffer(bin, offset + actualSizeImage, this.masks, 0, sizeMask);
 		}
 		return bin;
 	}

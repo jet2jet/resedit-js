@@ -4,6 +4,7 @@ export default interface BitmapInfo {
 	planes: number;
 	bitCount: number;
 	compression: number;
+	sizeImage: number;
 	xPelsPerMeter: number;
 	yPelsPerMeter: number;
 	colorUsed: number;
