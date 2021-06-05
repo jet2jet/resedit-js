@@ -3,7 +3,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["../../src/main/*"]
-    }
+    },
+    "target": "es5"
   },
   "include": [
     "./src/main/**/*.ts",

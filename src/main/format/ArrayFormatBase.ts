@@ -45,6 +45,7 @@ abstract class ArrayFormatBase<T> extends FormatBase {
 interface ArrayFormatBase<T> {
 	[Symbol.iterator]: () => Iterator<Readonly<T>>;
 }
+/* istanbul ignore else */
 if (typeof Symbol !== 'undefined') {
 	(ArrayFormatBase.prototype as any)[(Symbol as any).iterator] =
 		ArrayFormatBase.prototype._iterator;

@@ -1,6 +1,7 @@
 .vs/
 obj/
 /.work/
+/coverage/
 /dist/
 /node_modules/
 *.aps
