@@ -73,6 +73,12 @@ const FIELDS = [
 const TOTAL_DATA_SIZE = getFieldOffset(FIELDS, null);
 
 describe('ImageOptionalHeader', () => {
+	it('should satisfy that ImageOptionalHeader.size is the total data size', () => {
+		expect(ImageOptionalHeader.size).toEqual(TOTAL_DATA_SIZE);
+	});
+	it('should satisfy that ImageOptionalHeader.DEFAULT_MAGIC is 0x010b', () => {
+		expect(ImageOptionalHeader.DEFAULT_MAGIC).toEqual(0x010b);
+	});
 	describe.each([undefined, 32] as const)(
 		'Binary data offset is %s',
 		(dataOffset) => {
@@ -80,12 +86,6 @@ describe('ImageOptionalHeader', () => {
 			let dummyData: ArrayBuffer;
 			beforeEach(() => {
 				dummyData = new ArrayBuffer(TOTAL_DATA_SIZE + actualDataOffset);
-			});
-			it('should satisfy that ImageOptionalHeader.size is the total data size', () => {
-				expect(ImageOptionalHeader.size).toEqual(TOTAL_DATA_SIZE);
-			});
-			it('should satisfy that ImageOptionalHeader.DEFAULT_MAGIC is 0x010b', () => {
-				expect(ImageOptionalHeader.DEFAULT_MAGIC).toEqual(0x010b);
 			});
 			it.each(FIELDS)(
 				'should read %s field correctly',

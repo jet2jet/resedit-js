@@ -41,6 +41,12 @@ const NON_RESERVED_FIELDS = FIELDS.filter(
 const TOTAL_DATA_SIZE = getFieldOffset(FIELDS, 'newHeaderAddress') + 4;
 
 describe('ImageDosHeader', () => {
+	it('should satisfy that ImageDosHeader.size is the total data size', () => {
+		expect(ImageDosHeader.size).toEqual(TOTAL_DATA_SIZE);
+	});
+	it('should satisfy that ImageDosHeader.DEFAULT_MAGIC is 0x5a4d', () => {
+		expect(ImageDosHeader.DEFAULT_MAGIC).toEqual(0x5a4d);
+	});
 	describe.each([undefined, 32] as const)(
 		'Binary data offset is %s',
 		(dataOffset) => {
@@ -48,12 +54,6 @@ describe('ImageDosHeader', () => {
 			let dummyData: ArrayBuffer;
 			beforeEach(() => {
 				dummyData = new ArrayBuffer(TOTAL_DATA_SIZE + actualDataOffset);
-			});
-			it('should satisfy that ImageDosHeader.size is the total data size', () => {
-				expect(ImageDosHeader.size).toEqual(TOTAL_DATA_SIZE);
-			});
-			it('should satisfy that ImageDosHeader.DEFAULT_MAGIC is 0x5a4d', () => {
-				expect(ImageDosHeader.DEFAULT_MAGIC).toEqual(0x5a4d);
 			});
 			it('should be valid if the magic is DEFAULT_MAGIC', () => {
 				const dataView = new DataView(dummyData);

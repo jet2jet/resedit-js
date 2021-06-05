@@ -26,6 +26,9 @@ const FIELDS = [
 const TOTAL_DATA_SIZE = getFieldOffset(FIELDS, null);
 
 describe('ImageFileHeader', () => {
+	it('should satisfy that ImageFileHeader.size is the total data size', () => {
+		expect(ImageFileHeader.size).toEqual(TOTAL_DATA_SIZE);
+	});
 	describe.each([undefined, 32] as const)(
 		'Binary data offset is %s',
 		(dataOffset) => {
@@ -33,9 +36,6 @@ describe('ImageFileHeader', () => {
 			let dummyData: ArrayBuffer;
 			beforeEach(() => {
 				dummyData = new ArrayBuffer(TOTAL_DATA_SIZE + actualDataOffset);
-			});
-			it('should satisfy that ImageFileHeader.size is the total data size', () => {
-				expect(ImageFileHeader.size).toEqual(TOTAL_DATA_SIZE);
 			});
 			FIELDS.forEach((args) => {
 				const [fieldName, fieldSize] = args;
