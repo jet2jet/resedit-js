@@ -1,4 +1,5 @@
 import ArrayFormatBase from './ArrayFormatBase';
+import { getFixedString, setFixedString } from '../util/functions';
 
 export interface ImageSectionHeader {
 	name: string;
@@ -11,89 +12,6 @@ export interface ImageSectionHeader {
 	numberOfRelocations: number;
 	numberOfLineNumbers: number;
 	characteristics: number;
-}
-
-function getFixedString(
-	view: DataView,
-	offset: number,
-	length: number
-): string {
-	let actualLen = 0;
-	for (let i = 0; i < length; ++i) {
-		if (view.getUint8(offset + i) === 0) {
-			break;
-		}
-		++actualLen;
-	}
-	if (typeof Buffer !== 'undefined') {
-		return Buffer.from(
-			view.buffer,
-			view.byteOffset + offset,
-			actualLen
-		).toString('utf8');
-	} else if (typeof decodeURIComponent !== 'undefined') {
-		let s = '';
-		for (let i = 0; i < actualLen; ++i) {
-			const c = view.getUint8(offset + i);
-			if (c < 16) {
-				s += '%0' + c.toString(16);
-			} else {
-				s += '%' + c.toString(16);
-			}
-		}
-		return decodeURIComponent(s);
-	} else {
-		let s = '';
-		for (let i = 0; i < actualLen; ++i) {
-			const c = view.getUint8(offset + i);
-			s += String.fromCharCode(c);
-		}
-		return s;
-	}
-}
-
-function setFixedString(
-	view: DataView,
-	offset: number,
-	length: number,
-	text: string
-) {
-	if (typeof Buffer !== 'undefined') {
-		const u = new Uint8Array(view.buffer, view.byteOffset + offset, length);
-		// fill by zero
-		u.set(new Uint8Array(length));
-		u.set(Buffer.from(text, 'utf8').subarray(0, length));
-	} else if (typeof encodeURIComponent !== 'undefined') {
-		const s = encodeURIComponent(text);
-		for (let i = 0, j = 0; i < length; ++i) {
-			if (j >= s.length) {
-				view.setUint8(i + offset, 0);
-			} else {
-				const c = s.charCodeAt(j);
-				if (c === 37) {
-					// '%'
-					const n = parseInt(s.substr(j + 1, 2), 16);
-					if (typeof n === 'number' && !isNaN(n)) {
-						view.setUint8(i + offset, n);
-					} else {
-						view.setUint8(i + offset, 0);
-					}
-					j += 3;
-				} else {
-					view.setUint8(i + offset, c);
-				}
-			}
-		}
-	} else {
-		for (let i = 0, j = 0; i < length; ++i) {
-			if (j >= text.length) {
-				view.setUint8(i + offset, 0);
-			} else {
-				const c = text.charCodeAt(j);
-				view.setUint8(i + offset, c & 0xff);
-			}
-		}
-	}
 }
 
 export default class ImageSectionHeaderArray extends ArrayFormatBase<ImageSectionHeader> {
