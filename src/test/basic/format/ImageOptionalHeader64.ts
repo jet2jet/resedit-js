@@ -1,4 +1,5 @@
 import ImageOptionalHeader64 from '@/format/ImageOptionalHeader64';
+import { getFieldOffset } from '../../util/structure';
 
 // The definition:
 //
@@ -66,24 +67,8 @@ const FIELDS = [
 	['loaderFlags', 4],
 	['numberOfRvaAndSizes', 4],
 ] as const;
-type FieldNames = typeof FIELDS extends ReadonlyArray<
-	readonly [infer F, number]
->
-	? F
-	: never;
 
-function getFieldOffset(fieldName: FieldNames | null) {
-	let o = 0;
-	for (const f of FIELDS) {
-		if (f[0] === fieldName) {
-			return o;
-		}
-		o += f[1];
-	}
-	return o;
-}
-
-const TOTAL_DATA_SIZE = getFieldOffset(null);
+const TOTAL_DATA_SIZE = getFieldOffset(FIELDS, null);
 
 describe('ImageOptionalHeader64', () => {
 	describe.each([undefined, 32] as const)(
@@ -104,7 +89,7 @@ describe('ImageOptionalHeader64', () => {
 				const [fieldName, fieldSize] = args;
 				it(`should read ${args[0]} field correctly`, () => {
 					const dataView = new DataView(dummyData);
-					const offset = getFieldOffset(fieldName);
+					const offset = getFieldOffset(FIELDS, fieldName);
 					// To restrict 'args' type, use args[1] instead of fieldSize
 					if (args[1] === 8) {
 						dataView.setUint32(
@@ -178,7 +163,7 @@ describe('ImageOptionalHeader64', () => {
 						dummyData,
 						dataOffset
 					);
-					const offset = getFieldOffset(fieldName);
+					const offset = getFieldOffset(FIELDS, fieldName);
 					if (args[1] === 8) {
 						header[fieldName] = Number.MAX_SAFE_INTEGER;
 						expect(

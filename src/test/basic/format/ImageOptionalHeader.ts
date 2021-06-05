@@ -1,4 +1,5 @@
 import ImageOptionalHeader from '@/format/ImageOptionalHeader';
+import { getFieldOffset } from '../../util/structure';
 
 // The definition:
 //
@@ -68,24 +69,8 @@ const FIELDS = [
 	['loaderFlags', 4],
 	['numberOfRvaAndSizes', 4],
 ] as const;
-type FieldNames = typeof FIELDS extends ReadonlyArray<
-	readonly [infer F, number]
->
-	? F
-	: never;
 
-function getFieldOffset(fieldName: FieldNames | null) {
-	let o = 0;
-	for (const f of FIELDS) {
-		if (f[0] === fieldName) {
-			return o;
-		}
-		o += f[1];
-	}
-	return o;
-}
-
-const TOTAL_DATA_SIZE = getFieldOffset(null);
+const TOTAL_DATA_SIZE = getFieldOffset(FIELDS, null);
 
 describe('ImageOptionalHeader', () => {
 	describe.each([undefined, 32] as const)(
@@ -106,7 +91,7 @@ describe('ImageOptionalHeader', () => {
 				'should read %s field correctly',
 				(fieldName, fieldSize) => {
 					const dataView = new DataView(dummyData);
-					const offset = getFieldOffset(fieldName);
+					const offset = getFieldOffset(FIELDS, fieldName);
 					const value = 0x87654321 % Math.pow(2, 8 * fieldSize);
 					switch (fieldSize) {
 						case 1:
@@ -142,7 +127,7 @@ describe('ImageOptionalHeader', () => {
 						dummyData,
 						dataOffset
 					);
-					const offset = getFieldOffset(fieldName);
+					const offset = getFieldOffset(FIELDS, fieldName);
 					const value = 0x87654321 % Math.pow(2, 8 * fieldSize);
 					header[fieldName] = value;
 					switch (fieldSize) {
