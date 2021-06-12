@@ -668,6 +668,24 @@ export default class NtExecutableResource {
 	}
 
 	/**
+	 * Removes resource entries which has specified type and id.
+	 */
+	public removeResourceEntry(
+		type: string | number,
+		id: string | number,
+		lang?: string | number
+	): void {
+		this.entries = this.entries.filter(
+			(entry) =>
+				!(
+					entry.type === type &&
+					entry.id === id &&
+					(typeof lang === 'undefined' || entry.lang === lang)
+				)
+		);
+	}
+
+	/**
 	 * Generates resource data binary for NtExecutable (not for .res file)
 	 */
 	public generateResourceData(
