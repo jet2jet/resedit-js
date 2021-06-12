@@ -20,7 +20,10 @@
     "library",
     "version",
     "icon",
-    "edit"
+    "edit",
+    "resedit",
+    "pe-executable",
+    "authenticode"
   ],
   "repository": {
     "type": "git",
