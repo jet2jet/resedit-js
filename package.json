@@ -2,7 +2,7 @@
   "name": "resedit",
   "version": "0.7.0",
   "engines": {
-    "node": ">=10",
+    "node": ">=12",
     "npm": ">=6"
   },
   "engineStrict": true,
