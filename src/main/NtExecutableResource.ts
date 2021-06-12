@@ -6,7 +6,13 @@ import ResourceEntry, {
 	ResourceEntryT,
 	ResourceEntryTT,
 } from './resource/ResourceEntry';
-import { cloneObject, copyBuffer, roundUp } from './util/functions';
+import {
+	binaryToString,
+	cloneObject,
+	copyBuffer,
+	roundUp,
+	stringToBinary,
+} from './util/functions';
 
 function removeDuplicates<T>(a: readonly T[]): T[] {
 	return a.reduce<T[]>((p, c) => {
@@ -624,6 +630,41 @@ export default class NtExecutableResource {
 			}
 		}
 		this.entries.push(entry);
+	}
+
+	/**
+	 * Returns all resource entries, which has specified type and id, as UTF-8 string data.
+	 * @param type Resource type
+	 * @param id Resource id
+	 * @returns an array of lang and value pair (tuple)
+	 */
+	public getResourceEntriesAsString(
+		type: string | number,
+		id: string | number
+	): Array<[lang: string | number, value: string]> {
+		return this.entries
+			.filter((entry) => entry.type === type && entry.id === id)
+			.map((entry) => [entry.lang, binaryToString(entry.bin)]);
+	}
+
+	/**
+	 * Add or replace the resource entry with UTF-8 string data.
+	 * This method is a wrapper of {@link NtExecutableResource.replaceResourceEntry}.
+	 */
+	public replaceResourceEntryFromString(
+		type: string | number,
+		id: string | number,
+		lang: string | number,
+		value: string
+	): void {
+		const entry: ResourceEntry = {
+			type,
+			id,
+			lang,
+			codepage: 1200,
+			bin: stringToBinary(value),
+		};
+		this.replaceResourceEntry(entry);
 	}
 
 	/**

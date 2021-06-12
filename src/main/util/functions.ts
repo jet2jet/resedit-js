@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference lib='dom' />
 import ImageDosHeader from '../format/ImageDosHeader';
 
 // We must use 'object' for this function (Record<string, unknown> is not usable here)
@@ -169,6 +171,89 @@ export function readUint32WithLastOffset(
 	last: number
 ): number {
 	return offset + 4 <= last ? view.getUint32(offset, true) : 0;
+}
+
+export function binaryToString(bin: ArrayBuffer | ArrayBufferView): string {
+	if (typeof TextDecoder !== 'undefined') {
+		const dec = new TextDecoder();
+		return dec.decode(bin);
+	} else if (typeof Buffer !== 'undefined') {
+		let b;
+		if ('buffer' in bin) {
+			b = Buffer.from(bin.buffer, bin.byteOffset, bin.byteLength);
+		} else {
+			b = Buffer.from(bin);
+		}
+		return b.toString('utf8');
+	} else {
+		let view;
+		if ('buffer' in bin) {
+			view = new Uint8Array(bin.buffer, bin.byteOffset, bin.byteLength);
+		} else {
+			view = new Uint8Array(bin);
+		}
+		if (typeof decodeURIComponent !== 'undefined') {
+			let s = '';
+			for (let i = 0; i < view.length; ++i) {
+				const c = view[i];
+				if (c < 16) {
+					s += '%0' + c.toString(16);
+				} else {
+					s += '%' + c.toString(16);
+				}
+			}
+			return decodeURIComponent(s);
+		} else {
+			let s = '';
+			for (let i = 0; i < view.length; ++i) {
+				const c = view[i];
+				s += String.fromCharCode(c);
+			}
+			return s;
+		}
+	}
+}
+
+export function stringToBinary(string: string): ArrayBuffer {
+	if (typeof TextEncoder !== 'undefined') {
+		const enc = new TextEncoder();
+		return cloneToArrayBuffer(enc.encode(string));
+	} else if (typeof Buffer !== 'undefined') {
+		return cloneToArrayBuffer(Buffer.from(string, 'utf8'));
+	} else if (typeof encodeURIComponent !== 'undefined') {
+		const data = encodeURIComponent(string);
+		let len = 0;
+		for (let i = 0; i < data.length; ++len) {
+			const c = data.charCodeAt(i);
+			if (c === 37) {
+				i += 3;
+			} else {
+				++i;
+			}
+		}
+		const bin = new ArrayBuffer(len);
+		const view = new Uint8Array(bin);
+		for (let i = 0, j = 0; i < data.length; ++j) {
+			const c = data.charCodeAt(i);
+			if (c === 37) {
+				const n = parseInt(data.substring(i + 1, i + 3), 16);
+				view[j] = n;
+				i += 3;
+			} else {
+				view[j] = c;
+				++i;
+			}
+		}
+		return bin;
+	} else {
+		const bin = new ArrayBuffer(string.length);
+		new Uint8Array(bin).set(
+			[].map.call(string, (c: string): number =>
+				c.charCodeAt(0)
+			) as number[]
+		);
+		return bin;
+	}
 }
 
 export function getFixedString(

@@ -7,7 +7,7 @@ interface DummyBuffer extends Uint8Array {
 }
 interface DummyBufferConstructor {
 	from(data: string, encoding: string): DummyBuffer;
-	from(data: ArrayBuffer, offset: number, length?: number): DummyBuffer;
+	from(data: ArrayBuffer, offset?: number, length?: number): DummyBuffer;
 }
 // @ts-ignore: Avoid reporting errors in editors
 declare let Buffer: undefined | DummyBufferConstructor;
