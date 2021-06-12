@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.0
+
+- Add `sizeImage` on `BitmapInfo` to keep original values
+- Change icon mask to be non-null data
+- Add BigInt support for `ImageOptionalHeader64`
+- Add `getResourceEntriesAsString`, `replaceResourceEntryFromString`, and `removeResourceEntry` methods in `NtExecutableResource`
+- Drop Node.js v10
+
 ## v0.7.0
 
 - Add `NtExecutable.createEmpty` which creates 'empty' executable data
