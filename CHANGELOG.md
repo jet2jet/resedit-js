@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0
+
+- Add options to generateResourceData/outputResource (#21)
+
 ## v1.0.0
 
 - Add `sizeImage` on `BitmapInfo` to keep original values
