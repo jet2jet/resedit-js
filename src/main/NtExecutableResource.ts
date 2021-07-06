@@ -509,6 +509,7 @@ export default class NtExecutableResource {
 	 * (Note that the addresses and sizes are ignored for output)
 	 */
 	public sectionDataHeader: ImageSectionHeader | null = null;
+	private originalSize: number = 0;
 
 	private constructor() {}
 	private parse(section: Readonly<NtExecutableSection>) {
@@ -571,6 +572,7 @@ export default class NtExecutableResource {
 		}
 
 		this.entries = res;
+		this.originalSize = section.data.byteLength;
 	}
 
 	/**
@@ -687,10 +689,16 @@ export default class NtExecutableResource {
 
 	/**
 	 * Generates resource data binary for NtExecutable (not for .res file)
+	 * @param virtualAddress The virtual address for the section
+	 * @param alignment File alignment value of executable
+	 * @param noGrow Set true to disallow growing resource section (throw errors if data exceeds)
+	 * @param allowShrink Set true to allow shrinking resource section (if the data size is less than original)
 	 */
 	public generateResourceData(
 		virtualAddress: number,
-		alignment: number
+		alignment: number,
+		noGrow: boolean = false,
+		allowShrink: boolean = false
 	): {
 		bin: ArrayBuffer;
 		rawSize: number;
@@ -721,7 +729,19 @@ export default class NtExecutableResource {
 			return roundUp(p, 8) + e.bin.byteLength;
 		}, dataOffset);
 
-		const alignedSize = roundUp(size, alignment);
+		let alignedSize = roundUp(size, alignment);
+		const originalAlignedSize = roundUp(this.originalSize, alignment);
+
+		if (noGrow) {
+			if (alignedSize > originalAlignedSize) {
+				throw new Error('New resource data is larger than original');
+			}
+		}
+		if (!allowShrink) {
+			if (alignedSize < originalAlignedSize) {
+				alignedSize = originalAlignedSize;
+			}
+		}
 
 		// generate binary
 		const bin = new ArrayBuffer(alignedSize);
@@ -785,8 +805,15 @@ export default class NtExecutableResource {
 
 	/**
 	 * Writes holding resource data to specified NtExecutable instance.
+	 * @param exeDest An NtExecutable instance to write resource section to
+	 * @param noGrow Set true to disallow growing resource section (throw errors if data exceeds)
+	 * @param allowShrink Set true to allow shrinking resource section (if the data size is less than original)
 	 */
-	public outputResource(exeDest: NtExecutable): void {
+	public outputResource(
+		exeDest: NtExecutable,
+		noGrow: boolean = false,
+		allowShrink: boolean = false
+	): void {
 		// make section data
 		const fileAlign = exeDest.getFileAlignment();
 		let sectionData: NtExecutableSection;
@@ -815,7 +842,12 @@ export default class NtExecutableResource {
 
 		// first, set virtualAddress to 0 because
 		// the virtual address is not determined now
-		const data = this.generateResourceData(0, fileAlign);
+		const data = this.generateResourceData(
+			0,
+			fileAlign,
+			noGrow,
+			allowShrink
+		);
 
 		sectionData.data = data.bin;
 		sectionData.info.sizeOfRawData = data.bin.byteLength;
