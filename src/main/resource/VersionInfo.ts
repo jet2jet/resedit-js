@@ -521,6 +521,64 @@ export interface VersionInfoCreateParam {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+function clampInt(val: number, min: number, max: number) {
+	if (isNaN(val) || val < min) {
+		return min;
+	} else if (val >= max) {
+		return max;
+	}
+	return Math.floor(val);
+}
+
+function parseVersionArguments(
+	arg1: string | number,
+	arg2?: number,
+	arg3?: number,
+	arg4?: number,
+	arg5?: number
+): [
+	major: number,
+	minor: number,
+	micro: number,
+	revision: number,
+	lang: number | undefined
+] {
+	let major: number;
+	let minor: number;
+	let micro: number;
+	let revision: number;
+	let lang: number | undefined;
+	if (
+		typeof arg1 === 'string' &&
+		(typeof arg2 === 'undefined' || typeof arg2 === 'number') &&
+		typeof arg3 === 'undefined'
+	) {
+		[major, minor, micro, revision] = arg1
+			.split('.')
+			.map((token) => clampInt(Number(token), 0, 65535))
+			// add zeros for missing fields
+			.concat(0, 0, 0);
+		lang = arg2;
+	} else {
+		major = clampInt(Number(arg1), 0, 65535);
+		minor = clampInt(Number(arg2), 0, 65535);
+		micro = clampInt(
+			typeof arg3 === 'undefined' ? 0 : Number(arg3),
+			0,
+			65535
+		);
+		revision = clampInt(
+			typeof arg4 === 'undefined' ? 0 : Number(arg4),
+			0,
+			65535
+		);
+		lang = arg5;
+	}
+	return [major, minor, micro, revision, lang];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Treats 'Version information' (`VS_VERSIONINFO`) resource data.
  */
@@ -844,5 +902,150 @@ export default class VersionInfo {
 		}
 
 		entries.push(res);
+	}
+
+	// utility methods
+
+	private getDefaultVersionLang(propName: string) {
+		// first, use `this.lang` if it is a numeric value
+		const num = Number(this.lang);
+		if (this.lang !== '' && !isNaN(num)) {
+			return num;
+		}
+		// second, use lang value for propName if there is only one language
+		const a = this.data.strings
+			.filter((e) => propName in e.values)
+			.map((e) => e.lang);
+		if (a.length === 1) {
+			return a[0];
+		}
+		// use English language
+		return 1033;
+	}
+
+	/**
+	 * Sets 'FileVersion' property with specified values.
+	 * This methods writes `fixedInfo.fileVersionMS` and `fixedInfo.fileVersionLS` fields,
+	 * and writes `FileVersion` string with the value `<major>.<minor>.<micro>.<revision>`.
+	 * @param major The major version (clamped between 0 and 65535)
+	 * @param minor The minor version (clamped between 0 and 65535)
+	 * @param micro The micro version (clamped between 0 and 65535; default is 0)
+	 * @param revision The revision value (clamped between 0 and 65535; default is 0)
+	 * @param lang The language (default: this.lang -> picked from existings -> 1033)
+	 * @note
+	 * If you want to use 'Neutral' language for the version string, specify `lang` parameter to 0 explicitly
+	 */
+	public setFileVersion(
+		major: number,
+		minor: number,
+		micro?: number,
+		revision?: number,
+		lang?: number
+	): void;
+	/**
+	 * Sets 'FileVersion' property with specified values.
+	 * This methods writes `fixedInfo.fileVersionMS` and `fixedInfo.fileVersionLS` fields,
+	 * and writes `FileVersion` string with the value `<major>.<minor>.<micro>.<revision>`.
+	 * @param version The version string value (should be `x.x.x.x` format; each integer clamped between 0 and 65535)
+	 * @param lang The language (default: this.lang -> picked from existings -> 1033)
+	 * @note
+	 * If you want to use 'Neutral' language for the version string, specify `lang` parameter to 0 explicitly
+	 */
+	public setFileVersion(version: string, lang?: number): void;
+
+	public setFileVersion(
+		arg1: string | number,
+		arg2?: number,
+		arg3?: number,
+		arg4?: number,
+		arg5?: number
+	): void {
+		this.setFileVersionImpl(
+			...parseVersionArguments(arg1, arg2, arg3, arg4, arg5)
+		);
+	}
+
+	private setFileVersionImpl(
+		major: number,
+		minor: number,
+		micro: number,
+		revision: number,
+		lang?: number
+	): void {
+		lang =
+			typeof lang !== 'undefined'
+				? lang
+				: this.getDefaultVersionLang('FileVersion');
+		this.fixedInfo.fileVersionMS = (major << 16) | minor;
+		this.fixedInfo.fileVersionLS = (micro << 16) | revision;
+		this.setStringValue(
+			{ lang, codepage: 1200 },
+			'FileVersion',
+			`${major}.${minor}.${micro}.${revision}`,
+			true
+		);
+	}
+
+	/**
+	 * Sets 'ProductVersion' property with specified values.
+	 * This methods writes `fixedInfo.productVersionMS` and `fixedInfo.productVersionLS` fields,
+	 * and writes `ProductVersion` string with the value `<major>.<minor>.<micro>.<revision>`.
+	 * @param major The major version (clamped between 0 and 65535)
+	 * @param minor The minor version (clamped between 0 and 65535)
+	 * @param micro The micro version (clamped between 0 and 65535; default is 0)
+	 * @param revision The revision value (clamped between 0 and 65535; default is 0)
+	 * @param lang The language (default: this.lang -> picked from existings -> 1033)
+	 * @note
+	 * If you want to use 'Neutral' language for the version string, specify `lang` parameter to 0 explicitly
+	 */
+	public setProductVersion(
+		major: number,
+		minor: number,
+		micro?: number,
+		revision?: number,
+		lang?: number
+	): void;
+	/**
+	 * Sets 'ProductVersion' property with specified values.
+	 * This methods writes `fixedInfo.productVersionMS` and `fixedInfo.productVersionLS` fields,
+	 * and writes `ProductVersion` string with the value `<major>.<minor>.<micro>.<revision>`.
+	 * @param version The version string value (should be `x.x.x.x` format; each integer clamped between 0 and 65535)
+	 * @param lang The language (default: this.lang -> picked from existings -> 1033)
+	 * @note
+	 * If you want to use 'Neutral' language for the version string, specify `lang` parameter to 0 explicitly
+	 */
+	public setProductVersion(version: string, lang?: number): void;
+
+	public setProductVersion(
+		arg1: string | number,
+		arg2?: number,
+		arg3?: number,
+		arg4?: number,
+		arg5?: number
+	): void {
+		this.setProductVersionImpl(
+			...parseVersionArguments(arg1, arg2, arg3, arg4, arg5)
+		);
+	}
+
+	private setProductVersionImpl(
+		major: number,
+		minor: number,
+		micro: number,
+		revision: number,
+		lang?: number
+	): void {
+		lang =
+			typeof lang !== 'undefined'
+				? lang
+				: this.getDefaultVersionLang('ProductVersion');
+		this.fixedInfo.productVersionMS = (major << 16) | minor;
+		this.fixedInfo.productVersionLS = (micro << 16) | revision;
+		this.setStringValue(
+			{ lang, codepage: 1200 },
+			'ProductVersion',
+			`${major}.${minor}.${micro}.${revision}`,
+			true
+		);
 	}
 }

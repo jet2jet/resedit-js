@@ -103,11 +103,15 @@ describe(`VersionInfo - ${platform}`, () => {
 	const lang = 1033;
 	const langAnother = 1041;
 	const codepage = 1200;
-	const versionFixedValues: VersionFixedInfo = {
-		fileVersionMS: 0x10002,
-		fileVersionLS: 0x30004,
-		productVersionMS: 0x10001,
-		productVersionLS: 0x20003,
+	const fileVersions = [1, 2, 3, 4];
+	const fileVersionString = `${fileVersions[0]}.${fileVersions[1]}.${fileVersions[2]}.${fileVersions[3]}`;
+	const productVersions = [1, 1, 2, 3];
+	const productVersionString = `${productVersions[0]}.${productVersions[1]}.${productVersions[2]}.${productVersions[3]}`;
+	const versionFixedValuesWithoutVersionNumbers: VersionFixedInfo = {
+		fileVersionMS: 0,
+		fileVersionLS: 0,
+		productVersionMS: 0,
+		productVersionLS: 0,
 		fileFlagsMask: VersionFileFlags.Patched,
 		fileFlags: VersionFileFlags.Patched,
 		fileOS: VersionFileOS.NT_Windows32,
@@ -116,12 +120,22 @@ describe(`VersionInfo - ${platform}`, () => {
 		fileDateMS: 0,
 		fileDateLS: 0,
 	};
-	const versionStringValues = {
+	const versionFixedValues: VersionFixedInfo = {
+		...versionFixedValuesWithoutVersionNumbers,
+		fileVersionMS: (fileVersions[0] << 16) | fileVersions[1],
+		fileVersionLS: (fileVersions[2] << 16) | fileVersions[3],
+		productVersionMS: (productVersions[0] << 16) | productVersions[1],
+		productVersionLS: (productVersions[2] << 16) | productVersions[3],
+	};
+	const versionStringValuesWithoutVersions = {
 		FileDescription: 'dummy version - replaced by versionInfo test',
-		FileVersion: '1.2.3.4',
 		ProductName: 'versionInfo test',
-		ProductVersion: '1.1.2.3',
 		OriginalFilename: 'versionInfo.exe',
+	};
+	const versionStringValues = {
+		...versionStringValuesWithoutVersions,
+		FileVersion: fileVersionString,
+		ProductVersion: productVersionString,
 	};
 
 	it('append new version info as a new resource data', () => {
@@ -155,6 +169,58 @@ describe(`VersionInfo - ${platform}`, () => {
 			appName,
 			versionFixedValues,
 			lang,
+			codepage,
+			versionStringValues
+		);
+	});
+
+	it('append new version info as a new resource data 2', () => {
+		const appName = 'ReadVersionApp_NoRes';
+		const exe = loadExecutableWithResourceCheck(appName, platform, false);
+
+		const res = NtExecutableResource.from(exe);
+		expect(res.entries.length).toEqual(0);
+
+		const version = VersionInfo.createEmpty();
+		version.lang = langAnother;
+
+		copyValues(version.fixedInfo, versionFixedValuesWithoutVersionNumbers);
+		version.setStringValues(
+			{ lang: langAnother, codepage: codepage },
+			versionStringValuesWithoutVersions
+		);
+
+		// use utility method
+		version.setFileVersion(
+			fileVersions[0],
+			fileVersions[1],
+			fileVersions[2],
+			fileVersions[3],
+			langAnother
+		);
+		version.setProductVersion(
+			productVersions[0],
+			productVersions[1],
+			productVersions[2],
+			productVersions[3]
+			// skip specifying lang (use version.lang value)
+		);
+
+		version.outputToResourceEntries(res.entries);
+		expect(res.entries.length).toEqual(1);
+
+		res.outputResource(exe);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
+
+		const newBin = exe.generate();
+
+		doTestExecWithVersionValues(
+			newBin,
+			appName,
+			versionFixedValues,
+			langAnother,
 			codepage,
 			versionStringValues
 		);
@@ -196,6 +262,56 @@ describe(`VersionInfo - ${platform}`, () => {
 			appName,
 			versionFixedValues,
 			lang,
+			codepage,
+			versionStringValues
+		);
+	});
+
+	it('append new version info to existing resource data 2 (no version info)', () => {
+		const appName = 'ReadVersionApp_NoVersion';
+		const exe = loadExecutableWithResourceCheck(appName, platform, true);
+
+		const res = NtExecutableResource.from(exe);
+		const countEntries = res.entries.length;
+		expect(countEntries).toBeGreaterThan(0);
+
+		// check no entries
+		expect(VersionInfo.fromEntries(res.entries).length).toEqual(0);
+
+		const version = VersionInfo.createEmpty();
+
+		copyValues(version.fixedInfo, versionFixedValuesWithoutVersionNumbers);
+
+		// use utility method
+		version.setFileVersion(fileVersionString, lang);
+		// set version.lang to invalid string value
+		// to force setProductVersion use default lang value
+		version.lang = '';
+		// skip specifying lang to use default lang value
+		version.setProductVersion(productVersionString);
+
+		version.setStringValues(
+			{ lang: 1033, codepage: codepage },
+			versionStringValuesWithoutVersions
+		);
+
+		version.lang = 1033;
+		version.outputToResourceEntries(res.entries);
+		// should be incremented because no version entries are available
+		expect(res.entries.length).toEqual(countEntries + 1);
+
+		res.outputResource(exe);
+		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
+			null
+		);
+
+		const newBin = exe.generate();
+
+		doTestExecWithVersionValues(
+			newBin,
+			appName,
+			versionFixedValues,
+			1033,
 			codepage,
 			versionStringValues
 		);
