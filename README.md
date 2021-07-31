@@ -34,7 +34,7 @@ npm install resedit
 
 - Parsing signed executables (by using Authenticode or etc.) is not allowed by default and an exception will be thrown if `NtExecutable.from` receives a signed binary.
 - To parse signed, `{ ignoreCert: true }` object must be passed to the second argument of `NtExecutable.from`.
-- Although the base executable data is signed, `NtExecutable.generate` will generate unsigned executable binary. If you want to re-sign it, generate function with signing (see below) or any other signing tool such as Microsoft `signtool` must be used.
+- Although the base executable data is signed, `NtExecutable.generate` will generate unsigned executable binary. If you want to re-sign it, you must use generate-function with signing (see below) or any other signing tool such as Microsoft `signtool`.
 
 ## Signing executables with resedit-js
 
@@ -100,14 +100,14 @@ ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
 
 let viList = ResEdit.Resource.VersionInfo.fromEntries(res.entries);
 let vi = viList[0];
-vi.fixedInfo.fileVersionMS = 0x10001; // '1.1'
-vi.fixedInfo.fileVersionLS = 0;
+// setFileVersion will set `vi.fixedInfo.fileVersionMS`/`fileVersionLS` and 'FileVersion' string value
+// ('1033' means 'en-US')
+vi.setFileVersion(1, 0, 0, 0, 1033);
 // ('lang: 1033' means 'en-US', 'codepage: 1200' is the default codepage)
 vi.setStringValues(
   { lang: 1033, codepage: 1200 },
   {
     FileDescription: 'My application',
-    FileVersion: '1.1',
     ProductName: 'My product',
   }
 );

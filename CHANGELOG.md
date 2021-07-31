@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.0
+
+- Add 'setFileVersion' and 'setProductVersion' methods to VersionInfo (#23)
+
 ## v1.1.0
 
 - Add options to generateResourceData/outputResource (#21)
