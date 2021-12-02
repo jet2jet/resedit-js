@@ -226,6 +226,20 @@ function getAlgorithmIdentifierObject(type: DigestAlgorithmType | number[]) {
 	}
 }
 
+function doSign(
+	signer: SignerObject,
+	digestAlgorithm: AlgorithmIdentifier,
+	dataIterator: Iterator<ArrayBuffer, void>
+) {
+	return signer.digestData(dataIterator).then((digestAttributes) => {
+		// encrypting DigestInfo with digest of 'attributes' set
+		const digestInfoBin = new Uint8Array(
+			new DigestInfo(digestAlgorithm, digestAttributes).toDER()
+		).buffer;
+		return signer.encryptData(makeSimpleIterator(digestInfoBin));
+	});
+}
+
 /**
  * Generates the executable binary data with signed info.
  * This function is like an extension of `generate` method of `NtExecutable`.
@@ -342,27 +356,17 @@ export function generateExecutableWithSign(
 							const attrBin = new Uint8Array(
 								arrayToDERSet(attributes)
 							).buffer;
-							return signer
-								.digestData(makeSimpleIterator(attrBin))
-								.then((digestAttributes) => {
-									// encrypting DigestInfo with digest of 'attributes' set
-									const digestInfoBin = new Uint8Array(
-										new DigestInfo(
-											digestAlgorithm,
-											digestAttributes
-										).toDER()
-									).buffer;
-									return signer.encryptData(
-										makeSimpleIterator(digestInfoBin)
-									);
-								})
-								.then((signed): [
-									SpcIndirectDataContent,
-									Attribute[],
-									AnyBinary
-								] => {
-									return [content, attributes, signed];
-								});
+							return doSign(
+								signer,
+								digestAlgorithm,
+								makeSimpleIterator(attrBin)
+							).then((signed): [
+								SpcIndirectDataContent,
+								Attribute[],
+								AnyBinary
+							] => {
+								return [content, attributes, signed];
+							});
 						})
 				);
 			})
