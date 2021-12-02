@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.0
+
+- Add `signData` method to `SignerObject`
+
 ## v1.2.0
 
 - Add 'setFileVersion' and 'setProductVersion' methods to VersionInfo (#23)
