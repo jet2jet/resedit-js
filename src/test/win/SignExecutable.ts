@@ -9,7 +9,12 @@ import {
 	writeBinary,
 } from '../util/fs';
 import NtExecutable from '@/NtExecutable';
-import { generateExecutableWithSign, SignerObject } from '@/sign';
+import {
+	DigestAlgorithmType,
+	EncryptionAlgorithmType,
+	generateExecutableWithSign,
+	SignerObject,
+} from '@/sign';
 
 const platform = __TEST_PLATFORM__;
 
@@ -46,32 +51,57 @@ async function encryptDataBase(
 	return crypto.privateEncrypt(pkey, Buffer.concat(binArray, totalLength));
 }
 
-// simple SignerObject (using Node.js crypto API)
-const signerObjectBase: SignerObject = {
-	getDigestAlgorithm() {
-		return 'sha1';
-	},
-	getEncryptionAlgorithm() {
-		return 'rsa';
-	},
-	getCertificateData() {
-		throw new Error('Unimplemented');
-	},
-	async digestData(dataIterator) {
-		const hash = crypto.createHash('sha1');
-		while (true) {
-			const it = dataIterator.next();
-			if (it.done) {
-				break;
-			}
-			await hash.update(Buffer.from(it.value));
+async function digestDataBase(
+	algorithm: DigestAlgorithmType,
+	dataIterator: Iterator<ArrayBuffer, void>
+) {
+	const hash = crypto.createHash(algorithm);
+	while (true) {
+		const it = dataIterator.next();
+		if (it.done) {
+			break;
 		}
-		return hash.digest();
-	},
-	encryptData() {
-		throw new Error('Unimplemented');
-	},
-};
+		await hash.update(Buffer.from(it.value));
+	}
+	return hash.digest();
+}
+
+async function signDataBase(
+	algorithm: DigestAlgorithmType,
+	privFile: string,
+	dataIterator: Iterator<ArrayBuffer, void>
+) {
+	const pkey: crypto.SignPrivateKeyInput = {
+		key: loadPrivatePem(privFile),
+	};
+
+	const binArray: Buffer[] = [];
+	let totalLength = 0;
+	while (true) {
+		const it = dataIterator.next();
+		if (it.done) {
+			break;
+		}
+		binArray.push(Buffer.from(it.value));
+		totalLength += it.value.byteLength;
+		await 0;
+	}
+	return crypto.sign(algorithm, Buffer.concat(binArray, totalLength), pkey);
+}
+
+// simple SignerObject (using Node.js crypto API)
+class SimpleSignerObject implements SignerObject {
+	public getCertificateData!: SignerObject['getCertificateData'];
+	public getDigestAlgorithm(): DigestAlgorithmType {
+		return 'sha1';
+	}
+	public getEncryptionAlgorithm(): EncryptionAlgorithmType {
+		return 'rsa';
+	}
+	public async digestData(dataIterator: Iterator<ArrayBuffer>) {
+		return await digestDataBase('sha1', dataIterator);
+	}
+}
 
 describe('generateExecutableWithSign', () => {
 	const CERT_PATTERNS: Array<[string, string, string]> = [
@@ -87,14 +117,12 @@ describe('generateExecutableWithSign', () => {
 		async (_, certFile, privFile) => {
 			// use executable with resource
 			const appName = 'ReadVersionApp_HasVersion';
-			const signerObject: SignerObject = {
-				...signerObjectBase,
-				getCertificateData() {
-					return loadCert(certFile);
-				},
-				async encryptData(dataIterator) {
-					return await encryptDataBase(privFile, dataIterator);
-				},
+			const signerObject: SignerObject = new SimpleSignerObject();
+			signerObject.getCertificateData = () => {
+				return loadCert(certFile);
+			};
+			signerObject.encryptData = async (dataIterator) => {
+				return await encryptDataBase(privFile, dataIterator);
 			};
 
 			const binBase = loadExeBinary(appName, platform);
@@ -130,14 +158,12 @@ describe('generateExecutableWithSign', () => {
 	it('should sign and return an executable validated by Windows (re-sign)', async () => {
 		// use executable with resource
 		const appName = 'ReadVersionApp_HasVersion';
-		const signerObject: SignerObject = {
-			...signerObjectBase,
-			getCertificateData() {
-				return loadCert(CERT_KEY_NAME);
-			},
-			async encryptData(dataIterator) {
-				return await encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
-			},
+		const signerObject: SignerObject = new SimpleSignerObject();
+		signerObject.getCertificateData = () => {
+			return loadCert(CERT_KEY_NAME);
+		};
+		signerObject.encryptData = async (dataIterator) => {
+			return await encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
 		};
 
 		const binBase = loadExeBinary(appName, platform);
@@ -177,14 +203,12 @@ describe('generateExecutableWithSign', () => {
 	it('should sign and return an executable validated by Windows (with extra data)', async () => {
 		// use executable with resource
 		const appName = 'ReadVersionApp_HasVersion';
-		const signerObject: SignerObject = {
-			...signerObjectBase,
-			getCertificateData() {
-				return loadCert(CERT_KEY_NAME);
-			},
-			async encryptData(dataIterator) {
-				return await encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
-			},
+		const signerObject: SignerObject = new SimpleSignerObject();
+		signerObject.getCertificateData = () => {
+			return loadCert(CERT_KEY_NAME);
+		};
+		signerObject.encryptData = async (dataIterator) => {
+			return await encryptDataBase(PRIVATE_KEY_NAME, dataIterator);
 		};
 
 		const binBase = loadExeBinary(appName, platform);
@@ -220,4 +244,54 @@ describe('generateExecutableWithSign', () => {
 		}
 		expect(resultValue).toBe(0);
 	});
+	it.each(['sha1', 'sha256', 'sha384'] as const)(
+		'should sign and return an executable validated by Windows (with `signData` method and algorithm = %s)',
+		async (algorithm) => {
+			// use executable with resource
+			const appName = 'ReadVersionApp_HasVersion';
+			const signerObject: SignerObject = new SimpleSignerObject();
+			signerObject.getDigestAlgorithm = () => algorithm;
+			signerObject.digestData = async (dataIterator) =>
+				await digestDataBase(algorithm, dataIterator);
+			signerObject.getCertificateData = () => {
+				return loadCert(CERT_KEY_NAME);
+			};
+			signerObject.signData = async (dataIterator) => {
+				return await signDataBase(
+					algorithm,
+					PRIVATE_KEY_NAME,
+					dataIterator
+				);
+			};
+
+			const binBase = loadExeBinary(appName, platform);
+			const exe = NtExecutable.from(binBase, { ignoreCert: true });
+
+			const newBin = await generateExecutableWithSign(exe, signerObject);
+
+			const tempExe = path.resolve(
+				__TEST_TEMPDIR_ROOT__,
+				'sign',
+				platform,
+				`${appName}.exe`
+			);
+			writeBinary(tempExe, newBin);
+
+			const result = runExec(VERIFY_TOOL, [tempExe]);
+			const resultLines = result
+				.replace(/(?:\r\n|[\r\n])$/g, '')
+				.split(/\r\n|[\r\n]/g);
+
+			const ra = /^Result:([0-9]+)$/.exec(resultLines[0]);
+			if (!ra) {
+				fail(`Unexpected output from VerifyTool: ${result}`);
+			}
+			let resultValue = Number(ra[1]);
+			// ignore 2148204809 (CERT_E_UNTRUSTEDROOT)
+			if (resultValue === 2148204809) {
+				resultValue = 0;
+			}
+			expect(resultValue).toBe(0);
+		}
+	);
 });

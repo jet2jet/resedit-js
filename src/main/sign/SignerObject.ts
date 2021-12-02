@@ -82,10 +82,24 @@ export default interface SignerObject {
 		dataIterator: Iterator<ArrayBuffer, void>
 	): PromiseLike<ArrayBuffer | ArrayBufferView>;
 	/**
-	 * Encrypts specified data with **private key** (i.e. can be decrypted by the public key from `getCertificateData`). The private key type (algorithm) must be same as the result of `getEncryptionAlgorithm`.
+	 * Encrypts specified data with **private key** (i.e. can be verified with the public key from `getCertificateData`). The private key type (algorithm) must be same as the result of `getEncryptionAlgorithm`.
 	 * Must pick all data from `dataIterator` (until `dataIterator.next().done` is `true`).
+	 *
+	 * This method must be implemented if `signData` is not implemented.
 	 */
-	encryptData(
+	encryptData?(
+		dataIterator: Iterator<ArrayBuffer, void>
+	): PromiseLike<ArrayBuffer | ArrayBufferView>;
+	/**
+	 * Signs specified data with **private key** (i.e. can be verified with the public key from `getCertificateData`).
+	 * The private key type (algorithm) must be same as the result of `getEncryptionAlgorithm`, and the digest algorithm must be same as the result of `getDigestAlgorithm`.
+	 * Must pick all data from `dataIterator` (until `dataIterator.next().done` is `true`).
+	 *
+	 * This method must be implemented if `encryptData` is not implemented.
+	 *
+	 * Note that even if `signData` is implemented, `digestData` must be implemented.
+	 */
+	signData?(
 		dataIterator: Iterator<ArrayBuffer, void>
 	): PromiseLike<ArrayBuffer | ArrayBufferView>;
 	/**

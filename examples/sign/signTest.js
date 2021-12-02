@@ -80,7 +80,7 @@ function main() {
 			}
 			return hash.digest();
 		},
-		async encryptData(dataIterator) {
+		async signData(dataIterator) {
 			const pkey = {
 				key: fs.readFileSync(PRIVATE_KEY_PEM, 'utf8'),
 			};
@@ -97,9 +97,10 @@ function main() {
 				// NOTE: Use 'await' here for an example only.
 				await 0;
 			}
-			return crypto.privateEncrypt(
-				pkey,
-				Buffer.concat(binArray, totalLength)
+			return crypto.sign(
+				'sha1',
+				Buffer.concat(binArray, totalLength),
+				pkey
 			);
 		},
 		// If timestamp is not necessary, this method can be omitted.

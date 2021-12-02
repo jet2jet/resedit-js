@@ -88,6 +88,14 @@ function makeSimpleIterator<T>(data: T): Iterator<T> {
 	};
 }
 
+function validateSignerObject(signer: SignerObject) {
+	if (!signer.encryptData && !signer.signData) {
+		throw new Error(
+			'Signer object must implement either `encryptData` or `signData`.'
+		);
+	}
+}
+
 function calculateExecutableDigest(
 	executable: NtExecutable,
 	signer: SignerObject,
@@ -230,14 +238,19 @@ function doSign(
 	signer: SignerObject,
 	digestAlgorithm: AlgorithmIdentifier,
 	dataIterator: Iterator<ArrayBuffer, void>
-) {
-	return signer.digestData(dataIterator).then((digestAttributes) => {
-		// encrypting DigestInfo with digest of 'attributes' set
-		const digestInfoBin = new Uint8Array(
-			new DigestInfo(digestAlgorithm, digestAttributes).toDER()
-		).buffer;
-		return signer.encryptData(makeSimpleIterator(digestInfoBin));
-	});
+): PromiseLike<ArrayBuffer | ArrayBufferView> {
+	if (signer.signData) {
+		return signer.signData(dataIterator);
+	} else {
+		return signer.digestData(dataIterator).then((digestAttributes) => {
+			// encrypting DigestInfo with digest of 'attributes' set
+			const digestInfoBin = new Uint8Array(
+				new DigestInfo(digestAlgorithm, digestAttributes).toDER()
+			).buffer;
+			// (eencryptData should be defined here)
+			return signer.encryptData!(makeSimpleIterator(digestInfoBin));
+		});
+	}
 }
 
 /**
@@ -254,6 +267,7 @@ export function generateExecutableWithSign(
 	signer: SignerObject,
 	alignment?: number
 ): PromiseLike<ArrayBuffer> {
+	validateSignerObject(signer);
 	let certAlignment: number;
 	if (typeof alignment === 'number') {
 		if (alignment <= 0) {
