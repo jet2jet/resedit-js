@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.0
+
+- resedit now uses [pe-library](https://www.npmjs.com/package/pe-library) to parsing/generating PE binaries
+  - `ResEdit.NtExecutable` and some classes are now aliases of pe-library's classes.
+
 ## v1.3.0
 
 - Add `signData` method to `SignerObject`
