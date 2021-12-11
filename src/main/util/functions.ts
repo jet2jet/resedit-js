@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference lib='dom' />
-import { Format } from 'pe-library';
 
 // We must use 'object' for this function (Record<string, unknown> is not usable here)
 /* eslint-disable @typescript-eslint/ban-types */
@@ -35,49 +34,6 @@ export function createDataView(
 	} else {
 		return new DataView(bin, byteOffset, byteLength);
 	}
-}
-
-export function calculateCheckSumForPE(
-	bin: ArrayBuffer,
-	storeToBinary?: boolean
-): number {
-	const dosHeader = Format.ImageDosHeader.from(bin);
-	const view = new DataView(bin);
-
-	const checkSumOffset = dosHeader.newHeaderAddress + 88;
-
-	let result = 0;
-	const limit = 0x100000000; // 2^32
-	const update = (dword: number) => {
-		result += dword;
-		if (result >= limit) {
-			result = (result % limit) + ((result / limit) | 0);
-		}
-	};
-
-	const len = view.byteLength;
-	const lenExtra = len % 4;
-	const lenAlign = len - lenExtra;
-	for (let i = 0; i < lenAlign; i += 4) {
-		if (i !== checkSumOffset) {
-			update(view.getUint32(i, true));
-		}
-	}
-	if (lenExtra !== 0) {
-		let extra = 0;
-		for (let i = 0; i < lenExtra; i++) {
-			extra |= view.getUint8(lenAlign + i) << ((3 - i) * 8);
-		}
-		update(extra);
-	}
-	result = (result & 0xffff) + (result >>> 16);
-	result += result >>> 16;
-	result = (result & 0xffff) + len;
-
-	if (storeToBinary) {
-		view.setUint32(checkSumOffset, result, true);
-	}
-	return result;
 }
 
 export function roundUp(val: number, align: number): number {

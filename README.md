@@ -121,7 +121,4 @@ fs.writeFileSync('MyApp_modified.exe', new Buffer(newBinary));
 
 ## License
 
-- All programs / source codes / binaries in this package, EXCEPT FOLLOWINGS, are licensed with [MIT License](./LICENSE).
-- The followings are licensed with 0-BSD license:
-  - [tools/dos-stub/dos-stub.asm](./tools/dos-stub/dos-stub.asm)
-  - The bit code, generated from tools/dos-stub/dos-stub.asm, written in [src/main/util/generate.ts](./src/main/util/generate.ts) as `DOS_STUB_PROGRAM`
+[MIT License](./LICENSE)
