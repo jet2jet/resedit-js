@@ -14,18 +14,15 @@
 // - mono/AuthenticodeDeformatter.cs
 //   https://github.com/mono/mono/blob/master/mcs/class/Mono.Security/Mono.Security.Authenticode/AuthenticodeDeformatter.cs
 
+import { NtExecutable, Format, calculateCheckSumForPE } from 'pe-library';
+
 import SignerObject, {
 	DigestAlgorithmType,
 	EncryptionAlgorithmType,
 } from './SignerObject';
 
-import NtExecutable from '../NtExecutable';
-import ImageDataDirectoryArray from '../format/ImageDataDirectoryArray';
-import ImageDirectoryEntry from '../format/ImageDirectoryEntry';
-import ImageSectionHeaderArray from '../format/ImageSectionHeaderArray';
 import {
 	allocatePartialBinary,
-	calculateCheckSumForPE,
 	cloneToArrayBuffer,
 	copyBuffer,
 	roundUp,
@@ -106,7 +103,8 @@ function calculateExecutableDigest(
 		const certificateTableOffset =
 			executable.dosHeader.newHeaderAddress +
 			executable.newHeader.getDataDirectoryOffset() +
-			ImageDataDirectoryArray.itemSize * ImageDirectoryEntry.Certificate;
+			Format.ImageDataDirectoryArray.itemSize *
+				Format.ImageDirectoryEntry.Certificate;
 
 		const rawHeader = executable.getRawHeader();
 		// gather sections
@@ -120,14 +118,14 @@ function calculateExecutableDigest(
 		const sectionStartOffset = rawHeader.byteLength;
 		const sectionEndOffset = roundUp(
 			sectionStartOffset +
-				sectionCount * ImageSectionHeaderArray.itemSize,
+				sectionCount * Format.ImageSectionHeaderArray.itemSize,
 			executable.getFileAlignment()
 		);
 		const sectionHeadersSize = sectionEndOffset - sectionStartOffset;
 		// make dummy section header binary
 		const secHeader = new ArrayBuffer(sectionHeadersSize);
 		{
-			const secArray = ImageSectionHeaderArray.from(
+			const secArray = Format.ImageSectionHeaderArray.from(
 				secHeader,
 				sectionCount
 			);
@@ -148,7 +146,8 @@ function calculateExecutableDigest(
 		// pick from the end of 'Certificate Table' header to the end
 		{
 			const off =
-				certificateTableOffset + ImageDataDirectoryArray.itemSize;
+				certificateTableOffset +
+				Format.ImageDataDirectoryArray.itemSize;
 			yield allocatePartialBinary(
 				executable.getRawHeader(),
 				off,
@@ -499,12 +498,12 @@ export function generateExecutableWithSign(
 				}
 				const newBin = executable.generate(paddingSize);
 				const certOffset = newBin.byteLength - alignedSize;
-				const dirArray = ImageDataDirectoryArray.from(
+				const dirArray = Format.ImageDataDirectoryArray.from(
 					newBin,
 					executable.dosHeader.newHeaderAddress +
 						executable.newHeader.getDataDirectoryOffset()
 				);
-				dirArray.set(ImageDirectoryEntry.Certificate, {
+				dirArray.set(Format.ImageDirectoryEntry.Certificate, {
 					size: alignedSize,
 					virtualAddress: certOffset,
 				});

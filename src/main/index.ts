@@ -1,9 +1,8 @@
-import NtExecutable from './NtExecutable';
+import { NtExecutable, Format } from 'pe-library';
 import NtExecutableResource from './NtExecutableResource';
 import version from './version';
 
 import * as Data from './data';
-import * as Format from './format';
 import * as Resource from './resource';
 
 import {

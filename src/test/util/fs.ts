@@ -2,8 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as child_process from 'child_process';
 
-import NtExecutable from '@/NtExecutable';
-import ImageDirectoryEntry from '@/format/ImageDirectoryEntry';
+import { NtExecutable, Format } from 'pe-library';
 
 function loadBinary(filePath: string): Buffer {
 	return fs.readFileSync(filePath);
@@ -98,13 +97,13 @@ export function loadExecutableWithResourceCheck(
 	const bin = loadExeBinary(appName, platform);
 	const exe = NtExecutable.from(bin);
 	if (exists) {
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 	} else {
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).toEqual(null);
 	}
 	return exe;
 }

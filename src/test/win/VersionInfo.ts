@@ -1,7 +1,8 @@
+import { Format } from 'pe-library';
+
 import { loadExecutableWithResourceCheck, testExec } from '../util/fs';
 
 import NtExecutableResource from '@/NtExecutableResource';
-import ImageDirectoryEntry from '@/format/ImageDirectoryEntry';
 import VersionFileFlags from '@/resource/VersionFileFlags';
 import VersionFileOS from '@/resource/VersionFileOS';
 import VersionFileType from '@/resource/VersionFileType';
@@ -158,9 +159,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(1);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 
@@ -210,9 +211,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(1);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 
@@ -251,9 +252,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries + 1);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 
@@ -301,9 +302,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries + 1);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 
@@ -350,9 +351,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 
@@ -398,9 +399,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 
@@ -441,9 +442,9 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(res.entries.length).toEqual(countEntries);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 

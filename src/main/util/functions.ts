@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference lib='dom' />
-import ImageDosHeader from '../format/ImageDosHeader';
+import { Format } from 'pe-library';
 
 // We must use 'object' for this function (Record<string, unknown> is not usable here)
 /* eslint-disable @typescript-eslint/ban-types */
@@ -41,7 +41,7 @@ export function calculateCheckSumForPE(
 	bin: ArrayBuffer,
 	storeToBinary?: boolean
 ): number {
-	const dosHeader = ImageDosHeader.from(bin);
+	const dosHeader = Format.ImageDosHeader.from(bin);
 	const view = new DataView(bin);
 
 	const checkSumOffset = dosHeader.newHeaderAddress + 88;

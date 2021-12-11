@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
+import { NtExecutable } from 'pe-library';
 
 import {
 	loadCert,
@@ -8,7 +9,6 @@ import {
 	runExec,
 	writeBinary,
 } from '../util/fs';
-import NtExecutable from '@/NtExecutable';
 import {
 	DigestAlgorithmType,
 	EncryptionAlgorithmType,

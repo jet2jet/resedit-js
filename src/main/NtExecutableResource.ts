@@ -1,6 +1,4 @@
-import ImageDirectoryEntry from './format/ImageDirectoryEntry';
-import { ImageSectionHeader } from './format/ImageSectionHeaderArray';
-import NtExecutable, { NtExecutableSection } from './NtExecutable';
+import { NtExecutable, NtExecutableSection, Format } from 'pe-library';
 import ResourceEntry, {
 	ResourceEntryBaseType,
 	ResourceEntryT,
@@ -508,7 +506,7 @@ export default class NtExecutableResource {
 	 * You can override this field before calling outputResource method.
 	 * (Note that the addresses and sizes are ignored for output)
 	 */
-	public sectionDataHeader: ImageSectionHeader | null = null;
+	public sectionDataHeader: Format.ImageSectionHeader | null = null;
 	private originalSize: number = 0;
 
 	private constructor() {}
@@ -584,13 +582,15 @@ export default class NtExecutableResource {
 		const secs = ([] as NtExecutableSection[])
 			.concat(exe.getAllSections())
 			.sort((a, b) => a.info.virtualAddress - b.info.virtualAddress);
-		const entry = exe.getSectionByEntry(ImageDirectoryEntry.Resource);
+		const entry = exe.getSectionByEntry(
+			Format.ImageDirectoryEntry.Resource
+		);
 		// check if the section order is supported
 		// (not supported if any other sections except 'relocation' is available,
 		// because the recalculation of virtual address is not simple)
 		if (entry) {
 			const reloc = exe.getSectionByEntry(
-				ImageDirectoryEntry.BaseRelocation
+				Format.ImageDirectoryEntry.BaseRelocation
 			);
 			for (let i = 0; i < secs.length; ++i) {
 				const s = secs[i];
@@ -854,11 +854,14 @@ export default class NtExecutableResource {
 		sectionData.info.virtualSize = data.rawSize;
 
 		// write as section
-		exeDest.setSectionByEntry(ImageDirectoryEntry.Resource, sectionData);
+		exeDest.setSectionByEntry(
+			Format.ImageDirectoryEntry.Resource,
+			sectionData
+		);
 
 		// rewrite section raw-data
 		const generatedSection = exeDest.getSectionByEntry(
-			ImageDirectoryEntry.Resource
+			Format.ImageDirectoryEntry.Resource
 		)!;
 		const view = new DataView(generatedSection.data!);
 		// set RVA

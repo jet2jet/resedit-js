@@ -1,3 +1,5 @@
+import { Format } from 'pe-library';
+
 import {
 	loadExecutableWithResourceCheck,
 	loadIcon,
@@ -6,7 +8,6 @@ import {
 
 import NtExecutableResource from '@/NtExecutableResource';
 import IconFile from '@/data/IconFile';
-import ImageDirectoryEntry from '@/format/ImageDirectoryEntry';
 import IconGroupEntry from '@/resource/IconGroupEntry';
 
 const platform = __TEST_PLATFORM__;
@@ -75,9 +76,9 @@ describe(`IconGroupEntry - ${platform}`, () => {
 		expect(res.entries.length).toEqual(1 + iconFile.icons.length);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 
@@ -108,9 +109,9 @@ describe(`IconGroupEntry - ${platform}`, () => {
 		);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 
@@ -157,9 +158,9 @@ describe(`IconGroupEntry - ${platform}`, () => {
 		);
 
 		res.outputResource(exe);
-		expect(exe.getSectionByEntry(ImageDirectoryEntry.Resource)).not.toEqual(
-			null
-		);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
 
 		const newBin = exe.generate();
 

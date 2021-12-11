@@ -5,12 +5,7 @@
 //
 // NOTE: the original dos-stub.asm program and the bit code in DOS_STUB_PROGRAM are under the 0-BSD license.
 
-import ImageDataDirectoryArray from '../format/ImageDataDirectoryArray';
-import ImageDosHeader from '../format/ImageDosHeader';
-import ImageFileHeader from '../format/ImageFileHeader';
-import ImageNtHeaders from '../format/ImageNtHeaders';
-import ImageOptionalHeader from '../format/ImageOptionalHeader';
-import ImageOptionalHeader64 from '../format/ImageOptionalHeader64';
+import { Format } from 'pe-library';
 import { copyBuffer, roundUp } from './functions';
 
 // fill with '0x00' to make 8-bytes alignment
@@ -22,7 +17,7 @@ const DOS_STUB_PROGRAM = new Uint8Array([
 ]);
 
 const DOS_STUB_SIZE = roundUp(
-	ImageDosHeader.size + DOS_STUB_PROGRAM.length,
+	Format.ImageDosHeader.size + DOS_STUB_PROGRAM.length,
 	0x80
 );
 
@@ -33,8 +28,8 @@ export function getDosStubDataSize(): number {
 }
 
 export function fillDosStubData(bin: ArrayBuffer | ArrayBufferView): void {
-	const dos = ImageDosHeader.from(bin);
-	dos.magic = ImageDosHeader.DEFAULT_MAGIC;
+	const dos = Format.ImageDosHeader.from(bin);
+	dos.magic = Format.ImageDosHeader.DEFAULT_MAGIC;
 	// last page size
 	dos.lastPageSize = DOS_STUB_SIZE % 512;
 	// total page count
@@ -42,18 +37,18 @@ export function fillDosStubData(bin: ArrayBuffer | ArrayBufferView): void {
 	// no relocations
 	dos.relocations = 0;
 	// header size as paragraph count (1 paragraph = 16 bytes)
-	dos.headerSizeInParagraph = Math.ceil(ImageDosHeader.size / 16);
+	dos.headerSizeInParagraph = Math.ceil(Format.ImageDosHeader.size / 16);
 	dos.minAllocParagraphs = 0;
 	dos.maxAllocParagraphs = 0xffff;
 	dos.initialSS = 0;
 	dos.initialSP = 0x80;
 	// (no relocations, but set offset after the header)
-	dos.relocationTableAddress = ImageDosHeader.size;
+	dos.relocationTableAddress = Format.ImageDosHeader.size;
 	dos.newHeaderAddress = DOS_STUB_SIZE;
 
 	copyBuffer(
 		bin,
-		ImageDosHeader.size,
+		Format.ImageDosHeader.size,
 		DOS_STUB_PROGRAM,
 		0,
 		DOS_STUB_PROGRAM.length
@@ -64,9 +59,11 @@ export function estimateNewHeaderSize(is32Bit: boolean): number {
 	return (
 		// magic
 		4 +
-		ImageFileHeader.size +
-		(is32Bit ? ImageOptionalHeader.size : ImageOptionalHeader64.size) +
-		ImageDataDirectoryArray.size
+		Format.ImageFileHeader.size +
+		(is32Bit
+			? Format.ImageOptionalHeader.size
+			: Format.ImageOptionalHeader64.size) +
+		Format.ImageDataDirectoryArray.size
 	);
 }
 
@@ -89,28 +86,30 @@ export function fillPeHeaderEmptyData(
 
 	new DataView(_bin, _offset).setUint32(
 		0,
-		ImageNtHeaders.DEFAULT_SIGNATURE,
+		Format.ImageNtHeaders.DEFAULT_SIGNATURE,
 		true
 	);
 
-	const fh = ImageFileHeader.from(_bin, _offset + 4);
+	const fh = Format.ImageFileHeader.from(_bin, _offset + 4);
 	fh.machine = is32Bit ? 0x14c : 0x8664;
 	fh.numberOfSections = 0; // no sections
 	fh.timeDateStamp = 0;
 	fh.pointerToSymbolTable = 0;
 	fh.numberOfSymbols = 0;
 	fh.sizeOfOptionalHeader =
-		(is32Bit ? ImageOptionalHeader.size : ImageOptionalHeader64.size) +
-		ImageDataDirectoryArray.size;
+		(is32Bit
+			? Format.ImageOptionalHeader.size
+			: Format.ImageOptionalHeader64.size) +
+		Format.ImageDataDirectoryArray.size;
 	fh.characteristics = isDLL ? 0x2102 : 0x102;
 
-	const oh = (is32Bit ? ImageOptionalHeader : ImageOptionalHeader64).from(
-		_bin,
-		_offset + 4 + ImageFileHeader.size
-	);
+	const oh = (is32Bit
+		? Format.ImageOptionalHeader
+		: Format.ImageOptionalHeader64
+	).from(_bin, _offset + 4 + Format.ImageFileHeader.size);
 	oh.magic = is32Bit
-		? ImageOptionalHeader.DEFAULT_MAGIC
-		: ImageOptionalHeader64.DEFAULT_MAGIC;
+		? Format.ImageOptionalHeader.DEFAULT_MAGIC
+		: Format.ImageOptionalHeader64.DEFAULT_MAGIC;
 	// oh.majorLinkerVersion = 0;
 	// oh.minorLinkerVersion = 0;
 	oh.sizeOfCode = 0;
@@ -142,7 +141,8 @@ export function fillPeHeaderEmptyData(
 	oh.sizeOfHeapCommit = 0x1000;
 	// oh.loaderFlags = 0;
 	oh.numberOfRvaAndSizes =
-		ImageDataDirectoryArray.size / ImageDataDirectoryArray.itemSize;
+		Format.ImageDataDirectoryArray.size /
+		Format.ImageDataDirectoryArray.itemSize;
 }
 
 export function makeEmptyNtExecutableBinary(
