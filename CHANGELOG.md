@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.0
+
+- Update pe-library
+
 ## v1.4.1
 
 - Remove more unused functions/files

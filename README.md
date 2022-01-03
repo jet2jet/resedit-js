@@ -64,14 +64,15 @@ Note that resedit-js only provides basic signing process, and provides as beta v
 For more APIs, please see `dist` directory of the package. And, [some test codes](./src/test) may help you for usages.
 
 ```js
+const PELibrary = require('pe-library');
 const ResEdit = require('resedit');
 const fs = require('fs');
 
 // load and parse data
 let data = fs.readFileSync('MyApp.exe');
 // (the Node.js Buffer instance can be specified directly to NtExecutable.from)
-let exe = ResEdit.NtExecutable.from(data);
-let res = ResEdit.NtExecutableResource.from(exe);
+let exe = PELibrary.NtExecutable.from(data);
+let res = PELibrary.NtExecutableResource.from(exe);
 
 // rewrite resources
 // - You can use helper classes as followings:
