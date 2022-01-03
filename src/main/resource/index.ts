@@ -1,5 +1,5 @@
+import { Type } from 'pe-library';
 import IconGroupEntry, { IconGroupItem } from './IconGroupEntry';
-import ResourceEntry, { ResourceEntryBaseType } from './ResourceEntry';
 import StringTable from './StringTable';
 import VersionFileFlags from './VersionFileFlags';
 import VersionFileOS from './VersionFileOS';
@@ -15,6 +15,13 @@ import VersionInfo, {
 	VersionStringValues,
 	VersionTranslation,
 } from './VersionInfo';
+
+type ResourceEntry = Type.ResourceEntry;
+type ResourceEntryBaseType<
+	TType extends string | number,
+	TID extends string | number,
+	TLang extends string | number
+> = Type.ResourceEntryBaseType<TType, TID, TLang>;
 
 export {
 	IconGroupEntry,

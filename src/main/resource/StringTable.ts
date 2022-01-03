@@ -1,8 +1,6 @@
-import ResourceEntry from './ResourceEntry';
+import { NtExecutableResource, Type } from 'pe-library';
 
 import StringTableItem from './StringTableItem';
-
-import NtExecutableResource from '../NtExecutableResource';
 
 /** Utility class to create / parse String Table resource */
 export default class StringTable {
@@ -18,7 +16,7 @@ export default class StringTable {
 	/** Create StringTable instance from resource entries, with specified language. */
 	public static fromEntries(
 		lang: string | number,
-		entries: readonly ResourceEntry[]
+		entries: readonly Type.ResourceEntry[]
 	): StringTable {
 		const r = new StringTable();
 		entries.forEach((e) => {
@@ -85,9 +83,9 @@ export default class StringTable {
 	}
 
 	/** Generates an array of Entry for resource processings */
-	public generateEntries(): ResourceEntry[] {
+	public generateEntries(): Type.ResourceEntry[] {
 		return this.items
-			.map((e, i): ResourceEntry | null => {
+			.map((e, i): Type.ResourceEntry | null => {
 				const len = e.calcByteLength();
 				const bin = new ArrayBuffer(len);
 				e.generate(bin, 0);
@@ -99,7 +97,7 @@ export default class StringTable {
 					bin,
 				};
 			})
-			.filter((e): e is ResourceEntry => !!e);
+			.filter((e): e is Type.ResourceEntry => !!e);
 	}
 
 	/**

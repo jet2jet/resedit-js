@@ -1,4 +1,4 @@
-import { Format } from 'pe-library';
+import { Format, NtExecutableResource } from 'pe-library';
 
 import {
 	loadExecutableWithResourceCheck,
@@ -6,7 +6,6 @@ import {
 	testExec,
 } from '../util/fs';
 
-import NtExecutableResource from '@/NtExecutableResource';
 import IconFile from '@/data/IconFile';
 import IconGroupEntry from '@/resource/IconGroupEntry';
 

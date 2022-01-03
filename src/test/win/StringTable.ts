@@ -1,8 +1,7 @@
-import { Format } from 'pe-library';
+import { Format, NtExecutableResource } from 'pe-library';
 
 import { loadExecutableWithResourceCheck, testExec } from '../util/fs';
 
-import NtExecutableResource from '@/NtExecutableResource';
 import StringTable from '@/resource/StringTable';
 
 const platform = __TEST_PLATFORM__;

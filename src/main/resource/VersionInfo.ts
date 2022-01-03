@@ -1,4 +1,4 @@
-import ResourceEntry from './ResourceEntry';
+import { Type } from 'pe-library';
 
 import {
 	allocatePartialBinary,
@@ -270,7 +270,10 @@ function parseVarFileInfo(
 	return r;
 }
 
-function parseVersionEntry(view: DataView, entry: ResourceEntry): VersionEntry {
+function parseVersionEntry(
+	view: DataView,
+	entry: Type.ResourceEntry
+): VersionEntry {
 	const totalLen = view.getUint16(0, true);
 	let dataLen = view.getUint16(2, true);
 	// value type must be binary
@@ -585,7 +588,7 @@ function parseVersionArguments(
 export default class VersionInfo {
 	private data: VersionEntry;
 
-	private constructor(entry?: ResourceEntry) {
+	private constructor(entry?: Type.ResourceEntry) {
 		if (!entry) {
 			this.data = {
 				lang: 0, // MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL)
@@ -657,7 +660,7 @@ export default class VersionInfo {
 
 	/** Pick up all version-info entries */
 	public static fromEntries(
-		entries: readonly ResourceEntry[]
+		entries: readonly Type.ResourceEntry[]
 	): VersionInfo[] {
 		return entries
 			.filter((e) => e.type === 16)
@@ -868,11 +871,11 @@ export default class VersionInfo {
 	}
 
 	/**
-	 * Creates `ResourceEntry` object for this instance.
+	 * Creates `Type.ResourceEntry` object for this instance.
 	 * Usually `outputToResourceEntries` is suitable for generating resource data
 	 * into executables, but you can use this method if necessary.
 	 */
-	public generateResource(): ResourceEntry {
+	public generateResource(): Type.ResourceEntry {
 		const bin = generateVersionEntryBinary(this.data);
 
 		return {
@@ -889,7 +892,7 @@ export default class VersionInfo {
 	 * If version info resource already exists in `entries`, this method replaces it with the new one.
 	 * @param entries resource entry array for output
 	 */
-	public outputToResourceEntries(entries: ResourceEntry[]): void {
+	public outputToResourceEntries(entries: Type.ResourceEntry[]): void {
 		const res = this.generateResource();
 
 		const len = entries.length;

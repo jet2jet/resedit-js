@@ -1,4 +1,4 @@
-import ResourceEntry, { ResourceEntryBaseType } from './ResourceEntry';
+import { Type } from 'pe-library';
 
 import IconItem from '../data/IconItem';
 import RawIconItem from '../data/RawIconItem';
@@ -65,7 +65,7 @@ function generateEntryBinary(icons: readonly IconGroupItem[]): ArrayBuffer {
 }
 
 function findUnusedIconID(
-	entries: readonly ResourceEntry[],
+	entries: readonly Type.ResourceEntry[],
 	lang: string | number,
 	isCursor: boolean
 ): {
@@ -76,8 +76,13 @@ function findUnusedIconID(
 	// (ignore string id)
 	const filteredIDs = entries
 		.filter(
-			(e): e is ResourceEntryBaseType<number, number, string | number> =>
-				e.type === type && e.lang === lang && typeof e.id === 'number'
+			(
+				e
+			): e is Type.ResourceEntryBaseType<
+				number,
+				number,
+				string | number
+			> => e.type === type && e.lang === lang && typeof e.id === 'number'
 		)
 		.map((e) => e.id)
 		.sort((a, b) => a - b);
@@ -113,7 +118,7 @@ export default class IconGroupEntry {
 	public lang: string | number;
 	public readonly icons: IconGroupItem[];
 
-	private constructor(groupEntry: ResourceEntry) {
+	private constructor(groupEntry: Type.ResourceEntry) {
 		const view = new DataView(groupEntry.bin);
 		const totalSize = view.byteLength;
 		const icons: IconGroupItem[] = [];
@@ -165,14 +170,14 @@ export default class IconGroupEntry {
 	}
 
 	public static fromEntries(
-		entries: readonly ResourceEntry[]
+		entries: readonly Type.ResourceEntry[]
 	): IconGroupEntry[] {
 		return entries
 			.filter((e) => e.type === 14)
 			.map((e) => new IconGroupEntry(e));
 	}
 
-	public generateEntry(): ResourceEntry {
+	public generateEntry(): Type.ResourceEntry {
 		const bin = generateEntryBinary(this.icons);
 		return {
 			type: 14,
@@ -188,7 +193,7 @@ export default class IconGroupEntry {
 	 * from specified resource entries.
 	 */
 	public getIconItemsFromEntries(
-		entries: readonly ResourceEntry[]
+		entries: readonly Type.ResourceEntry[]
 	): Array<IconItem | RawIconItem> {
 		return entries
 			.map((e) => {
@@ -230,13 +235,13 @@ export default class IconGroupEntry {
 	 * @param icons the icons to replace
 	 */
 	public static replaceIconsForResource(
-		destEntries: ResourceEntry[],
+		destEntries: Type.ResourceEntry[],
 		iconGroupID: string | number,
 		lang: string | number,
 		icons: Array<IconItem | RawIconItem>
 	): void {
 		// find existing entry
-		let entry: ResourceEntry | undefined = destEntries
+		let entry: Type.ResourceEntry | undefined = destEntries
 			.filter(
 				(e) => e.type === 14 && e.id === iconGroupID && e.lang === lang
 			)
@@ -384,9 +389,9 @@ export default class IconGroupEntry {
 		entry.bin = binEntry;
 
 		function isIconUsed(
-			icon: ResourceEntry,
-			allEntries: readonly ResourceEntry[],
-			excludeGroup: ResourceEntry
+			icon: Type.ResourceEntry,
+			allEntries: readonly Type.ResourceEntry[],
+			excludeGroup: Type.ResourceEntry
 		) {
 			return allEntries.some((e) => {
 				if (

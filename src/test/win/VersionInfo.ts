@@ -1,8 +1,7 @@
-import { Format } from 'pe-library';
+import { Format, NtExecutableResource } from 'pe-library';
 
 import { loadExecutableWithResourceCheck, testExec } from '../util/fs';
 
-import NtExecutableResource from '@/NtExecutableResource';
 import VersionFileFlags from '@/resource/VersionFileFlags';
 import VersionFileOS from '@/resource/VersionFileOS';
 import VersionFileType from '@/resource/VersionFileType';
