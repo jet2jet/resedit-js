@@ -1,6 +1,6 @@
 {
   "name": "resedit",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "engines": {
     "node": ">=12",
     "npm": ">=6"
