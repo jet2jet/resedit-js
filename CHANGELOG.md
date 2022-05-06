@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.6.0
+
+- Update pe-library
+
 ## v1.5.0
 
 - Update pe-library
