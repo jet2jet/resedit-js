@@ -12,8 +12,10 @@ import {
 } from '../util/functions';
 
 function calcMaskSize(width: number, height: number) {
-	const actualWidth = roundUp(Math.abs(width) / 8, 4);
-	return actualWidth * Math.abs(height);
+	// round up to 4 bytes (32 bit)
+	// (mask pixels is 1-bit bitmap)
+	const actualWidthBytes = roundUp(Math.abs(width), 32) / 8;
+	return actualWidthBytes * Math.abs(height);
 }
 
 export default class IconItem {
@@ -96,10 +98,10 @@ export default class IconItem {
 		this.width = width;
 		this.height = height;
 		this.bitmapInfo = bi;
-		const absWidthRound = roundUp(Math.abs(bi.width), 8);
+		// round up to 4 bytes (32 bit)
+		const widthBytes = roundUp(bi.bitCount * Math.abs(bi.width), 32) / 8;
 		const absActualHeight = Math.abs(bi.height) / 2;
-		const size =
-			sizeImage || (bi.bitCount * absWidthRound * absActualHeight) / 8;
+		const size = sizeImage || widthBytes * absActualHeight;
 		this._pixels = allocatePartialBinary(view, offset, size);
 		offset += size;
 		const maskSize = calcMaskSize(bi.width, absActualHeight);
@@ -192,10 +194,10 @@ export default class IconItem {
 	public generate(): ArrayBuffer {
 		const bi = this.bitmapInfo;
 		const absWidth = Math.abs(bi.width);
-		const absWidthRound = roundUp(absWidth, 8);
+		// round up to 4 bytes (32 bit)
+		const absWidthBytes = roundUp(bi.bitCount * absWidth, 32) / 8;
 		const absActualHeight = Math.abs(bi.height) / 2;
-		const actualSizeImage =
-			(bi.bitCount * absWidthRound * absActualHeight) / 8;
+		const actualSizeImage = absWidthBytes * absActualHeight;
 		const sizeMask = calcMaskSize(bi.width, absActualHeight);
 		const colorCount = bi.colors.length;
 		const totalSize = 40 + 4 * colorCount + actualSizeImage + sizeMask;
