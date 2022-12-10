@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.6.1
+
+- Fix width byte calculation (#30)
+
 ## v1.6.0
 
 - Update pe-library
