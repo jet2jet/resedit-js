@@ -85,7 +85,7 @@ export function pickSignedDataFromTimestampResponse(
 							// pick UTF8String body
 							([] as number[]).slice
 								.call(
-									(ub as unknown) as number[],
+									ub as unknown as number[],
 									offset,
 									offset + len
 								)

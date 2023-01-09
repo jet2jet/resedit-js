@@ -26,10 +26,7 @@ describe('arrayToDERSet', () => {
 	});
 	it('should make valid DER (with one DERObject item)', () => {
 		expect(arrayToDERSet([new RawDERObject([0x05, 0x00])])).toEqual([
-			0x31,
-			0x02,
-			0x05,
-			0x00,
+			0x31, 0x02, 0x05, 0x00,
 		]);
 	});
 	it('should make valid DER (with two DERObject items)', () => {
@@ -53,20 +50,8 @@ describe('arrayToDERSet', () => {
 describe('makeDERBMPString', () => {
 	it('should make valid DER', () => {
 		expect(makeDERBMPString('FooBar')).toEqual([
-			0x1e,
-			0x0c,
-			0x00,
-			0x46,
-			0x00,
-			0x6f,
-			0x00,
-			0x6f,
-			0x00,
-			0x42,
-			0x00,
-			0x61,
-			0x00,
-			0x72,
+			0x1e, 0x0c, 0x00, 0x46, 0x00, 0x6f, 0x00, 0x6f, 0x00, 0x42, 0x00,
+			0x61, 0x00, 0x72,
 		]);
 	});
 });
@@ -74,14 +59,7 @@ describe('makeDERBMPString', () => {
 describe('makeDERIA5String', () => {
 	it('should make valid DER', () => {
 		expect(makeDERIA5String('FooBar')).toEqual([
-			0x16,
-			0x06,
-			0x46,
-			0x6f,
-			0x6f,
-			0x42,
-			0x61,
-			0x72,
+			0x16, 0x06, 0x46, 0x6f, 0x6f, 0x42, 0x61, 0x72,
 		]);
 	});
 });
@@ -101,12 +79,7 @@ describe('makeDERLength', () => {
 describe('makeDEROctetString', () => {
 	it('should make valid DER (with number[])', () => {
 		expect(makeDEROctetString([0x01, 0x10, 0x80, 0xde])).toEqual([
-			0x04,
-			0x04,
-			0x01,
-			0x10,
-			0x80,
-			0xde,
+			0x04, 0x04, 0x01, 0x10, 0x80, 0xde,
 		]);
 	});
 	it('should make valid DER (with Uint8Array)', () => {
@@ -119,13 +92,7 @@ describe('makeDEROctetString', () => {
 describe('makeDERSequence', () => {
 	it('should make valid DER (short length)', () => {
 		expect(makeDERSequence([0x04, 0x03, 0x02, 0x01, 0x00])).toEqual([
-			0x30,
-			0x05,
-			0x04,
-			0x03,
-			0x02,
-			0x01,
-			0x00,
+			0x30, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00,
 		]);
 	});
 	it('should make valid DER (long length)', () => {
@@ -133,7 +100,7 @@ describe('makeDERSequence', () => {
 		tempData[0] = 0x04;
 		tempData[1] = 0x7f;
 		const tempDataNum = ([] as number[]).slice.call(
-			(tempData as unknown) as number[]
+			tempData as unknown as number[]
 		);
 		expect(makeDERSequence(tempDataNum)).toEqual(
 			[0x30, 0x81, 0x81].concat(tempDataNum)
@@ -144,13 +111,7 @@ describe('makeDERSequence', () => {
 describe('makeDERTaggedData', () => {
 	it('should make valid DER (short length)', () => {
 		expect(makeDERTaggedData(1, [0x04, 0x03, 0x02, 0x01, 0x00])).toEqual([
-			0xa1,
-			0x05,
-			0x04,
-			0x03,
-			0x02,
-			0x01,
-			0x00,
+			0xa1, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00,
 		]);
 	});
 	it('should make valid DER (long length)', () => {
@@ -158,7 +119,7 @@ describe('makeDERTaggedData', () => {
 		tempData[0] = 0x04;
 		tempData[1] = 0x7f;
 		const tempDataNum = ([] as number[]).slice.call(
-			(tempData as unknown) as number[]
+			tempData as unknown as number[]
 		);
 		expect(makeDERTaggedData(1, tempDataNum)).toEqual(
 			[0xa1, 0x81, 0x81].concat(tempDataNum)

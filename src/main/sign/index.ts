@@ -373,116 +373,123 @@ export function generateExecutableWithSign(
 								signer,
 								digestAlgorithm,
 								makeSimpleIterator(attrBin)
-							).then((signed): [
-								SpcIndirectDataContent,
-								Attribute[],
-								AnyBinary
-							] => {
-								return [content, attributes, signed];
-							});
-						})
-				);
-			})
-			// make cert bin
-			.then(([content, attributes, signed]):
-				| [SpcIndirectDataContent, SignerInfo]
-				| PromiseLike<[SpcIndirectDataContent, SignerInfo]> => {
-				const signerInfo = new SignerInfo(
-					// version
-					1,
-					// issuerAndSerialNumber
-					new IssuerAndSerialNumber(
-						new RawDERObject(issuer),
-						new RawDERObject(serialNumber)
-					),
-					// digestAlgorithm
-					digestAlgorithm,
-					// digestEncryptionAlgorithm
-					digestEncryptionAlgorithm,
-					// encryptedDigest
-					toUint8Array(signed),
-					// authenticatedAttributes
-					attributes
-				);
-				if (!signer.timestampData) {
-					return [content, signerInfo];
-				}
-				// timestamp
-				return (
-					signer
-						// make digest of encrypted data for make timestamp
-						.digestData(
-							makeSimpleIterator(cloneToArrayBuffer(signed))
-						)
-						.then((digestEncryptedBase) => {
-							const digestEncrypted = createTimestampRequest(
-								digestEncryptedBase,
-								digestAlgorithm
-							);
-							// request timestamp
-							return signer.timestampData!(digestEncrypted).then(
+							).then(
 								(
-									timestamp
-								): [SpcIndirectDataContent, SignerInfo] => {
-									// pick up signedData
-									const timestampSignedData = pickSignedDataFromTimestampResponse(
-										timestamp
-									);
-									// add timestamp to 'unauthenticatedAttributes'
-									signerInfo.unauthenticatedAttributes = [
-										new Attribute(
-											KnownOids.OID_RFC3161_COUNTER_SIGNATURE,
-											[
-												new ContentInfo(
-													KnownOids.OID_SIGNED_DATA,
-													new RawDERObject(
-														toUint8Array(
-															timestampSignedData
-														)
-													)
-												),
-											]
-										),
-									];
-									return [content, signerInfo];
+									signed
+								): [
+									SpcIndirectDataContent,
+									Attribute[],
+									AnyBinary
+								] => {
+									return [content, attributes, signed];
 								}
 							);
 						})
 				);
 			})
+			// make cert bin
 			.then(
-				([content, signerInfo]): ArrayBuffer => {
-					// make certificate data
-					const root = new CertificateDataRoot(
-						KnownOids.OID_SIGNED_DATA,
-						new SignedData(
-							// version
-							1,
-							// digestAlgorithms
-							[digestAlgorithm],
-							// contentInfo
-							new SpcIndirectDataContentInfo(content),
-							// signerInfos
-							[signerInfo],
-							// certificates
-							certBinToCertificatesDER(cert)
-						)
+				([content, attributes, signed]):
+					| [SpcIndirectDataContent, SignerInfo]
+					| PromiseLike<[SpcIndirectDataContent, SignerInfo]> => {
+					const signerInfo = new SignerInfo(
+						// version
+						1,
+						// issuerAndSerialNumber
+						new IssuerAndSerialNumber(
+							new RawDERObject(issuer),
+							new RawDERObject(serialNumber)
+						),
+						// digestAlgorithm
+						digestAlgorithm,
+						// digestEncryptionAlgorithm
+						digestEncryptionAlgorithm,
+						// encryptedDigest
+						toUint8Array(signed),
+						// authenticatedAttributes
+						attributes
 					);
-					const certBin = new Uint8Array(root.toDER());
-					const resultBin = new ArrayBuffer(8 + certBin.length);
-					// make WIN_CERTIFICATE
-					const resultView = new DataView(resultBin);
-					// dwLength
-					resultView.setUint32(0, certBin.length + 8, true);
-					// wRevision : 0x0200 (revision 2)
-					resultView.setUint16(4, 0x200, true);
-					// wCertificateType : 0x0002
-					resultView.setUint16(6, 0x2, true);
-					copyBuffer(resultBin, 8, certBin, 0, certBin.byteLength);
-
-					return resultBin;
+					if (!signer.timestampData) {
+						return [content, signerInfo];
+					}
+					// timestamp
+					return (
+						signer
+							// make digest of encrypted data for make timestamp
+							.digestData(
+								makeSimpleIterator(cloneToArrayBuffer(signed))
+							)
+							.then((digestEncryptedBase) => {
+								const digestEncrypted = createTimestampRequest(
+									digestEncryptedBase,
+									digestAlgorithm
+								);
+								// request timestamp
+								return signer.timestampData!(
+									digestEncrypted
+								).then(
+									(
+										timestamp
+									): [SpcIndirectDataContent, SignerInfo] => {
+										// pick up signedData
+										const timestampSignedData =
+											pickSignedDataFromTimestampResponse(
+												timestamp
+											);
+										// add timestamp to 'unauthenticatedAttributes'
+										signerInfo.unauthenticatedAttributes = [
+											new Attribute(
+												KnownOids.OID_RFC3161_COUNTER_SIGNATURE,
+												[
+													new ContentInfo(
+														KnownOids.OID_SIGNED_DATA,
+														new RawDERObject(
+															toUint8Array(
+																timestampSignedData
+															)
+														)
+													),
+												]
+											),
+										];
+										return [content, signerInfo];
+									}
+								);
+							})
+					);
 				}
 			)
+			.then(([content, signerInfo]): ArrayBuffer => {
+				// make certificate data
+				const root = new CertificateDataRoot(
+					KnownOids.OID_SIGNED_DATA,
+					new SignedData(
+						// version
+						1,
+						// digestAlgorithms
+						[digestAlgorithm],
+						// contentInfo
+						new SpcIndirectDataContentInfo(content),
+						// signerInfos
+						[signerInfo],
+						// certificates
+						certBinToCertificatesDER(cert)
+					)
+				);
+				const certBin = new Uint8Array(root.toDER());
+				const resultBin = new ArrayBuffer(8 + certBin.length);
+				// make WIN_CERTIFICATE
+				const resultView = new DataView(resultBin);
+				// dwLength
+				resultView.setUint32(0, certBin.length + 8, true);
+				// wRevision : 0x0200 (revision 2)
+				resultView.setUint16(4, 0x200, true);
+				// wCertificateType : 0x0002
+				resultView.setUint16(6, 0x2, true);
+				copyBuffer(resultBin, 8, certBin, 0, certBin.byteLength);
+
+				return resultBin;
+			})
 			.then((certBin) => {
 				const alignedSize = roundUp(certBin.byteLength, certAlignment);
 				// NOTE: The certificate data must follow the extra data.

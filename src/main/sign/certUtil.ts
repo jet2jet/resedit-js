@@ -232,7 +232,7 @@ export function pickIssuerAndSerialNumberDERFromCert(
 		);
 	}
 	const serialNumberDER: number[] = ([] as number[]).slice.call(
-		(ub as unknown) as number[],
+		ub as unknown as number[],
 		eaten,
 		offsetAfterSerialNumber
 	);
@@ -264,7 +264,7 @@ export function pickIssuerAndSerialNumberDERFromCert(
 	return [
 		// return entire issuer sequence
 		([] as number[]).slice.call(
-			(ub as unknown) as number[],
+			ub as unknown as number[],
 			eaten,
 			offsetAfterIssuer
 		),

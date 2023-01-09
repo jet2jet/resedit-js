@@ -257,46 +257,44 @@ export default class IconGroupEntry {
 			bin: ArrayBuffer;
 			id: number;
 		}
-		const tmpIconArray: TempIconData[] = icons.map(
-			(icon): TempIconData => {
-				if (icon.isIcon()) {
-					let { width, height } = icon;
-					if (width === null) {
-						width = icon.bitmapInfo.width;
-					}
-					if (height === null) {
-						height = icon.bitmapInfo.height;
-						// if mask is specified, the icon height must be the half of bitmap height
-						if (icon.masks !== null) {
-							height = Math.floor(height / 2);
-						}
-					}
-					return {
-						base: icon,
-						bm: {
-							width: width,
-							height: height,
-							planes: icon.bitmapInfo.planes,
-							bitCount: icon.bitmapInfo.bitCount,
-						},
-						bin: icon.generate(),
-						id: 0,
-					};
-				} else {
-					return {
-						base: icon,
-						bm: {
-							width: icon.width,
-							height: icon.height,
-							planes: 1,
-							bitCount: icon.bitCount,
-						},
-						bin: icon.bin,
-						id: 0,
-					};
+		const tmpIconArray: TempIconData[] = icons.map((icon): TempIconData => {
+			if (icon.isIcon()) {
+				let { width, height } = icon;
+				if (width === null) {
+					width = icon.bitmapInfo.width;
 				}
+				if (height === null) {
+					height = icon.bitmapInfo.height;
+					// if mask is specified, the icon height must be the half of bitmap height
+					if (icon.masks !== null) {
+						height = Math.floor(height / 2);
+					}
+				}
+				return {
+					base: icon,
+					bm: {
+						width: width,
+						height: height,
+						planes: icon.bitmapInfo.planes,
+						bitCount: icon.bitmapInfo.bitCount,
+					},
+					bin: icon.generate(),
+					id: 0,
+				};
+			} else {
+				return {
+					base: icon,
+					bm: {
+						width: icon.width,
+						height: icon.height,
+						planes: 1,
+						bitCount: icon.bitCount,
+					},
+					bin: icon.bin,
+					id: 0,
+				};
 			}
-		);
+		});
 
 		if (entry) {
 			// remove unused icon data
@@ -317,7 +315,7 @@ export default class IconGroupEntry {
 				lang: lang,
 				codepage: 0,
 				// set later
-				bin: (null as any) as ArrayBuffer,
+				bin: null as any as ArrayBuffer,
 			};
 			destEntries.push(entry);
 		}
@@ -342,48 +340,46 @@ export default class IconGroupEntry {
 		});
 
 		const binEntry = generateEntryBinary(
-			tmpIconArray.map(
-				(icon): IconGroupItem => {
-					let width = Math.abs(icon.bm.width);
-					if (width >= 256) {
-						width = 0;
-					}
-					let height = Math.abs(icon.bm.height);
-					if (height >= 256) {
-						height = 0;
-					}
-					let colors = 0;
-					if (icon.base.isIcon()) {
-						const bmBase = icon.base.bitmapInfo;
-						colors = bmBase.colorUsed || bmBase.colors.length;
-						if (!colors) {
-							switch (bmBase.bitCount) {
-								case 1:
-									colors = 2;
-									break;
-								case 4:
-									colors = 16;
-									break;
-								// case 8:
-								// 	colors = 256;
-								// 	break;
-							}
-						}
-						if (colors >= 256) {
-							colors = 0;
-						}
-					}
-					return {
-						width: width,
-						height: height,
-						colors: colors,
-						planes: icon.bm.planes,
-						bitCount: icon.bm.bitCount,
-						dataSize: icon.bin.byteLength,
-						iconID: icon.id,
-					};
+			tmpIconArray.map((icon): IconGroupItem => {
+				let width = Math.abs(icon.bm.width);
+				if (width >= 256) {
+					width = 0;
 				}
-			)
+				let height = Math.abs(icon.bm.height);
+				if (height >= 256) {
+					height = 0;
+				}
+				let colors = 0;
+				if (icon.base.isIcon()) {
+					const bmBase = icon.base.bitmapInfo;
+					colors = bmBase.colorUsed || bmBase.colors.length;
+					if (!colors) {
+						switch (bmBase.bitCount) {
+							case 1:
+								colors = 2;
+								break;
+							case 4:
+								colors = 16;
+								break;
+							// case 8:
+							// 	colors = 256;
+							// 	break;
+						}
+					}
+					if (colors >= 256) {
+						colors = 0;
+					}
+				}
+				return {
+					width: width,
+					height: height,
+					colors: colors,
+					planes: icon.bm.planes,
+					bitCount: icon.bm.bitCount,
+					dataSize: icon.bin.byteLength,
+					iconID: icon.id,
+				};
+			})
 		);
 		// rewrite entry
 		entry.bin = binEntry;
