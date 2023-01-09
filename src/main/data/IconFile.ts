@@ -47,13 +47,13 @@ function generateEntryBinary(icons: readonly IconFileItem[]): ArrayBuffer {
 	const tmpIcons = icons.map((item) => {
 		if (item.data.isIcon()) {
 			return {
-				item: item,
+				item,
 				bin: item.data.generate(),
 				offset: 0,
 			};
 		} else {
 			return {
-				item: item,
+				item,
 				bin: item.data.bin,
 				offset: 0,
 			};
@@ -195,8 +195,8 @@ export default class IconFile {
 					);
 				}
 				icons.push({
-					width: width,
-					height: height,
+					width,
+					height,
 					colors: readUint8WithLastOffset(
 						view,
 						offset + 2,
@@ -207,8 +207,8 @@ export default class IconFile {
 						offset + 4,
 						totalSize
 					),
-					bitCount: bitCount,
-					data: data,
+					bitCount,
+					data,
 				});
 				offset += 16;
 			}

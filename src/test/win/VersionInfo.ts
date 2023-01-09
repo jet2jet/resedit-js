@@ -23,9 +23,9 @@ function doTestExecWithVersionValues(
 	versionFixed: VersionFixedInfo | null,
 	lang: number,
 	codepage: number,
-	versionStrings: { [key: string]: string } | null
+	versionStrings: Record<string, string> | null
 ) {
-	const copiedVersionStrings: { [key: string]: string } = {};
+	const copiedVersionStrings: Record<string, string> = {};
 	if (versionStrings) {
 		copyValues(copiedVersionStrings, versionStrings);
 	}
@@ -149,10 +149,7 @@ describe(`VersionInfo - ${platform}`, () => {
 		version.lang = lang;
 
 		copyValues(version.fixedInfo, versionFixedValues);
-		version.setStringValues(
-			{ lang: lang, codepage: codepage },
-			versionStringValues
-		);
+		version.setStringValues({ lang, codepage }, versionStringValues);
 
 		version.outputToResourceEntries(res.entries);
 		expect(res.entries.length).toEqual(1);
@@ -186,7 +183,7 @@ describe(`VersionInfo - ${platform}`, () => {
 
 		copyValues(version.fixedInfo, versionFixedValuesWithoutVersionNumbers);
 		version.setStringValues(
-			{ lang: langAnother, codepage: codepage },
+			{ lang: langAnother, codepage },
 			versionStringValuesWithoutVersions
 		);
 
@@ -241,10 +238,7 @@ describe(`VersionInfo - ${platform}`, () => {
 		version.lang = lang;
 
 		copyValues(version.fixedInfo, versionFixedValues);
-		version.setStringValues(
-			{ lang: lang, codepage: codepage },
-			versionStringValues
-		);
+		version.setStringValues({ lang, codepage }, versionStringValues);
 
 		version.outputToResourceEntries(res.entries);
 		// should be incremented because no version entries are available
@@ -291,7 +285,7 @@ describe(`VersionInfo - ${platform}`, () => {
 		version.setProductVersion(productVersionString);
 
 		version.setStringValues(
-			{ lang: 1033, codepage: codepage },
+			{ lang: 1033, codepage },
 			versionStringValuesWithoutVersions
 		);
 
@@ -340,10 +334,7 @@ describe(`VersionInfo - ${platform}`, () => {
 		version.lang = lang;
 
 		copyValues(version.fixedInfo, versionFixedValues);
-		version.setStringValues(
-			{ lang: lang, codepage: codepage },
-			versionStringValues
-		);
+		version.setStringValues({ lang, codepage }, versionStringValues);
 
 		version.outputToResourceEntries(res.entries);
 		// should be same because existing version entry is replaced
@@ -388,7 +379,7 @@ describe(`VersionInfo - ${platform}`, () => {
 		copyValues(version.fixedInfo, versionFixedValues);
 		// use another language for here
 		version.setStringValues(
-			{ lang: langAnother, codepage: codepage },
+			{ lang: langAnother, codepage },
 			versionStringValues
 		);
 		expect(version.getAvailableLanguages().length).toEqual(verLangs + 1);
@@ -433,7 +424,7 @@ describe(`VersionInfo - ${platform}`, () => {
 		).toBeTruthy();
 		expect(verLangs).toBeGreaterThanOrEqual(2);
 
-		version.removeAllStringValues({ lang: lang, codepage: codepage });
+		version.removeAllStringValues({ lang, codepage });
 		expect(version.getAvailableLanguages().length).toEqual(verLangs - 1);
 
 		version.outputToResourceEntries(res.entries);

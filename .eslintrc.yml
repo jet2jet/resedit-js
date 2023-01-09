@@ -43,6 +43,9 @@ rules:
         - UPPER_CASE
       leadingUnderscore: allowSingleOrDouble
       trailingUnderscore: allowSingleOrDouble
+    - selector: memberLike
+      modifiers: ['requiresQuotes']
+      format: null
     - selector: enumMember
       format:
         - PascalCase

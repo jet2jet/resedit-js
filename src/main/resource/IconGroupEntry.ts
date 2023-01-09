@@ -184,7 +184,7 @@ export default class IconGroupEntry {
 			id: this.id,
 			lang: this.lang,
 			codepage: 0,
-			bin: bin,
+			bin,
 		};
 	}
 
@@ -273,8 +273,8 @@ export default class IconGroupEntry {
 				return {
 					base: icon,
 					bm: {
-						width: width,
-						height: height,
+						width,
+						height,
 						planes: icon.bitmapInfo.planes,
 						bitCount: icon.bitmapInfo.bitCount,
 					},
@@ -312,7 +312,7 @@ export default class IconGroupEntry {
 			entry = {
 				type: 14,
 				id: iconGroupID,
-				lang: lang,
+				lang,
 				codepage: 0,
 				// set later
 				bin: null as any as ArrayBuffer,
@@ -323,7 +323,7 @@ export default class IconGroupEntry {
 		// append icons
 		let idInfo: ReturnType<typeof findUnusedIconID> | undefined;
 		tmpIconArray.forEach((icon) => {
-			if (!idInfo || !idInfo.last) {
+			if (!idInfo?.last) {
 				idInfo = findUnusedIconID(destEntries, lang, false);
 			} else {
 				++idInfo.id;
@@ -331,7 +331,7 @@ export default class IconGroupEntry {
 			destEntries.push({
 				type: 3, // RT_ICON
 				id: idInfo.id,
-				lang: lang,
+				lang,
 				codepage: 0,
 				bin: icon.bin,
 			});
@@ -371,9 +371,9 @@ export default class IconGroupEntry {
 					}
 				}
 				return {
-					width: width,
-					height: height,
-					colors: colors,
+					width,
+					height,
+					colors,
 					planes: icon.bm.planes,
 					bitCount: icon.bm.bitCount,
 					dataSize: icon.bin.byteLength,

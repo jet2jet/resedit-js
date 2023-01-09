@@ -16,7 +16,7 @@ function testExecWithResultData(bin: ArrayBuffer, appName: string) {
 		/(?:\r\n|[\r\n])$/g,
 		''
 	);
-	const result: { [type: string]: { [key: string]: string } } = {};
+	const result: Record<string, Record<string, string>> = {};
 	output.split(/\r\n|[\r\n]/g).forEach((token) => {
 		const data = token.split(/:/g, 2);
 		const pairs = data[0].split(/\./g, 2);
@@ -29,7 +29,7 @@ function testExecWithResultData(bin: ArrayBuffer, appName: string) {
 
 function testIconPatterns(
 	patterns: Array<[number, number]>,
-	output: { [type: string]: { [key: string]: string } }
+	output: Record<string, Record<string, string>>
 ) {
 	patterns.forEach(([width, height]) => {
 		const typeName = `${width}x${height}`;

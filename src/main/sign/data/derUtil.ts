@@ -38,7 +38,9 @@ export function makeDERBMPString(text: string): number[] {
 	const ua = new Uint8Array(r.length * 2);
 	const dv = new DataView(ua.buffer);
 	// store codes as big-endian
-	r.forEach((v, i) => dv.setUint16(i * 2, v, false));
+	r.forEach((v, i) => {
+		dv.setUint16(i * 2, v, false);
+	});
 	return [0x1e].concat(makeDERLength(ua.length)).concat(
 		// convert Uint8Array to number[] (not using spread operator)
 		([] as number[]).slice.call(ua as unknown as number[])

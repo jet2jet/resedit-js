@@ -14,9 +14,7 @@ import {
  * Note that the key names are case-sensitive; this library does not convert keys
  * (e.g. `'fileVersion'` --> `'FileVersion'`).
  */
-export interface VersionStringValues {
-	[key: string]: string;
-}
+export type VersionStringValues = Record<string, string>;
 
 /** Used by `VersionInfo.create` */
 export interface VersionStringTable {
@@ -586,7 +584,7 @@ function parseVersionArguments(
  * Treats 'Version information' (`VS_VERSIONINFO`) resource data.
  */
 export default class VersionInfo {
-	private data: VersionEntry;
+	private readonly data: VersionEntry;
 
 	private constructor(entry?: Type.ResourceEntry) {
 		if (!entry) {

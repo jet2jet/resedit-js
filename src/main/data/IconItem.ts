@@ -64,7 +64,7 @@ export default class IconItem {
 			planes: readUint16WithLastOffset(view, 12, headerSize),
 			bitCount: readUint16WithLastOffset(view, 14, headerSize),
 			compression: readUint32WithLastOffset(view, 16, headerSize),
-			sizeImage: sizeImage,
+			sizeImage,
 			xPelsPerMeter: readInt32WithLastOffset(view, 24, headerSize),
 			yPelsPerMeter: readInt32WithLastOffset(view, 28, headerSize),
 			colorUsed: readUint32WithLastOffset(view, 32, headerSize),

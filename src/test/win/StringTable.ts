@@ -15,7 +15,7 @@ function testExecWithStringTable(bin: ArrayBuffer, appName: string) {
 		/(?:\r\n|[\r\n])$/g,
 		''
 	);
-	const result: { [id: number]: string } = {};
+	const result: Record<number, string> = {};
 	output.split(/\r\n|[\r\n]/g).forEach((token) => {
 		const pairs = token.split(/:/g, 2);
 		result[Number(pairs[0])] = pairs[1];
