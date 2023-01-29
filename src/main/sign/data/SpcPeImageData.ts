@@ -1,8 +1,8 @@
-import DERObject from './DERObject';
-import ObjectIdentifier from './ObjectIdentifier';
-import { SpcAttributeTypeAndOptionalValue } from './SpcIndirectDataContent';
-import SpcLink from './SpcLink';
-import { makeDERSequence, makeDERTaggedData } from './derUtil';
+import DERObject from './DERObject.js';
+import ObjectIdentifier from './ObjectIdentifier.js';
+import { SpcAttributeTypeAndOptionalValue } from './SpcIndirectDataContent.js';
+import SpcLink from './SpcLink.js';
+import { makeDERSequence, makeDERTaggedData } from './derUtil.js';
 
 // prettier-ignore
 export const SPC_PE_IMAGE_DATA_OBJID = new ObjectIdentifier([1,3,6,1,4,1,311,2,1,15]);

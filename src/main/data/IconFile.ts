@@ -1,5 +1,5 @@
-import IconItem from './IconItem';
-import RawIconItem from './RawIconItem';
+import IconItem from './IconItem.js';
+import RawIconItem from './RawIconItem.js';
 
 import {
 	readUint8WithLastOffset,
@@ -7,7 +7,7 @@ import {
 	readUint32WithLastOffset,
 	copyBuffer,
 	createDataView,
-} from '../util/functions';
+} from '../util/functions.js';
 
 // struct ICON_GROUP {
 //   uint16_t reserved;

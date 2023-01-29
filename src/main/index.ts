@@ -1,15 +1,15 @@
 import { NtExecutable, NtExecutableResource, Format } from 'pe-library';
-import version from './version';
+import version from './version.js';
 
-import * as Data from './data';
-import * as Resource from './resource';
+import * as Data from './data/index.js';
+import * as Resource from './resource/index.js';
 
 import {
 	generateExecutableWithSign,
 	SignerObject,
 	DigestAlgorithmType,
 	EncryptionAlgorithmType,
-} from './sign';
+} from './sign/index.js';
 
 export {
 	NtExecutable,

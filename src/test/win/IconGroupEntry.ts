@@ -4,10 +4,10 @@ import {
 	loadExecutableWithResourceCheck,
 	loadIcon,
 	testExec,
-} from '../util/fs';
+} from '../util/fs.js';
 
-import IconFile from '@/data/IconFile';
-import IconGroupEntry from '@/resource/IconGroupEntry';
+import IconFile from '@/data/IconFile.js';
+import IconGroupEntry from '@/resource/IconGroupEntry.js';
 
 const platform = __TEST_PLATFORM__;
 

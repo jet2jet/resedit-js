@@ -1,6 +1,6 @@
-import { loadIcon } from '../../util/fs';
+import { loadIcon } from '../../util/fs.js';
 
-import IconFile, { IconFileItem } from '@/data/IconFile';
+import IconFile, { IconFileItem } from '@/data/IconFile.js';
 
 function getIconWidth(icon: IconFileItem) {
 	return icon.width !== undefined && icon.width !== 0

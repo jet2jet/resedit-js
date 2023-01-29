@@ -1,20 +1,20 @@
 import { Type } from 'pe-library';
-import IconGroupEntry, { IconGroupItem } from './IconGroupEntry';
-import StringTable from './StringTable';
-import VersionFileFlags from './VersionFileFlags';
-import VersionFileOS from './VersionFileOS';
+import IconGroupEntry, { IconGroupItem } from './IconGroupEntry.js';
+import StringTable from './StringTable.js';
+import VersionFileFlags from './VersionFileFlags.js';
+import VersionFileOS from './VersionFileOS.js';
 import {
 	VersionFileDriverSubtype,
 	VersionFileFontSubtype,
-} from './VersionFileSubtypes';
-import VersionFileType from './VersionFileType';
+} from './VersionFileSubtypes.js';
+import VersionFileType from './VersionFileType.js';
 import VersionInfo, {
 	VersionInfoCreateParam,
 	VersionFixedInfo,
 	VersionStringTable,
 	VersionStringValues,
 	VersionTranslation,
-} from './VersionInfo';
+} from './VersionInfo.js';
 
 type ResourceEntry = Type.ResourceEntry;
 type ResourceEntryBaseType<

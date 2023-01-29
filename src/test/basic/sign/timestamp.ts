@@ -1,9 +1,9 @@
 import {
 	createTimestampRequest,
 	pickSignedDataFromTimestampResponse,
-} from '@/sign/timestamp';
-import AlgorithmIdentifier from '@/sign/data/AlgorithmIdentifier';
-import { OID_SHA1_NO_SIGN } from '@/sign/data/KnownOids';
+} from '@/sign/timestamp.js';
+import AlgorithmIdentifier from '@/sign/data/AlgorithmIdentifier.js';
+import { OID_SHA1_NO_SIGN } from '@/sign/data/KnownOids.js';
 
 describe('createTimestampRequest', () => {
 	// prettier-ignore

@@ -6,7 +6,7 @@ import {
 	copyBuffer,
 	readUint32WithLastOffset,
 	roundUp,
-} from '../util/functions';
+} from '../util/functions.js';
 
 /**
  * String values for the version information.

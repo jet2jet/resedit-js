@@ -1,4 +1,4 @@
-import { copyBuffer, createDataView } from '@/util/functions';
+import { copyBuffer, createDataView } from '@/util/functions.js';
 
 function generateArrayBuffer(pattern: number[]) {
 	const bin = new ArrayBuffer(pattern.length);

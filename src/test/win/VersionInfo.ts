@@ -1,11 +1,11 @@
 import { Format, NtExecutableResource } from 'pe-library';
 
-import { loadExecutableWithResourceCheck, testExec } from '../util/fs';
+import { loadExecutableWithResourceCheck, testExec } from '../util/fs.js';
 
-import VersionFileFlags from '@/resource/VersionFileFlags';
-import VersionFileOS from '@/resource/VersionFileOS';
-import VersionFileType from '@/resource/VersionFileType';
-import VersionInfo, { VersionFixedInfo } from '@/resource/VersionInfo';
+import VersionFileFlags from '@/resource/VersionFileFlags.js';
+import VersionFileOS from '@/resource/VersionFileOS.js';
+import VersionFileType from '@/resource/VersionFileType.js';
+import VersionInfo, { VersionFixedInfo } from '@/resource/VersionInfo.js';
 
 const platform = __TEST_PLATFORM__;
 

@@ -1,4 +1,4 @@
-import DERObject from './DERObject';
+import DERObject from './DERObject.js';
 
 export function makeDERLength(length: number): number[] {
 	if (length < 0x80) {

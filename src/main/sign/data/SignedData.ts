@@ -1,7 +1,11 @@
-import DigestAlgorithmIdentifier from './AlgorithmIdentifier';
-import ContentInfo from './ContentInfo';
-import DERObject from './DERObject';
-import { arrayToDERSet, makeDERSequence, makeDERTaggedData } from './derUtil';
+import DigestAlgorithmIdentifier from './AlgorithmIdentifier.js';
+import ContentInfo from './ContentInfo.js';
+import DERObject from './DERObject.js';
+import {
+	arrayToDERSet,
+	makeDERSequence,
+	makeDERTaggedData,
+} from './derUtil.js';
 
 export default class SignedData implements DERObject {
 	constructor(

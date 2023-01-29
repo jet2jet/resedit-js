@@ -1,4 +1,4 @@
-import ObjectIdentifier from '@/sign/data/ObjectIdentifier';
+import ObjectIdentifier from '@/sign/data/ObjectIdentifier.js';
 
 describe('ObjectIdentifier', () => {
 	it('should make DER correctly (with only <128 values)', () => {

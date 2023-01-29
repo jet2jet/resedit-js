@@ -1,6 +1,6 @@
-import AlgorithmIdentifier from './AlgorithmIdentifier';
-import DERObject from './DERObject';
-import { makeDERSequence, makeDEROctetString } from './derUtil';
+import AlgorithmIdentifier from './AlgorithmIdentifier.js';
+import DERObject from './DERObject.js';
+import { makeDERSequence, makeDEROctetString } from './derUtil.js';
 
 export default class DigestInfo implements DERObject {
 	constructor(

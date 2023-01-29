@@ -1,13 +1,13 @@
 import { Type } from 'pe-library';
 
-import IconItem from '../data/IconItem';
-import RawIconItem from '../data/RawIconItem';
+import IconItem from '../data/IconItem.js';
+import RawIconItem from '../data/RawIconItem.js';
 
 import {
 	readUint8WithLastOffset,
 	readUint16WithLastOffset,
 	readUint32WithLastOffset,
-} from '../util/functions';
+} from '../util/functions.js';
 
 // struct ICON_GROUP {
 //   uint16_t reserved;
