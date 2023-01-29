@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.7.0
+
+- Add support for ES module loading in Node.js environment
+- Update pe-library
+
 ## v1.6.1
 
 - Fix width byte calculation (#30)

@@ -64,15 +64,15 @@ Note that resedit-js only provides basic signing process, and provides as beta v
 For more APIs, please see `dist` directory of the package. And, [some test codes](./src/test) may help you for usages.
 
 ```js
-const PELibrary = require('pe-library');
-const ResEdit = require('resedit');
-const fs = require('fs');
+import * as PELibrary from 'pe-library';
+import * as ResEdit from 'resedit';
+import * as fs from 'fs';
 
 // load and parse data
-let data = fs.readFileSync('MyApp.exe');
+const data = fs.readFileSync('MyApp.exe');
 // (the Node.js Buffer instance can be specified directly to NtExecutable.from)
-let exe = PELibrary.NtExecutable.from(data);
-let res = PELibrary.NtExecutableResource.from(exe);
+const exe = PELibrary.NtExecutable.from(data);
+const res = PELibrary.NtExecutableResource.from(exe);
 
 // rewrite resources
 // - You can use helper classes as followings:
@@ -84,7 +84,7 @@ let res = PELibrary.NtExecutableResource.from(exe);
 
 // load icon data from file
 // (you can use ResEdit.Data.IconFile to parse icon data)
-let iconFile = ResEdit.Data.IconFile.from(fs.readFileSync('MyIcon.ico'));
+const iconFile = ResEdit.Data.IconFile.from(fs.readFileSync('MyIcon.ico'));
 
 ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
   // destEntries
@@ -99,8 +99,8 @@ ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
 
 // -- replace version
 
-let viList = ResEdit.Resource.VersionInfo.fromEntries(res.entries);
-let vi = viList[0];
+const viList = ResEdit.Resource.VersionInfo.fromEntries(res.entries);
+const vi = viList[0];
 // setFileVersion will set `vi.fixedInfo.fileVersionMS`/`fileVersionLS` and 'FileVersion' string value
 // ('1033' means 'en-US')
 vi.setFileVersion(1, 0, 0, 0, 1033);
@@ -116,8 +116,8 @@ vi.outputToResourceEntries(res.entries);
 
 // write to another binary
 res.outputResource(exe);
-let newBinary = exe.generate();
-fs.writeFileSync('MyApp_modified.exe', new Buffer(newBinary));
+const newBinary = exe.generate();
+fs.writeFileSync('MyApp_modified.exe', Buffer.from(newBinary));
 ```
 
 ## License
