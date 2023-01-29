@@ -9,6 +9,14 @@
   "description": "Node.js library editing Windows Resource data",
   "main": "./dist/index.js",
   "module": "./dist/_esm/index.js",
+  "exports": {
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "import": "./dist/_esm/index.js",
+    "require": "./dist/index.js"
+  },
   "types": "./dist/index.d.ts",
   "author": "jet",
   "license": "MIT",
@@ -32,7 +40,7 @@
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
     "build:cjs": "tsc -p ./tsconfig.app.json",
-    "build:esm": "tsc -p ./tsconfig.app.esm.json",
+    "build:esm": "tsc -p ./tsconfig.app.esm.json && node ./tools/copyEsmFile.js",
     "lint": "npm run lint:prettier && npm run lint:eslint",
     "lint:eslint": "eslint -c .eslintrc.yml --ext .js,.jsx,.ts,.tsx .",
     "lint:eslint:fix": "eslint -c .eslintrc.yml --fix --ext .js,.jsx,.ts,.tsx .",
