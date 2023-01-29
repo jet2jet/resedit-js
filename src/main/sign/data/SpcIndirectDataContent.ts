@@ -1,8 +1,8 @@
-import ContentInfo from './ContentInfo';
-import DigestInfo from './DigestInfo';
-import ObjectIdentifier from './ObjectIdentifier';
-import DERObject from './DERObject';
-import { makeDERSequence } from './derUtil';
+import ContentInfo from './ContentInfo.js';
+import DigestInfo from './DigestInfo.js';
+import ObjectIdentifier from './ObjectIdentifier.js';
+import DERObject from './DERObject.js';
+import { makeDERSequence } from './derUtil.js';
 
 // prettier-ignore
 export const SPC_INDIRECT_DATA_OBJID = new ObjectIdentifier([1,3,6,1,4,1,311,2,1,4]);

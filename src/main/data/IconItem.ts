@@ -1,4 +1,4 @@
-import BitmapInfo from './BitmapInfo';
+import BitmapInfo from './BitmapInfo.js';
 
 import {
 	allocatePartialBinary,
@@ -9,7 +9,7 @@ import {
 	readUint16WithLastOffset,
 	readUint32WithLastOffset,
 	roundUp,
-} from '../util/functions';
+} from '../util/functions.js';
 
 function calcMaskSize(width: number, height: number) {
 	// round up to 4 bytes (32 bit)

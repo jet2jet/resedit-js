@@ -19,49 +19,49 @@ import { NtExecutable, Format, calculateCheckSumForPE } from 'pe-library';
 import SignerObject, {
 	DigestAlgorithmType,
 	EncryptionAlgorithmType,
-} from './SignerObject';
+} from './SignerObject.js';
 
 import {
 	allocatePartialBinary,
 	cloneToArrayBuffer,
 	copyBuffer,
 	roundUp,
-} from '../util/functions';
+} from '../util/functions.js';
 
 import {
 	certBinToCertificatesDER,
 	pickIssuerAndSerialNumberDERFromCert,
 	toUint8Array,
-} from './certUtil';
-import AlgorithmIdentifier from './data/AlgorithmIdentifier';
-import CertificateDataRoot from './data/CertificateDataRoot';
-import { RawDERObject } from './data/DERObject';
-import DigestInfo from './data/DigestInfo';
-import IssuerAndSerialNumber from './data/IssuerAndSerialNumber';
-import * as KnownOids from './data/KnownOids';
-import SignedData from './data/SignedData';
-import SignerInfo from './data/SignerInfo';
+} from './certUtil.js';
+import AlgorithmIdentifier from './data/AlgorithmIdentifier.js';
+import CertificateDataRoot from './data/CertificateDataRoot.js';
+import { RawDERObject } from './data/DERObject.js';
+import DigestInfo from './data/DigestInfo.js';
+import IssuerAndSerialNumber from './data/IssuerAndSerialNumber.js';
+import * as KnownOids from './data/KnownOids.js';
+import SignedData from './data/SignedData.js';
+import SignerInfo from './data/SignerInfo.js';
 import SpcIndirectDataContent, {
 	SpcIndirectDataContentInfo,
 	SPC_INDIRECT_DATA_OBJID,
-} from './data/SpcIndirectDataContent';
+} from './data/SpcIndirectDataContent.js';
 import SpcPeImageData, {
 	SpcPeImageAttributeTypeAndOptionalValue,
 	SpcPeImageFlags,
-} from './data/SpcPeImageData';
-import { SpcLinkFile } from './data/SpcLink';
-import Attribute from './data/Attribute';
+} from './data/SpcPeImageData.js';
+import { SpcLinkFile } from './data/SpcLink.js';
+import Attribute from './data/Attribute.js';
 import {
 	arrayToDERSet,
 	makeDEROctetString,
 	makeDERSequence,
-} from './data/derUtil';
-import ContentInfo from './data/ContentInfo';
-import ObjectIdentifier from './data/ObjectIdentifier';
+} from './data/derUtil.js';
+import ContentInfo from './data/ContentInfo.js';
+import ObjectIdentifier from './data/ObjectIdentifier.js';
 import {
 	createTimestampRequest,
 	pickSignedDataFromTimestampResponse,
-} from './timestamp';
+} from './timestamp.js';
 
 type AnyBinary = ArrayBuffer | ArrayBufferView;
 

@@ -8,7 +8,7 @@ import {
 	loadPrivatePem,
 	runExec,
 	writeBinary,
-} from '../util/fs';
+} from '../util/fs.js';
 import {
 	DigestAlgorithmType,
 	EncryptionAlgorithmType,

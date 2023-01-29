@@ -1,5 +1,5 @@
-import DERObject from './DERObject';
-import { makeDERLength } from './derUtil';
+import DERObject from './DERObject.js';
+import { makeDERLength } from './derUtil.js';
 
 export default class ObjectIdentifier implements DERObject {
 	public value: number[];

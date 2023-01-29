@@ -1,4 +1,4 @@
-import ContentInfo from './ContentInfo';
-import SignedData from './SignedData';
+import ContentInfo from './ContentInfo.js';
+import SignedData from './SignedData.js';
 
 export default class CertificateDataRoot extends ContentInfo<SignedData> {}

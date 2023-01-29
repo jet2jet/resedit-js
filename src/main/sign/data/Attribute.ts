@@ -1,6 +1,6 @@
-import DERObject from './DERObject';
-import ObjectIdentifier from './ObjectIdentifier';
-import { makeDERSequence, arrayToDERSet } from './derUtil';
+import DERObject from './DERObject.js';
+import ObjectIdentifier from './ObjectIdentifier.js';
+import { makeDERSequence, arrayToDERSet } from './derUtil.js';
 
 export default class Attribute implements DERObject {
 	constructor(

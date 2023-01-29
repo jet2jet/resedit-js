@@ -6,7 +6,9 @@ module.exports = {
 	testEnvironment: 'node',
 	testMatch: ['<rootDir>/src/test/basic/**/*.ts'],
 	moduleNameMapper: {
+		'^@/(.*)\\.js$': '<rootDir>/src/main/$1',
 		'^@/(.*)$': '<rootDir>/src/main/$1',
+		'(.+)\\.js': '$1',
 	},
 	globals: {
 		__TEST_PLATFORM__: 'any',

@@ -1,6 +1,6 @@
-import DERObject from './DERObject';
-import ObjectIdentifier from './ObjectIdentifier';
-import { makeDERSequence, makeDERTaggedData } from './derUtil';
+import DERObject from './DERObject.js';
+import ObjectIdentifier from './ObjectIdentifier.js';
+import { makeDERSequence, makeDERTaggedData } from './derUtil.js';
 
 // abstract
 export default class ContentInfo<TContent extends DERObject = DERObject>

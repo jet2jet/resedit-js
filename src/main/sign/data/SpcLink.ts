@@ -1,9 +1,9 @@
-import DERObject, { RawDERObject } from './DERObject';
+import DERObject, { RawDERObject } from './DERObject.js';
 import {
 	makeDERTaggedData,
 	makeDERIA5String,
 	makeDERBMPString,
-} from './derUtil';
+} from './derUtil.js';
 
 /**
  * Abstract data SpcLink. Must use either `SpcLinkUrl` or `SpcLinkFile` instead.

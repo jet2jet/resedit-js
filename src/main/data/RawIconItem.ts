@@ -1,4 +1,4 @@
-import { allocatePartialBinary } from '../util/functions';
+import { allocatePartialBinary } from '../util/functions.js';
 
 /**
  * Represents the raw-graphic icon item, such as PNG data.
