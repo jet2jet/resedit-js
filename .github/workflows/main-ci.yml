@@ -3,8 +3,8 @@ on:
   push:
 
 env:
-  NODE_VERSION: 12
-  NPM_VERSION: 6
+  NODE_VERSION: 14
+  NPM_VERSION: 7
 
 jobs:
   main:
