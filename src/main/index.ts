@@ -6,9 +6,9 @@ import * as Resource from './resource/index.js';
 
 import {
 	generateExecutableWithSign,
-	SignerObject,
-	DigestAlgorithmType,
-	EncryptionAlgorithmType,
+	type SignerObject,
+	type DigestAlgorithmType,
+	type EncryptionAlgorithmType,
 } from './sign/index.js';
 
 export {
@@ -19,7 +19,7 @@ export {
 	Format,
 	Resource,
 	generateExecutableWithSign,
-	SignerObject,
-	DigestAlgorithmType,
-	EncryptionAlgorithmType,
+	type SignerObject,
+	type DigestAlgorithmType,
+	type EncryptionAlgorithmType,
 };

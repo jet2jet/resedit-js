@@ -1,4 +1,4 @@
-import { Type } from 'pe-library';
+import { type Type } from 'pe-library';
 
 import {
 	allocatePartialBinary,

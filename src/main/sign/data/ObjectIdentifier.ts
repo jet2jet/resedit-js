@@ -1,4 +1,4 @@
-import DERObject from './DERObject.js';
+import type DERObject from './DERObject.js';
 import { makeDERLength } from './derUtil.js';
 
 export default class ObjectIdentifier implements DERObject {

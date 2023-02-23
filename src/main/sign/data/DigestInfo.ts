@@ -1,5 +1,5 @@
-import AlgorithmIdentifier from './AlgorithmIdentifier.js';
-import DERObject from './DERObject.js';
+import type AlgorithmIdentifier from './AlgorithmIdentifier.js';
+import type DERObject from './DERObject.js';
 import { makeDERSequence, makeDEROctetString } from './derUtil.js';
 
 export default class DigestInfo implements DERObject {

@@ -1,6 +1,6 @@
-import BitmapInfo from './BitmapInfo.js';
-import IconFile, { IconFileItem } from './IconFile.js';
+import type BitmapInfo from './BitmapInfo.js';
+import IconFile, { type IconFileItem } from './IconFile.js';
 import IconItem from './IconItem.js';
 import RawIconItem from './RawIconItem.js';
 
-export { BitmapInfo, IconFile, IconFileItem, IconItem, RawIconItem };
+export { type BitmapInfo, IconFile, type IconFileItem, IconItem, RawIconItem };

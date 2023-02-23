@@ -1,4 +1,4 @@
-import BitmapInfo from './BitmapInfo.js';
+import type BitmapInfo from './BitmapInfo.js';
 
 import {
 	allocatePartialBinary,

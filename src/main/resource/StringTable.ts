@@ -1,4 +1,4 @@
-import { NtExecutableResource, Type } from 'pe-library';
+import { type NtExecutableResource, type Type } from 'pe-library';
 
 import StringTableItem from './StringTableItem.js';
 

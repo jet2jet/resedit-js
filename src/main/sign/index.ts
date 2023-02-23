@@ -14,12 +14,13 @@
 // - mono/AuthenticodeDeformatter.cs
 //   https://github.com/mono/mono/blob/master/mcs/class/Mono.Security/Mono.Security.Authenticode/AuthenticodeDeformatter.cs
 
-import { NtExecutable, Format, calculateCheckSumForPE } from 'pe-library';
+import { type NtExecutable, Format, calculateCheckSumForPE } from 'pe-library';
 
-import SignerObject, {
-	DigestAlgorithmType,
-	EncryptionAlgorithmType,
+import {
+	type DigestAlgorithmType,
+	type EncryptionAlgorithmType,
 } from './SignerObject.js';
+import type SignerObject from './SignerObject.js';
 
 import {
 	allocatePartialBinary,
@@ -523,4 +524,4 @@ export function generateExecutableWithSign(
 	);
 }
 
-export { SignerObject, DigestAlgorithmType, EncryptionAlgorithmType };
+export type { SignerObject, DigestAlgorithmType, EncryptionAlgorithmType };

@@ -1,5 +1,5 @@
-import DERObject from './DERObject.js';
-import ObjectIdentifier from './ObjectIdentifier.js';
+import type DERObject from './DERObject.js';
+import type ObjectIdentifier from './ObjectIdentifier.js';
 import { makeDERSequence, makeDERTaggedData } from './derUtil.js';
 
 // abstract

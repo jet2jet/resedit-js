@@ -1,7 +1,7 @@
 import ContentInfo from './ContentInfo.js';
-import DigestInfo from './DigestInfo.js';
+import type DigestInfo from './DigestInfo.js';
 import ObjectIdentifier from './ObjectIdentifier.js';
-import DERObject from './DERObject.js';
+import type DERObject from './DERObject.js';
 import { makeDERSequence } from './derUtil.js';
 
 // prettier-ignore
