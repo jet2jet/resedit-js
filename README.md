@@ -1,5 +1,5 @@
 [![NPM version](https://badge.fury.io/js/resedit.svg)](https://www.npmjs.com/package/resedit)
-[![Build Status](https://api.travis-ci.com/jet2jet/resedit-js.svg?branch=master)](https://www.travis-ci.com/jet2jet/resedit-js)
+[![Build Status](https://github.com/jet2jet/resedit-js/actions/workflows/main-ci.yml/badge.svg)](https://github.com/jet2jet/resedit-js)
 
 # resedit-js
 
@@ -10,6 +10,7 @@ This library is not tested well for modifying and/or signing executables yet. Pl
 To use in command line, consider using [resedit-js-cli](https://www.npmjs.com/package/resedit-cli).
 
 - [Install](#install)
+- [Migrate from v1.x to v2.x](#migrate-from-v1x-to-v2x)
 - [Supported formats](#supported-formats)
 - [Parsing signed executables](#parsing-signed-executables)
 - [Signing executables with resedit-js](#signing-executables-with-resedit-js)
@@ -21,6 +22,38 @@ To use in command line, consider using [resedit-js-cli](https://www.npmjs.com/pa
 
 ```
 npm install resedit
+```
+
+## Migrate from v1.x to v2.x
+
+- If you use from ES module (.mjs) and load by using `import`, no need for migration.
+- If you use from ES module (.mjs) and load by using `require` (Node.js: via `createRequire`), replace with `import` statement: `import * as ResEdit from 'resedit'`.
+- If you use from CommonJS module (.cjs) and load by using `require`, choose followings:
+  - Convert CommonJS module to ES module and replace `require` call with `import` statement
+  - Use `resedit/cjs` module and call `load` function (see below)
+- If you use TypeScript,
+  - For `"module": "ES2015"` or higher, no need for migration.
+  - For `"module": "CommonJS"`, import `resedit/cjs` and call `load` function
+
+The sample of using `resedit/cjs` in CommonJS module is:
+
+```js
+const { load } = require('resedit/cjs');
+load().then((ResEdit) => {
+  // ResEdit will be the namespace object of resedit library
+  // (for example ResEdit.Data.IconFile is available)
+});
+```
+
+Similarly, the sample of using `resedit/cjs` in TypeScript CommonJS module is:
+
+```ts
+// You can use `ResEdit` for type references (cannot be used for value references)
+import { type ResEdit, load } from 'resedit/cjs';
+load().then((RE: typeof ResEdit) => {
+  // RE will be the namespace object of resedit library
+  // (for example RE.Data.IconFile is available)
+});
 ```
 
 ## Supported formats
@@ -90,6 +123,8 @@ ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
   // destEntries
   res.entries,
   // iconGroupID
+  // - This ID is originally defined in base executable file
+  //   (the ID list can be retrieved by `ResEdit.Resource.IconGroupEntry.fromEntries(res.entries).map((entry) => entry.id)`)
   101,
   // lang ('lang: 1033' means 'en-US')
   1033,
