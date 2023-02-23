@@ -24,6 +24,7 @@ rules:
     - always
     - markers: ['/']
       exceptions: ['/']
+  import/extensions: [error, ignorePackages]
   '@typescript-eslint/adjacent-overload-signatures': error
   '@typescript-eslint/array-type': [error, { default: array-simple }]
   '@typescript-eslint/naming-convention':

@@ -1,4 +1,6 @@
-const fs = require('fs');
+import * as fs from 'fs';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 const packageJson = require('../package.json');
 
 fs.writeFileSync(

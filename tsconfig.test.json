@@ -2,6 +2,7 @@
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
     "baseUrl": "./src/main",
+    "module": "ES2015",
     "rootDir": "../..",
     "paths": {
       "@/*": ["../../src/main/*"]

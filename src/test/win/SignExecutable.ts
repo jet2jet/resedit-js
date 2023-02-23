@@ -14,7 +14,7 @@ import {
 	type EncryptionAlgorithmType,
 	generateExecutableWithSign,
 	type SignerObject,
-} from '@/sign';
+} from '@/sign/index.js';
 
 const platform = __TEST_PLATFORM__;
 
