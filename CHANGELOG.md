@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.0
+
+- Change the library to native ES module
+  - CommonJS scripts now requires to use `pe-library/cjs` module to use the library.
+
 ## v1.7.0
 
 - Add support for ES module loading in Node.js environment
