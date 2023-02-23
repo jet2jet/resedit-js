@@ -3,7 +3,7 @@
 ## v2.0.0
 
 - Change the library to native ES module
-  - CommonJS scripts now requires to use `pe-library/cjs` module to use the library.
+  - CommonJS scripts now requires to use `resedit/cjs` module to use the library.
 
 ## v1.7.0
 
