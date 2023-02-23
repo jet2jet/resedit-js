@@ -7,15 +7,13 @@
   },
   "engineStrict": true,
   "description": "Node.js library editing Windows Resource data",
-  "main": "./dist/index.js",
-  "module": "./dist/_esm/index.js",
+  "type": "module",
+  "module": "./dist/index.js",
   "exports": {
-    "node": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "import": "./dist/_esm/index.js",
-    "require": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./cjs": {
+      "require": "./cjs.cjs"
+    }
   },
   "types": "./dist/index.d.ts",
   "author": "jet",
@@ -38,24 +36,24 @@
     "url": "https://github.com/jet2jet/resedit-js.git"
   },
   "scripts": {
-    "build": "npm run build:cjs && npm run build:esm",
-    "build:cjs": "tsc -p ./tsconfig.app.json",
-    "build:esm": "tsc -p ./tsconfig.app.esm.json && node ./tools/copyEsmFile.js",
+    "build": "npm run build:esm",
+    "build:esm": "tsc -p ./tsconfig.app.json",
     "lint": "npm run lint:prettier && npm run lint:eslint",
     "lint:eslint": "eslint -c .eslintrc.yml --ext .js,.jsx,.ts,.tsx .",
     "lint:eslint:fix": "eslint -c .eslintrc.yml --fix --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "npm run lint:prettier:fix && npm run lint:eslint:fix",
     "lint:prettier": "prettier --config ./.prettierrc.yml --check \"**/*.{js,jsx,ts,tsx,yml,json,md}\"",
     "lint:prettier:fix": "prettier --config ./.prettierrc.yml --write \"**/*.{js,jsx,ts,tsx,yml,json,md}\"",
-    "test": "jest --config ./jest.config.basic.js",
-    "test:basic": "jest --config ./jest.config.basic.js",
+    "test-base": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test": "npm run test-base -- --config ./jest.config.basic.js",
+    "test:basic": "npm run test-base -- --config ./jest.config.basic.js",
     "test:lint": "npm run lint",
-    "test:win-x86": "jest --config ./jest.config.win-x86.js",
-    "test:win-x64": "jest --config ./jest.config.win-x64.js",
+    "test:win-x86": "npm run test-base -- --config ./jest.config.win-x86.js",
+    "test:win-x64": "npm run test-base -- --config ./jest.config.win-x64.js",
     "version": "node ./tools/updateVersion.js ./src/main/version.ts && git add -A ./src/main/version.ts"
   },
   "dependencies": {
-    "pe-library": "^0.4.0"
+    "pe-library": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",

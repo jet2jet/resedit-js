@@ -1,12 +1,16 @@
-const path = require('path');
-const fs = require('fs');
-const crypto = require('crypto');
-const https = require('https');
-const ResEdit = require('../../dist');
+import * as path from 'path';
+import * as fs from 'fs';
+import * as crypto from 'crypto';
+import * as https from 'https';
+import * as url from 'url';
+import { Buffer } from 'buffer';
+import * as process from 'process';
+import * as ResEdit from '../../dist/index.js';
 /** @typedef {import('../../dist').SignerObject} SignerObject */
 
-const INPUT_DIR = path.resolve(__dirname, '../../test/input');
-const WORK_DIR = path.resolve(__dirname, '../../.work');
+const THIS_DIR = url.fileURLToPath(new URL('.', import.meta.url));
+const INPUT_DIR = path.resolve(THIS_DIR, '../../test/input');
+const WORK_DIR = path.resolve(THIS_DIR, '../../.work');
 
 const SRC_EXE = path.resolve(
 	INPUT_DIR,
