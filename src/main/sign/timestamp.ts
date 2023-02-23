@@ -1,7 +1,7 @@
 import { allocatePartialBinary } from '../util/functions.js';
 import { calculateDERLength, toUint8Array } from './certUtil.js';
 import { makeDEROctetString, makeDERSequence } from './data/derUtil.js';
-import AlgorithmIdentifier from './data/AlgorithmIdentifier.js';
+import type AlgorithmIdentifier from './data/AlgorithmIdentifier.js';
 import { OID_SIGNED_DATA } from './data/KnownOids.js';
 
 export function createTimestampRequest(

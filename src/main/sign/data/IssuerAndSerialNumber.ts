@@ -1,4 +1,4 @@
-import DERObject from './DERObject.js';
+import type DERObject from './DERObject.js';
 import { makeDERSequence } from './derUtil.js';
 
 export default class IssuerAndSerialNumber implements DERObject {

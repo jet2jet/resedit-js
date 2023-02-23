@@ -1,7 +1,7 @@
-import DERObject from './DERObject.js';
+import type DERObject from './DERObject.js';
 import ObjectIdentifier from './ObjectIdentifier.js';
 import { SpcAttributeTypeAndOptionalValue } from './SpcIndirectDataContent.js';
-import SpcLink from './SpcLink.js';
+import type SpcLink from './SpcLink.js';
 import { makeDERSequence, makeDERTaggedData } from './derUtil.js';
 
 // prettier-ignore

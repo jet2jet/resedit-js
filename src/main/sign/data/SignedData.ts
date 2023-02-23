@@ -1,6 +1,6 @@
-import DigestAlgorithmIdentifier from './AlgorithmIdentifier.js';
-import ContentInfo from './ContentInfo.js';
-import DERObject from './DERObject.js';
+import type DigestAlgorithmIdentifier from './AlgorithmIdentifier.js';
+import type ContentInfo from './ContentInfo.js';
+import type DERObject from './DERObject.js';
 import {
 	arrayToDERSet,
 	makeDERSequence,

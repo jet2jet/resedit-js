@@ -1,4 +1,5 @@
-import DERObject, { RawDERObject } from './DERObject.js';
+import type DERObject from './DERObject.js';
+import { RawDERObject } from './DERObject.js';
 import {
 	makeDERTaggedData,
 	makeDERIA5String,

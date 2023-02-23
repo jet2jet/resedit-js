@@ -1,4 +1,5 @@
-import DERObject, { RawDERObject } from './data/DERObject.js';
+import type DERObject from './data/DERObject.js';
+import { RawDERObject } from './data/DERObject.js';
 import { OID_SIGNED_DATA } from './data/KnownOids.js';
 
 export function toUint8Array(bin: ArrayBuffer | ArrayBufferView): Uint8Array {

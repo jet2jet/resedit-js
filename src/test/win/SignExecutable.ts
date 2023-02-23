@@ -10,10 +10,10 @@ import {
 	writeBinary,
 } from '../util/fs.js';
 import {
-	DigestAlgorithmType,
-	EncryptionAlgorithmType,
+	type DigestAlgorithmType,
+	type EncryptionAlgorithmType,
 	generateExecutableWithSign,
-	SignerObject,
+	type SignerObject,
 } from '@/sign';
 
 const platform = __TEST_PLATFORM__;
@@ -46,7 +46,7 @@ async function encryptDataBase(
 		}
 		binArray.push(Buffer.from(it.value));
 		totalLength += it.value.byteLength;
-		await 0;
+		await Promise.resolve();
 	}
 	return crypto.privateEncrypt(pkey, Buffer.concat(binArray, totalLength));
 }
@@ -61,7 +61,8 @@ async function digestDataBase(
 		if (it.done) {
 			break;
 		}
-		await hash.update(Buffer.from(it.value));
+		hash.update(Buffer.from(it.value));
+		await Promise.resolve();
 	}
 	return hash.digest();
 }
@@ -84,7 +85,7 @@ async function signDataBase(
 		}
 		binArray.push(Buffer.from(it.value));
 		totalLength += it.value.byteLength;
-		await 0;
+		await Promise.resolve();
 	}
 	return crypto.sign(algorithm, Buffer.concat(binArray, totalLength), pkey);
 }

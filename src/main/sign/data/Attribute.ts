@@ -1,5 +1,5 @@
-import DERObject from './DERObject.js';
-import ObjectIdentifier from './ObjectIdentifier.js';
+import type DERObject from './DERObject.js';
+import type ObjectIdentifier from './ObjectIdentifier.js';
 import { makeDERSequence, arrayToDERSet } from './derUtil.js';
 
 export default class Attribute implements DERObject {

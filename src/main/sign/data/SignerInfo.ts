@@ -1,12 +1,12 @@
-import DERObject from './DERObject.js';
-import IssuerAndSerialNumber from './IssuerAndSerialNumber.js';
+import type DERObject from './DERObject.js';
+import type IssuerAndSerialNumber from './IssuerAndSerialNumber.js';
 import {
 	makeDERSequence,
 	arrayToDERSet,
 	makeDEROctetString,
 } from './derUtil.js';
-import AlgorithmIdentifier from './AlgorithmIdentifier.js';
-import Attribute from './Attribute.js';
+import type AlgorithmIdentifier from './AlgorithmIdentifier.js';
+import type Attribute from './Attribute.js';
 
 export default class SignerInfo implements DERObject {
 	constructor(

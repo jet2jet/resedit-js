@@ -5,7 +5,7 @@ import { loadExecutableWithResourceCheck, testExec } from '../util/fs.js';
 import VersionFileFlags from '@/resource/VersionFileFlags.js';
 import VersionFileOS from '@/resource/VersionFileOS.js';
 import VersionFileType from '@/resource/VersionFileType.js';
-import VersionInfo, { VersionFixedInfo } from '@/resource/VersionInfo.js';
+import VersionInfo, { type VersionFixedInfo } from '@/resource/VersionInfo.js';
 
 const platform = __TEST_PLATFORM__;
 
