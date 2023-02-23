@@ -9,6 +9,5 @@ obj/
 *.ipdb
 *.pdb
 *.user
-.github
 npm-debug.log
 yarn-error.log
