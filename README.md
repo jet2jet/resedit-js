@@ -9,6 +9,8 @@ This library is not tested well for modifying and/or signing executables yet. Pl
 
 To use in command line, consider using [resedit-js-cli](https://www.npmjs.com/package/resedit-cli).
 
+The demo page: [resedit demo](https://www.pg-fl.jp/program/resedit/index.en.htm)
+
 - [Install](#install)
 - [Migrate from v1.x to v2.x](#migrate-from-v1x-to-v2x)
 - [Supported formats](#supported-formats)
