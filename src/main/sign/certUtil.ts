@@ -34,7 +34,7 @@ export function calculateDERLength(
 				);
 			}
 			actualLength <<= 8;
-			actualLength |= value;
+			actualLength |= data[offset]!;
 			++offset;
 		}
 	}
