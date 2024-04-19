@@ -54,7 +54,8 @@
     "test:lint": "npm run lint",
     "test:win-x86": "npm run test-base -- --config ./jest.config.win-x86.js",
     "test:win-x64": "npm run test-base -- --config ./jest.config.win-x64.js",
-    "version": "node ./tools/updateVersion.js ./src/main/version.ts && git add -A ./src/main/version.ts"
+    "version": "node ./tools/updateVersion.js ./src/main/version.ts && git add -A ./src/main/version.ts",
+    "typecheck": "tsc --project tsconfig.json --noEmit && echo \"Done\"."
   },
   "dependencies": {
     "pe-library": "^1.0.0"

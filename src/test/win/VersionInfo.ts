@@ -41,10 +41,14 @@ function doTestExecWithVersionValues(
 			return;
 		}
 		// <key>:<value>
-		const [key, value] = line.split(/:/g, 2);
+		const [key, value] = line.split(/:/g, 2) as [string, string];
 		if (/^String\./.test(key)) {
 			// key = 'Strings.<lang>-<cp>.<key>'
-			const [, langCp, stringKey] = key.split(/\./g, 3);
+			const [, langCp, stringKey] = key.split(/\./g, 3) as [
+				string,
+				string,
+				string
+			];
 			if (langCp === `${lang}-${codepage}`) {
 				if (versionStrings) {
 					expect(value).toEqual(versionStrings[stringKey]);
@@ -103,9 +107,9 @@ describe(`VersionInfo - ${platform}`, () => {
 	const lang = 1033;
 	const langAnother = 1041;
 	const codepage = 1200;
-	const fileVersions = [1, 2, 3, 4];
+	const fileVersions = [1, 2, 3, 4] as const;
 	const fileVersionString = `${fileVersions[0]}.${fileVersions[1]}.${fileVersions[2]}.${fileVersions[3]}`;
-	const productVersions = [1, 1, 2, 3];
+	const productVersions = [1, 1, 2, 3] as const;
 	const productVersionString = `${productVersions[0]}.${productVersions[1]}.${productVersions[2]}.${productVersions[3]}`;
 	const versionFixedValuesWithoutVersionNumbers: VersionFixedInfo = {
 		fileVersionMS: 0,
@@ -325,7 +329,7 @@ describe(`VersionInfo - ${platform}`, () => {
 		expect(baseVersions.some((v) => v.lang === lang)).toBeTruthy();
 		expect(
 			baseVersions
-				.filter((v) => v.lang === lang)[0]
+				.filter((v) => v.lang === lang)[0]!
 				.getAvailableLanguages()
 				.some((v) => v.lang === lang)
 		).toBeTruthy();
@@ -417,7 +421,7 @@ describe(`VersionInfo - ${platform}`, () => {
 		const baseVersions = VersionInfo.fromEntries(res.entries);
 		expect(baseVersions.length).toBeGreaterThan(0);
 		expect(baseVersions.some((v) => v.lang === lang)).toBeTruthy();
-		const version = baseVersions.filter((v) => v.lang === lang)[0];
+		const version = baseVersions.filter((v) => v.lang === lang)[0]!;
 		const verLangs = version.getAvailableLanguages().length;
 		expect(
 			version.getAvailableLanguages().some((v) => v.lang === lang)

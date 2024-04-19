@@ -151,7 +151,7 @@ export function binaryToString(bin: ArrayBuffer | ArrayBufferView): string {
 		if (typeof decodeURIComponent !== 'undefined') {
 			let s = '';
 			for (let i = 0; i < view.length; ++i) {
-				const c = view[i];
+				const c = view[i]!;
 				if (c < 16) {
 					s += '%0' + c.toString(16);
 				} else {
@@ -162,7 +162,7 @@ export function binaryToString(bin: ArrayBuffer | ArrayBufferView): string {
 		} else {
 			let s = '';
 			for (let i = 0; i < view.length; ++i) {
-				const c = view[i];
+				const c = view[i]!;
 				s += String.fromCharCode(c);
 			}
 			return s;

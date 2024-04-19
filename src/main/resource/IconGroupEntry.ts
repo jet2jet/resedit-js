@@ -87,8 +87,7 @@ function findUnusedIconID(
 		.map((e) => e.id)
 		.sort((a, b) => a - b);
 	let idCurrent = 1;
-	for (let i = 0; i < filteredIDs.length; ++i) {
-		const id = filteredIDs[i];
+	for (const id of filteredIDs) {
 		if (idCurrent < id) {
 			return {
 				id: idCurrent,
@@ -300,7 +299,7 @@ export default class IconGroupEntry {
 			// remove unused icon data
 			for (let i = destEntries.length - 1; i >= 0; --i) {
 				const e = destEntries[i];
-				if (e.type === 3) {
+				if (e != null && e.type === 3) {
 					// RT_ICON
 					if (!isIconUsed(e, destEntries, entry)) {
 						destEntries.splice(i, 1);

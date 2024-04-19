@@ -61,7 +61,7 @@ export default class StringTable {
 		}
 		const entryIndex = id >> 4;
 		const entryPos = id & 15;
-		const e = this.items[entryIndex] as StringTableItem | undefined;
+		const e = this.items[entryIndex];
 		return e?.get(entryPos) ?? null;
 	}
 	/**
@@ -75,7 +75,7 @@ export default class StringTable {
 		}
 		const entryIndex = id >> 4;
 		const entryPos = id & 15;
-		let e = this.items[entryIndex] as StringTableItem | undefined;
+		let e = this.items[entryIndex];
 		if (!e) {
 			this.items[entryIndex] = e = new StringTableItem();
 		}
@@ -110,10 +110,10 @@ export default class StringTable {
 		// first try -- replace same type and same language
 		for (let i = 0; i < dest.length; ++i) {
 			const e = dest[i];
-			if (e.type === 6 && e.lang === this.lang) {
+			if (e != null && e.type === 6 && e.lang === this.lang) {
 				for (let j = dest.length - 1; j >= i; --j) {
 					const e2 = dest[j];
-					if (e2.type === 6 && e2.lang === this.lang) {
+					if (e2 != null && e2.type === 6 && e2.lang === this.lang) {
 						dest.splice(j, 1);
 					}
 				}
@@ -125,7 +125,7 @@ export default class StringTable {
 		// second try -- add entries next to previous language
 		for (let i = 0; i < dest.length; ++i) {
 			const e = dest[i];
-			if (e.type === 6 && e.lang < this.lang) {
+			if (e != null && e.type === 6 && e.lang < this.lang) {
 				const f = dest.splice.bind(dest, i + 1, 0);
 				f(...entries);
 				return;
@@ -134,7 +134,7 @@ export default class StringTable {
 		// third try -- add entries next to the last 'String' entry
 		for (let i = dest.length - 1; i >= 0; --i) {
 			const e = dest[i];
-			if (e.type === 6) {
+			if (e != null && e.type === 6) {
 				const f = dest.splice.bind(dest, i + 1, 0);
 				f(...entries);
 				return;
