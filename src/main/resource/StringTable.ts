@@ -61,7 +61,7 @@ export default class StringTable {
 		}
 		const entryIndex = id >> 4;
 		const entryPos = id & 15;
-		const e = this.items[entryIndex] as StringTableItem | undefined;
+		const e = this.items[entryIndex];
 		return e?.get(entryPos) ?? null;
 	}
 	/**
@@ -75,7 +75,7 @@ export default class StringTable {
 		}
 		const entryIndex = id >> 4;
 		const entryPos = id & 15;
-		let e = this.items[entryIndex] as StringTableItem | undefined;
+		let e = this.items[entryIndex];
 		if (!e) {
 			this.items[entryIndex] = e = new StringTableItem();
 		}

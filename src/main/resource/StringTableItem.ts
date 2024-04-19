@@ -35,7 +35,8 @@ export default class StringTableItem {
 	}
 
 	public get(index: number): string | null {
-		return this._a[index] || null;
+		const value = this._a[index];
+		return value != null && value !== '' ? value : null;
 	}
 	public getAll(): Array<string | null> {
 		return this._a.map((s) => s || null);
