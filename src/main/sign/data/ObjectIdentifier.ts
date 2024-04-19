@@ -15,13 +15,16 @@ export default class ObjectIdentifier implements DERObject {
 	public toDER(): number[] {
 		const id = this.value;
 		const r: number[] = [];
+		if (id.length < 2) {
+			throw new Error("Unexpected 'value' field");
+		}
 
 		// first byte will be (x * 40 + y) for 'x.y.****'
-		r.push(id[0] * 40 + id[1]);
+		r.push(id[0]! * 40 + id[1]!);
 
 		for (let i = 2; i < id.length; ++i) {
 			// store as variable-length value
-			let val = id[i];
+			let val = id[i]!;
 			let isFirst = true;
 			const insertPos = r.length;
 			while (true) {

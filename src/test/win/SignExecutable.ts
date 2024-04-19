@@ -143,7 +143,7 @@ describe('generateExecutableWithSign', () => {
 				.replace(/(?:\r\n|[\r\n])$/g, '')
 				.split(/\r\n|[\r\n]/g);
 
-			const ra = /^Result:([0-9]+)$/.exec(resultLines[0]);
+			const ra = /^Result:([0-9]+)$/.exec(resultLines[0]!);
 			if (!ra) {
 				fail(`Unexpected output from VerifyTool: ${result}`);
 			}
@@ -189,7 +189,7 @@ describe('generateExecutableWithSign', () => {
 			.replace(/(?:\r\n|[\r\n])$/g, '')
 			.split(/\r\n|[\r\n]/g);
 
-		const ra = /^Result:([0-9]+)$/.exec(resultLines[0]);
+		const ra = /^Result:([0-9]+)$/.exec(resultLines[0]!);
 		if (!ra) {
 			fail(`Unexpected output from VerifyTool: ${result}`);
 		}
@@ -233,7 +233,7 @@ describe('generateExecutableWithSign', () => {
 			.replace(/(?:\r\n|[\r\n])$/g, '')
 			.split(/\r\n|[\r\n]/g);
 
-		const ra = /^Result:([0-9]+)$/.exec(resultLines[0]);
+		const ra = /^Result:([0-9]+)$/.exec(resultLines[0]!);
 		if (!ra) {
 			fail(`Unexpected output from VerifyTool: ${result}`);
 		}
@@ -282,7 +282,7 @@ describe('generateExecutableWithSign', () => {
 				.replace(/(?:\r\n|[\r\n])$/g, '')
 				.split(/\r\n|[\r\n]/g);
 
-			const ra = /^Result:([0-9]+)$/.exec(resultLines[0]);
+			const ra = /^Result:([0-9]+)$/.exec(resultLines[0]!);
 			if (!ra) {
 				fail(`Unexpected output from VerifyTool: ${result}`);
 			}

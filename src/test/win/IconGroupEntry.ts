@@ -19,10 +19,10 @@ function testExecWithResultData(bin: ArrayBuffer, appName: string) {
 	const result: Record<string, Record<string, string>> = {};
 	output.split(/\r\n|[\r\n]/g).forEach((token) => {
 		const data = token.split(/:/g, 2);
-		const pairs = data[0].split(/\./g, 2);
+		const pairs = data[0]!.split(/\./g, 2);
 		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-		const obj = result[pairs[0]] ?? (result[pairs[0]] = {});
-		obj[pairs[1]] = data[1];
+		const obj = result[pairs[0]!] ?? (result[pairs[0]!] = {});
+		obj[pairs[1]!] = data[1]!;
 	});
 	return result;
 }
@@ -40,7 +40,7 @@ function testIconPatterns(
 			return;
 		}
 		expect(output).toHaveProperty(typeName);
-		const o = output[typeName];
+		const o = output[typeName]!;
 		expect(o).toBeDefined();
 		expect(o.isIcon).toEqual('1');
 		expect(o.width).toEqual(`${width}`);

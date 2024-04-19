@@ -61,7 +61,8 @@ export function pickSignedDataFromTimestampResponse(
 			'Invalid or unexpected timestamp response (invalid PKIStatusInfo.status)'
 		);
 	}
-	switch (ub[offset + 2]) {
+	const status = ub[offset + 2];
+	switch (status) {
 		case 0: // granted
 		case 1: // grantedWithMods
 			break;
@@ -69,9 +70,7 @@ export function pickSignedDataFromTimestampResponse(
 		case 3: // waiting
 		case 4: // revocationWarning
 		case 5: /* revocationNotification */ {
-			let msg: string = `Timestamp response has error status ${
-				ub[offset + 2]
-			}`;
+			let msg: string = `Timestamp response has error status ${status}`;
 			// PKIStatusInfo.statusString
 			if (offset + 3 < timeStampTokenOffset && ub[offset + 3] === 0x30) {
 				[len, offset] = calculateDERLength(ub, offset + 4);
@@ -110,7 +109,7 @@ export function pickSignedDataFromTimestampResponse(
 		}
 		default:
 			throw new Error(
-				`Unexpected PKIStatusInfo.status: ${ub[offset + 2]}`
+				`Unexpected PKIStatusInfo.status: ${status ?? '(unknown)'}`
 			);
 	}
 	// TimeStampToken ::= ContentInfo

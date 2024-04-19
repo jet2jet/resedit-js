@@ -15,6 +15,7 @@
     "rootDir": "./src/main",
     "skipLibCheck": true,
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "stripInternal": true,
     "target": "es5",
     "typeRoots": ["./src/typings", "./node_modules/@types", "./node_modules"],
