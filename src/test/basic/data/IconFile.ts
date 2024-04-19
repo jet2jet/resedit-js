@@ -41,7 +41,7 @@ describe('IconFile', () => {
 				[16, 16],
 				[32, 32],
 			].forEach(([width, height], i) => {
-				const icon = iconsSorted[i];
+				const icon = iconsSorted[i]!;
 				expect(icon.width).toEqual(width);
 				expect(icon.height).toEqual(height);
 				expect(icon.bitCount).toEqual(bitCount);
@@ -72,7 +72,7 @@ describe('IconFile', () => {
 			[32, 32],
 			[64, 64],
 		].forEach(([width, height], i) => {
-			const icon = iconsSorted[i];
+			const icon = iconsSorted[i]!;
 			expect(icon.width).toEqual(width);
 			expect(icon.height).toEqual(height);
 			expect(icon.bitCount).toEqual(4);
@@ -84,18 +84,15 @@ describe('IconFile', () => {
 			expect(icon.data.isIcon() && icon.data.width).toEqual(width);
 			expect(icon.data.isIcon() && icon.data.height).toEqual(height);
 		});
-		expect(getIconWidth(iconsSorted[3])).toEqual(256);
-		expect(getIconHeight(iconsSorted[3])).toEqual(256);
-		expect(iconsSorted[3].data.isRaw()).toBeTruthy();
+		const thirdIcon = iconsSorted[3]!;
+		expect(getIconWidth(thirdIcon)).toEqual(256);
+		expect(getIconHeight(thirdIcon)).toEqual(256);
+		expect(thirdIcon.data.isRaw()).toBeTruthy();
 		expect(
-			iconsSorted[3].data.isRaw() && iconsSorted[3].data.bin.byteLength
+			thirdIcon.data.isRaw() && thirdIcon.data.bin.byteLength
 		).toBeGreaterThan(0);
-		expect(
-			iconsSorted[3].data.isRaw() && iconsSorted[3].data.width
-		).toEqual(256);
-		expect(
-			iconsSorted[3].data.isRaw() && iconsSorted[3].data.height
-		).toEqual(256);
+		expect(thirdIcon.data.isRaw() && thirdIcon.data.width).toEqual(256);
+		expect(thirdIcon.data.isRaw() && thirdIcon.data.height).toEqual(256);
 
 		const newBin = Buffer.from(icon.generate());
 		expect(newBin).toEqual(bin);

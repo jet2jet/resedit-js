@@ -46,8 +46,11 @@ export default class StringTableItem {
 	public calcByteLength(): number {
 		let len = 0;
 		for (let i = 0; i < 16; ++i) {
+			const item = this._a[i];
 			len += 2;
-			len += 2 * this._a[i].length; // UTF-16 length
+			if (item != null) {
+				len += 2 * item.length; // UTF-16 length
+			}
 		}
 		// 16 alignment
 		return Math.floor((len + 15) / 16) * 16;
@@ -57,13 +60,15 @@ export default class StringTableItem {
 		let len = 0;
 		for (let i = 0; i < 16; ++i) {
 			const s = this._a[i];
-			const l = s.length > 4097 ? 4097 : s.length;
+			const l = s == null ? 0 : s.length > 4097 ? 4097 : s.length;
 			out.setUint16(len, l, true);
 			len += 2;
-			for (let j = 0; j < l; ++j) {
-				// output as UTF-16
-				out.setUint16(len, s.charCodeAt(j), true);
-				len += 2;
+			if (s != null) {
+				for (let j = 0; j < l; ++j) {
+					// output as UTF-16
+					out.setUint16(len, s.charCodeAt(j), true);
+					len += 2;
+				}
 			}
 		}
 		// 16 alignment

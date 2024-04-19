@@ -16,13 +16,16 @@ export function calculateDERLength(
 	offset: number
 ): [number, number] {
 	let actualLength = 0;
-	if (data[offset] < 0x80) {
-		actualLength = data[offset];
+	const value = data[offset];
+	if (value == null) {
+		throw new Error('Invalid "offset" value');
+	} else if (value < 0x80) {
+		actualLength = value;
 		++offset;
-	} else if (data[offset] === 0x80) {
+	} else if (value === 0x80) {
 		throw new Error('Not supported certificate data (variable length)');
 	} else {
-		let c = data[offset] & 0x7f;
+		let c = value & 0x7f;
 		++offset;
 		while (c--) {
 			if (offset >= data.length) {
@@ -31,7 +34,7 @@ export function calculateDERLength(
 				);
 			}
 			actualLength <<= 8;
-			actualLength |= data[offset];
+			actualLength |= value;
 			++offset;
 		}
 	}
@@ -153,7 +156,7 @@ export function pickIssuerAndSerialNumberDERFromCert(
 		if (bin.length === 0) {
 			throw new Error('No data is specified.');
 		}
-		return pickIssuerAndSerialNumberDERFromCert(bin[0]);
+		return pickIssuerAndSerialNumberDERFromCert(bin[0]!);
 	}
 	const ub = toUint8Array(bin);
 	if (ub.length < 2) {

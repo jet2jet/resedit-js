@@ -204,7 +204,10 @@ function parseStringFileInfo(
 		} else {
 			// merge values
 			for (const key in table.values) {
-				a[0].values[key] = table.values[key];
+				const value = table.values[key];
+				if (value != null) {
+					a[0]!.values[key] = value;
+				}
 			}
 		}
 		offset = roundUp(childData[0], 4);
@@ -358,6 +361,9 @@ function generateStringTable(table: VersionStringTable): ArrayBuffer {
 	const keys = Object.keys(table.values);
 	size = keys.reduce((prev, key) => {
 		const value = table.values[key];
+		if (value == null) {
+			return prev;
+		}
 		const childHeaderSize = roundUp(6 + 2 * (key.length + 1), 4);
 		const newSize = roundUp(
 			prev + childHeaderSize + 2 * (value.length + 1),
@@ -389,6 +395,9 @@ function generateStringTable(table: VersionStringTable): ArrayBuffer {
 
 	keys.forEach((key) => {
 		const value = table.values[key];
+		if (value == null) {
+			return;
+		}
 		const childHeaderSize = roundUp(6 + 2 * (key.length + 1), 4);
 		const newSize = roundUp(childHeaderSize + 2 * (value.length + 1), 4);
 		if (offset + newSize <= 65532) {
@@ -558,7 +567,7 @@ function parseVersionArguments(
 			.split('.')
 			.map((token) => clampInt(Number(token), 0, 65535))
 			// add zeros for missing fields
-			.concat(0, 0, 0);
+			.concat(0, 0, 0) as [number, number, number, number];
 		lang = arg2;
 	} else {
 		major = clampInt(Number(arg1), 0, 65535);
@@ -636,11 +645,13 @@ export default class VersionInfo {
 		vi.data.lang = lang;
 		// copy all specified values
 		// (if unspecified, use default value set by `createFixedInfo`)
-		for (const fixedInfoKey in fixedInfo!) {
+		for (const _fixedInfoKey in fixedInfo!) {
+			const fixedInfoKey = _fixedInfoKey as keyof VersionFixedInfo;
 			if (fixedInfoKey in fixedInfo) {
-				(vi.data.fixedInfo as any)[fixedInfoKey] = (fixedInfo as any)[
-					fixedInfoKey
-				];
+				const value = fixedInfo[fixedInfoKey];
+				if (value != null) {
+					vi.data.fixedInfo[fixedInfoKey] = value;
+				}
 			}
 		}
 		vi.data.strings = strings!.map(
@@ -712,7 +723,7 @@ export default class VersionInfo {
 					e.lang === language.lang && e.codepage === language.codepage
 			)
 			.map((e) => e.values);
-		return a.length > 0 ? a[0] : {};
+		return a.length > 0 ? a[0]! : {};
 	}
 
 	/**
@@ -751,10 +762,13 @@ export default class VersionInfo {
 			};
 			this.data.strings.push(table);
 		} else {
-			table = a[0];
+			table = a[0]!;
 		}
 		for (const key in values) {
-			table.values[key] = values[key];
+			const value = values[key];
+			if (value != null) {
+				table.values[key] = value;
+			}
 		}
 
 		if (addToAvailableLanguage) {
@@ -805,13 +819,18 @@ export default class VersionInfo {
 		const len = strings.length;
 		for (let i = 0; i < len; ++i) {
 			const e = strings[i];
-			if (e.lang === language.lang && e.codepage === language.codepage) {
+			if (
+				e != null &&
+				e.lang === language.lang &&
+				e.codepage === language.codepage
+			) {
 				strings.splice(i, 1);
 				if (removeFromAvailableLanguage) {
 					const translations = this.data.translations;
 					for (let j = 0; j < translations.length; j++) {
 						const t = translations[j];
 						if (
+							t != null &&
 							t.lang === language.lang &&
 							t.codepage === language.codepage
 						) {
@@ -840,7 +859,11 @@ export default class VersionInfo {
 		const len = strings.length;
 		for (let i = 0; i < len; ++i) {
 			const e = strings[i];
-			if (e.lang === language.lang && e.codepage === language.codepage) {
+			if (
+				e != null &&
+				e.lang === language.lang &&
+				e.codepage === language.codepage
+			) {
 				try {
 					// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 					delete e.values[key];
@@ -855,6 +878,7 @@ export default class VersionInfo {
 					for (let j = 0; j < translations.length; j++) {
 						const t = translations[j];
 						if (
+							t != null &&
 							t.lang === language.lang &&
 							t.codepage === language.codepage
 						) {
@@ -896,7 +920,12 @@ export default class VersionInfo {
 		const len = entries.length;
 		for (let i = 0; i < len; ++i) {
 			const e = entries[i];
-			if (e.type === 16 && e.id === res.id && e.lang === res.lang) {
+			if (
+				e != null &&
+				e.type === 16 &&
+				e.id === res.id &&
+				e.lang === res.lang
+			) {
 				entries[i] = res;
 				return;
 			}
@@ -915,10 +944,10 @@ export default class VersionInfo {
 		}
 		// second, use lang value for propName if there is only one language
 		const a = this.data.strings
-			.filter((e) => propName in e.values)
+			.filter((e) => propName in e.values && e.values[propName] != null)
 			.map((e) => e.lang);
 		if (a.length === 1) {
-			return a[0];
+			return a[0]!;
 		}
 		// use English language
 		return 1033;
