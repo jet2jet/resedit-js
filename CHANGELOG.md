@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.1
+
+- Add nullish check for some fields
+- Add demo page link to README
+
 ## v2.0.0
 
 - Change the library to native ES module
