@@ -30,6 +30,8 @@ jobs:
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
         run: npm ci
+      - name: Type check
+        run: npm run typecheck
       - name: Lint check
         run: npm run lint
       - name: Test
