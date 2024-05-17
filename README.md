@@ -84,7 +84,7 @@ To keep resedit-js generic library, the followings are required to use signing p
 
 These requirements are represented as [`SignerObject`](./src/main/sign/SignerObject.ts). The caller of `generateExecutableWithSign` function must implement this object to sign executables.
 
-An example code is here: [signTest.js](./examples/sign/signTest.js)
+An example code is here: [signTest.mjs](./examples/sign/signTest.mjs)
 
 Note that resedit-js only provides basic signing process, and provides as beta version. For example adding more attributes/informations to certificates are not supported now.
 
