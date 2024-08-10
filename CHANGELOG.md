@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.7.1
+
+- Same update for [v2.0.1](https://github.com/jet2jet/resedit-js/releases/tag/v2.0.1):
+  - Add nullish check for some fields
+  - Add demo page link to README
+- Same update for [v2.0.2](https://github.com/jet2jet/resedit-js/releases/tag/v2.0.2):
+  - Update pe-library
+
 ## v1.7.0
 
 - Add support for ES module loading in Node.js environment

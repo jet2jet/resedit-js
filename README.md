@@ -1,5 +1,5 @@
 [![NPM version](https://badge.fury.io/js/resedit.svg)](https://www.npmjs.com/package/resedit)
-[![Build Status](https://api.travis-ci.com/jet2jet/resedit-js.svg?branch=master)](https://www.travis-ci.com/jet2jet/resedit-js)
+[![Build Status](https://github.com/jet2jet/resedit-js/actions/workflows/main-ci.yml/badge.svg)](https://github.com/jet2jet/resedit-js)
 
 # resedit-js
 
