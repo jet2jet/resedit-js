@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.7.2
+
+- Same update for [v2.0.3](https://github.com/jet2jet/resedit-js/releases/tag/v2.0.3)
+  - Fix icon item image size to ignore biImageSize when biCompression is BI_RGB (#56)
+
 ## v1.7.1
 
 - Same update for [v2.0.1](https://github.com/jet2jet/resedit-js/releases/tag/v2.0.1):
