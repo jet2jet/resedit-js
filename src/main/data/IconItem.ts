@@ -101,7 +101,17 @@ export default class IconItem {
 		// round up to 4 bytes (32 bit)
 		const widthBytes = roundUp(bi.bitCount * Math.abs(bi.width), 32) / 8;
 		const absActualHeight = Math.abs(bi.height) / 2;
-		const size = sizeImage || widthBytes * absActualHeight;
+		// sizeImage may be weird if compression is 0 (BI_RGB), so
+		// we calculate actual bitmap size from width and height
+		const size =
+			bi.compression !== 0 && sizeImage !== 0
+				? sizeImage
+				: widthBytes * absActualHeight;
+		if (size + offset > totalSize) {
+			throw new Error(
+				`Unexpected bitmap data in icon: bitmap size ${size} is larger than ${totalSize} - ${offset}`
+			);
+		}
 		this._pixels = allocatePartialBinary(view, offset, size);
 		offset += size;
 		const maskSize = calcMaskSize(bi.width, absActualHeight);
