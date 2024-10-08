@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.3
+
+- Fix icon item image size to ignore biImageSize when biCompression is BI_RGB (#56)
+
 ## v2.0.2
 
 - Update pe-library
