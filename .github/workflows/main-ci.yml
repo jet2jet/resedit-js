@@ -62,6 +62,7 @@ jobs:
         # use npx instead of installing npm globally to avoid permission error
         run: npx -y npm@${{ needs.get-vars.outputs.npm-version }} ci
       - name: Test (x86)
-        run: npx -y npm@${{ needs.get-vars.outputs.npm-version }} run test:win-x86
+        # use normal npm (which should not affect to the test)
+        run: npm run test:win-x86
       - name: Test (x64)
-        run: npx -y npm@${{ needs.get-vars.outputs.npm-version }} run test:win-x64
+        run: npm run test:win-x64
