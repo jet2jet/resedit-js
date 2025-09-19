@@ -49,6 +49,12 @@ jobs:
         with:
           node-version: ${{ needs.get-vars.outputs.node-version }}
           cache: npm
+      - name: Override npm prefix for using specific npm version
+        shell: pwsh
+        run: |
+          $prefix = "$env:USERPROFILE\npm-prefix"
+          npm config set prefix $prefix
+          "$prefix\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Setup npm
         run: npm i -g npm@${{ needs.get-vars.outputs.npm-version }}
       - name: Cache node modules
