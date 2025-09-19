@@ -175,6 +175,45 @@ describe(`VersionInfo - ${platform}`, () => {
 		);
 	});
 
+	it('append new version info as a new resource data (with VersionInfo.create)', () => {
+		const appName = 'ReadVersionApp_NoRes';
+		const exe = loadExecutableWithResourceCheck(appName, platform, false);
+
+		const res = NtExecutableResource.from(exe);
+		expect(res.entries.length).toEqual(0);
+
+		const version = VersionInfo.create({
+			lang,
+			fixedInfo: versionFixedValues,
+			strings: [
+				{
+					lang,
+					codepage,
+					values: versionStringValues,
+				},
+			],
+		});
+
+		version.outputToResourceEntries(res.entries);
+		expect(res.entries.length).toEqual(1);
+
+		res.outputResource(exe);
+		expect(
+			exe.getSectionByEntry(Format.ImageDirectoryEntry.Resource)
+		).not.toEqual(null);
+
+		const newBin = exe.generate();
+
+		doTestExecWithVersionValues(
+			newBin,
+			appName,
+			versionFixedValues,
+			lang,
+			codepage,
+			versionStringValues
+		);
+	});
+
 	it('append new version info as a new resource data 2', () => {
 		const appName = 'ReadVersionApp_NoRes';
 		const exe = loadExecutableWithResourceCheck(appName, platform, false);
