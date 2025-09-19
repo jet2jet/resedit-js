@@ -2,12 +2,12 @@ name: Main CI
 on:
   push:
 
-env:
-  NODE_VERSION: 14
-  NPM_VERSION: 7
-
 jobs:
+  get-vars:
+    uses: ./.github/workflows/nodevars.yml
+
   main:
+    needs: get-vars
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,10 +15,10 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ needs.get-vars.outputs.node-version }}
           cache: npm
       - name: Setup npm
-        run: npm i -g npm@${{ env.NPM_VERSION }}
+        run: npm i -g npm@${{ needs.get-vars.outputs.npm-version }}
       - name: Cache node modules
         id: node_modules_cache
         uses: actions/cache@v3
@@ -37,6 +37,7 @@ jobs:
       - name: Test
         run: npm run test
   windows-test:
+    needs: get-vars
     runs-on: windows-latest
     env:
       TEST_IGNORE_256_ICON: 1
@@ -46,10 +47,10 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ needs.get-vars.outputs.node-version }}
           cache: npm
       - name: Setup npm
-        run: npm i -g npm@${{ env.NPM_VERSION }}
+        run: npm i -g npm@${{ needs.get-vars.outputs.npm-version }}
       - name: Cache node modules
         id: node_modules_cache
         uses: actions/cache@v3
