@@ -1,7 +1,5 @@
 import { Format, NtExecutableResource } from 'pe-library';
-
 import { loadExecutableWithResourceCheck, testExec } from '../util/fs.js';
-
 import VersionFileFlags from '@/resource/VersionFileFlags.js';
 import VersionFileOS from '@/resource/VersionFileOS.js';
 import VersionFileType from '@/resource/VersionFileType.js';
@@ -9,7 +7,6 @@ import VersionInfo, { type VersionFixedInfo } from '@/resource/VersionInfo.js';
 
 const platform = __TEST_PLATFORM__;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function copyValues<T extends object>(dest: T, src: Readonly<T>) {
 	type TKeys = keyof T;
 	Object.keys(src).forEach((key) => {
@@ -47,13 +44,12 @@ function doTestExecWithVersionValues(
 			const [, langCp, stringKey] = key.split(/\./g, 3) as [
 				string,
 				string,
-				string
+				string,
 			];
 			if (langCp === `${lang}-${codepage}`) {
 				if (versionStrings) {
 					expect(value).toEqual(versionStrings[stringKey]);
 					try {
-						// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 						delete copiedVersionStrings[stringKey];
 					} catch (_e) {}
 				} else {

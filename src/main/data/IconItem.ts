@@ -1,5 +1,3 @@
-import type BitmapInfo from './BitmapInfo.js';
-
 import {
 	allocatePartialBinary,
 	copyBuffer,
@@ -10,6 +8,7 @@ import {
 	readUint32WithLastOffset,
 	roundUp,
 } from '../util/functions.js';
+import type BitmapInfo from './BitmapInfo.js';
 
 function calcMaskSize(width: number, height: number) {
 	// round up to 4 bytes (32 bit)

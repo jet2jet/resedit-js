@@ -1,7 +1,6 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
 import { NtExecutable } from 'pe-library';
-
 import {
 	loadCert,
 	loadExeBinary,
@@ -99,7 +98,7 @@ class SimpleSignerObject implements SignerObject {
 	public getEncryptionAlgorithm(): EncryptionAlgorithmType {
 		return 'rsa';
 	}
-	public async digestData(dataIterator: Iterator<ArrayBuffer>) {
+	public async digestData(dataIterator: Iterator<ArrayBuffer, void>) {
 		return await digestDataBase('sha1', dataIterator);
 	}
 }

@@ -1,11 +1,9 @@
 import { Format, NtExecutableResource } from 'pe-library';
-
 import {
 	loadExecutableWithResourceCheck,
 	loadIcon,
 	testExec,
 } from '../util/fs.js';
-
 import IconFile from '@/data/IconFile.js';
 import IconGroupEntry from '@/resource/IconGroupEntry.js';
 
@@ -20,7 +18,7 @@ function testExecWithResultData(bin: ArrayBuffer, appName: string) {
 	output.split(/\r\n|[\r\n]/g).forEach((token) => {
 		const data = token.split(/:/g, 2);
 		const pairs = data[0]!.split(/\./g, 2);
-		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+
 		const obj = result[pairs[0]!] ?? (result[pairs[0]!] = {});
 		obj[pairs[1]!] = data[1]!;
 	});

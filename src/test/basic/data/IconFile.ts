@@ -1,21 +1,20 @@
 import { loadIcon } from '../../util/fs.js';
-
 import IconFile, { type IconFileItem } from '@/data/IconFile.js';
 
 function getIconWidth(icon: IconFileItem) {
 	return icon.width !== undefined && icon.width !== 0
 		? icon.width
 		: icon.data.isIcon()
-		? icon.data.bitmapInfo.width
-		: icon.data.width;
+			? icon.data.bitmapInfo.width
+			: icon.data.width;
 }
 
 function getIconHeight(icon: IconFileItem) {
 	return icon.height !== undefined && icon.height !== 0
 		? icon.height
 		: icon.data.isIcon()
-		? icon.data.bitmapInfo.height
-		: icon.data.height;
+			? icon.data.bitmapInfo.height
+			: icon.data.height;
 }
 
 describe('IconFile', () => {
@@ -108,7 +107,6 @@ describe('IconFile', () => {
 				const bin = loadIcon(iconName);
 				const icon = IconFile.from(bin);
 				for (const i of icon.icons) {
-					// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 					delete i[field];
 				}
 				const newBin = Buffer.from(icon.generate());

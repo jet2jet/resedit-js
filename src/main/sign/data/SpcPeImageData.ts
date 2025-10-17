@@ -1,8 +1,8 @@
 import type DERObject from './DERObject.js';
+import { makeDERSequence, makeDERTaggedData } from './derUtil.js';
 import ObjectIdentifier from './ObjectIdentifier.js';
 import { SpcAttributeTypeAndOptionalValue } from './SpcIndirectDataContent.js';
 import type SpcLink from './SpcLink.js';
-import { makeDERSequence, makeDERTaggedData } from './derUtil.js';
 
 // prettier-ignore
 export const SPC_PE_IMAGE_DATA_OBJID = new ObjectIdentifier([1,3,6,1,4,1,311,2,1,15]);
@@ -14,7 +14,10 @@ export const enum SpcPeImageFlags {
 }
 
 export default class SpcPeImageData implements DERObject {
-	constructor(public flags: SpcPeImageFlags, public file: SpcLink) {}
+	constructor(
+		public flags: SpcPeImageFlags,
+		public file: SpcLink
+	) {}
 
 	public toDER(): number[] {
 		return makeDERSequence(

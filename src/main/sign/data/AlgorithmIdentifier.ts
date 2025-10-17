@@ -1,6 +1,6 @@
 import type DERObject from './DERObject.js';
-import type ObjectIdentifier from './ObjectIdentifier.js';
 import { makeDERSequence } from './derUtil.js';
+import type ObjectIdentifier from './ObjectIdentifier.js';
 
 export default class AlgorithmIdentifier implements DERObject {
 	constructor(public algorithm: ObjectIdentifier) {}

@@ -1,19 +1,16 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference lib='dom' />
 
 // We must use 'object' for this function (Record<string, unknown> is not usable here)
-/* eslint-disable @typescript-eslint/ban-types */
 export function cloneObject<T extends object>(object: Readonly<T>): T;
 export function cloneObject<T extends object>(object: T): T;
 
 export function cloneObject<T extends object>(object: object): T {
-	const r: any = {};
+	const r: Record<string, unknown> = {};
 	Object.keys(object).forEach((key) => {
 		r[key] = object[key as keyof typeof object];
 	});
-	return r;
+	return r as T;
 }
-/* eslint-enable @typescript-eslint/ban-types */
 
 export function createDataView(
 	bin: ArrayBuffer | ArrayBufferView,
@@ -53,7 +50,7 @@ export function copyBuffer(
 					dest.buffer,
 					dest.byteOffset + (destOffset || 0),
 					length
-			  )
+				)
 			: new Uint8Array(dest, destOffset, length);
 	const ua8Src =
 		'buffer' in src
@@ -61,7 +58,7 @@ export function copyBuffer(
 					src.buffer,
 					src.byteOffset + (srcOffset || 0),
 					length
-			  )
+				)
 			: new Uint8Array(src, srcOffset, length);
 
 	ua8Dest.set(ua8Src);

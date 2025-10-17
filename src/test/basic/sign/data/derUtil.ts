@@ -1,3 +1,4 @@
+import { RawDERObject } from '@/sign/data/DERObject.js';
 import {
 	arrayToDERSet,
 	makeDERBMPString,
@@ -7,7 +8,6 @@ import {
 	makeDERSequence,
 	makeDERTaggedData,
 } from '@/sign/data/derUtil.js';
-import { RawDERObject } from '@/sign/data/DERObject.js';
 
 describe('arrayToDERSet', () => {
 	it('should make valid DER (with no items)', () => {

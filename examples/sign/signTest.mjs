@@ -1,10 +1,10 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import * as crypto from 'crypto';
-import * as https from 'https';
-import * as url from 'url';
 import { Buffer } from 'buffer';
+import * as crypto from 'crypto';
+import * as fs from 'fs';
+import * as https from 'https';
+import * as path from 'path';
 import * as process from 'process';
+import * as url from 'url';
 import * as ResEdit from '../../dist/index.js';
 /** @typedef {import('../../dist').SignerObject} SignerObject */
 

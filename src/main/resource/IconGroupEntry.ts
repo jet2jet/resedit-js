@@ -1,8 +1,6 @@
 import { type Type } from 'pe-library';
-
 import IconItem from '../data/IconItem.js';
 import RawIconItem from '../data/RawIconItem.js';
-
 import {
 	readUint8WithLastOffset,
 	readUint16WithLastOffset,

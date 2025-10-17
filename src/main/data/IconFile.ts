@@ -1,6 +1,3 @@
-import IconItem from './IconItem.js';
-import RawIconItem from './RawIconItem.js';
-
 import {
 	readUint8WithLastOffset,
 	readUint16WithLastOffset,
@@ -8,6 +5,8 @@ import {
 	copyBuffer,
 	createDataView,
 } from '../util/functions.js';
+import IconItem from './IconItem.js';
+import RawIconItem from './RawIconItem.js';
 
 // struct ICON_GROUP {
 //   uint16_t reserved;
@@ -59,10 +58,13 @@ function generateEntryBinary(icons: readonly IconFileItem[]): ArrayBuffer {
 			};
 		}
 	});
-	const size = tmpIcons.reduce((p, icon) => {
-		icon.offset = p;
-		return p + icon.bin.byteLength;
-	}, 6 + 16 * count);
+	const size = tmpIcons.reduce(
+		(p, icon) => {
+			icon.offset = p;
+			return p + icon.bin.byteLength;
+		},
+		6 + 16 * count
+	);
 	const bin = new ArrayBuffer(size);
 	const view = new DataView(bin);
 

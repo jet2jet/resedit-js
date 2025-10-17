@@ -1,7 +1,6 @@
+import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as child_process from 'child_process';
-
 import { NtExecutable, Format } from 'pe-library';
 
 function loadBinary(filePath: string): Buffer {

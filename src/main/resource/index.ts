@@ -20,7 +20,7 @@ type ResourceEntry = Type.ResourceEntry;
 type ResourceEntryBaseType<
 	TType extends string | number,
 	TID extends string | number,
-	TLang extends string | number
+	TLang extends string | number,
 > = Type.ResourceEntryBaseType<TType, TID, TLang>;
 
 export {

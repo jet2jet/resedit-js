@@ -19,10 +19,11 @@ export function makeDERLength(length: number): number[] {
 export function makeDERIA5String(text: string): number[] {
 	// convert to char-code array and filter to [0-127]
 	const r = [].map
-		.call<string[], [(v: string) => number], number[]>(
-			text as unknown as string[],
-			(c) => c.charCodeAt(0)
-		)
+		.call<
+			string[],
+			[(v: string) => number],
+			number[]
+		>(text as unknown as string[], (c) => c.charCodeAt(0))
 		.filter((n) => n < 128);
 	return [0x16].concat(makeDERLength(r.length)).concat(r);
 }

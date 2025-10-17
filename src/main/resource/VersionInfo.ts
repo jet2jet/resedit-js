@@ -1,5 +1,4 @@
 import { type Type } from 'pe-library';
-
 import {
 	allocatePartialBinary,
 	cloneObject,
@@ -551,7 +550,7 @@ function parseVersionArguments(
 	minor: number,
 	micro: number,
 	revision: number,
-	lang: number | undefined
+	lang: number | undefined,
 ] {
 	let major: number;
 	let minor: number;
@@ -865,7 +864,6 @@ export default class VersionInfo {
 				e.codepage === language.codepage
 			) {
 				try {
-					// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 					delete e.values[key];
 				} catch (_ex) {}
 				if (

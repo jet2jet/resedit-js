@@ -15,50 +15,47 @@
 //   https://github.com/mono/mono/blob/master/mcs/class/Mono.Security/Mono.Security.Authenticode/AuthenticodeDeformatter.cs
 
 import { type NtExecutable, Format, calculateCheckSumForPE } from 'pe-library';
-
-import {
-	type DigestAlgorithmType,
-	type EncryptionAlgorithmType,
-} from './SignerObject.js';
-import type SignerObject from './SignerObject.js';
-
 import {
 	allocatePartialBinary,
 	cloneToArrayBuffer,
 	copyBuffer,
 	roundUp,
 } from '../util/functions.js';
-
 import {
 	certBinToCertificatesDER,
 	pickIssuerAndSerialNumberDERFromCert,
 	toUint8Array,
 } from './certUtil.js';
 import AlgorithmIdentifier from './data/AlgorithmIdentifier.js';
+import Attribute from './data/Attribute.js';
 import CertificateDataRoot from './data/CertificateDataRoot.js';
+import ContentInfo from './data/ContentInfo.js';
 import { RawDERObject } from './data/DERObject.js';
+import {
+	arrayToDERSet,
+	makeDEROctetString,
+	makeDERSequence,
+} from './data/derUtil.js';
 import DigestInfo from './data/DigestInfo.js';
 import IssuerAndSerialNumber from './data/IssuerAndSerialNumber.js';
 import * as KnownOids from './data/KnownOids.js';
+import ObjectIdentifier from './data/ObjectIdentifier.js';
 import SignedData from './data/SignedData.js';
 import SignerInfo from './data/SignerInfo.js';
 import SpcIndirectDataContent, {
 	SpcIndirectDataContentInfo,
 	SPC_INDIRECT_DATA_OBJID,
 } from './data/SpcIndirectDataContent.js';
+import { SpcLinkFile } from './data/SpcLink.js';
 import SpcPeImageData, {
 	SpcPeImageAttributeTypeAndOptionalValue,
 	SpcPeImageFlags,
 } from './data/SpcPeImageData.js';
-import { SpcLinkFile } from './data/SpcLink.js';
-import Attribute from './data/Attribute.js';
 import {
-	arrayToDERSet,
-	makeDEROctetString,
-	makeDERSequence,
-} from './data/derUtil.js';
-import ContentInfo from './data/ContentInfo.js';
-import ObjectIdentifier from './data/ObjectIdentifier.js';
+	type DigestAlgorithmType,
+	type EncryptionAlgorithmType,
+} from './SignerObject.js';
+import type SignerObject from './SignerObject.js';
 import {
 	createTimestampRequest,
 	pickSignedDataFromTimestampResponse,
@@ -66,7 +63,7 @@ import {
 
 type AnyBinary = ArrayBuffer | ArrayBufferView;
 
-function makeSimpleIterator<T>(data: T): Iterator<T> {
+function makeSimpleIterator<T>(data: T): Iterator<T, void> {
 	let done = false;
 	return {
 		next() {
@@ -380,7 +377,7 @@ export function generateExecutableWithSign(
 								): [
 									SpcIndirectDataContent,
 									Attribute[],
-									AnyBinary
+									AnyBinary,
 								] => {
 									return [content, attributes, signed];
 								}

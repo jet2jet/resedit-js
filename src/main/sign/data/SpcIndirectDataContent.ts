@@ -1,16 +1,19 @@
 import ContentInfo from './ContentInfo.js';
-import type DigestInfo from './DigestInfo.js';
-import ObjectIdentifier from './ObjectIdentifier.js';
 import type DERObject from './DERObject.js';
 import { makeDERSequence } from './derUtil.js';
+import type DigestInfo from './DigestInfo.js';
+import ObjectIdentifier from './ObjectIdentifier.js';
 
 // prettier-ignore
 export const SPC_INDIRECT_DATA_OBJID = new ObjectIdentifier([1,3,6,1,4,1,311,2,1,4]);
 
 export class SpcAttributeTypeAndOptionalValue<
-	TValue extends DERObject = DERObject
+	TValue extends DERObject = DERObject,
 > {
-	constructor(public type: ObjectIdentifier, public value: TValue) {}
+	constructor(
+		public type: ObjectIdentifier,
+		public value: TValue
+	) {}
 
 	public toDER(): number[] {
 		return makeDERSequence(this.type.toDER().concat(this.value.toDER()));

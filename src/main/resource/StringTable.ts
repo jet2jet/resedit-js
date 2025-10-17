@@ -1,5 +1,4 @@
 import { type NtExecutableResource, type Type } from 'pe-library';
-
 import StringTableItem from './StringTableItem.js';
 
 /** Utility class to create / parse String Table resource */

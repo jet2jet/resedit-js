@@ -28,7 +28,6 @@ export type DigestAlgorithmType =
 	| 'SHAKE256';
 export type EncryptionAlgorithmType = 'rsa' | 'dsa' | 'RSA' | 'DSA';
 
-/* eslint-disable @typescript-eslint/method-signature-style */
 export default interface SignerObject {
 	/**
 	 * Returns the digest algorithm used in `digestData`.
@@ -111,4 +110,3 @@ export default interface SignerObject {
 		reqData: ArrayBuffer
 	): PromiseLike<ArrayBuffer | ArrayBufferView>;
 }
-/* eslint-enable @typescript-eslint/method-signature-style */

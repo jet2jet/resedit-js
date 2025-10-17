@@ -34,7 +34,7 @@ type BufferPattern = [
 	// fromDescription
 	string,
 	// generator
-	(pattern: number[]) => ArrayBuffer | ArrayBufferView
+	(pattern: number[]) => ArrayBuffer | ArrayBufferView,
 ];
 const bufferPatterns: BufferPattern[] = [
 	['raw ArrayBuffer', generateArrayBuffer],
