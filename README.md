@@ -12,6 +12,7 @@ To use in command line, consider using [resedit-js-cli](https://www.npmjs.com/pa
 The demo page: [resedit demo](https://www.pg-fl.jp/program/resedit/index.en.htm)
 
 - [Install](#install)
+- [Migrate from v2.x to v3.x](#migrate-from-v2x-to-v3x)
 - [Migrate from v1.x to v2.x](#migrate-from-v1x-to-v2x)
 - [Supported formats](#supported-formats)
 - [Parsing signed executables](#parsing-signed-executables)
@@ -25,6 +26,18 @@ The demo page: [resedit demo](https://www.pg-fl.jp/program/resedit/index.en.htm)
 ```
 npm install resedit
 ```
+
+## Migrate from v2.x to v3.x
+
+This major version up includes 'Change requirements of Node.js version (_v20.19.5 or later_ is required)' and 'Remove TypeScript enum usage' only. If your code base (project) meets following conditions, you can safely upgrade to v3.x (without no more actions):
+
+- You uses resedit v2.x
+  - If you use v1.x, please follow [Migrate from v1.x to v2.x](#migrate-from-v1x-to-v2x).
+- The code base already uses Node.js v20.19.5 or later (including v22, v24, or higher)
+  - Node.js v18 or earlier is already end-of-life. Upgrade to v22 or v24 is recommended.
+  - For using Node.js v20, upgrading to v20.19.5 or later would not be difficult.
+- Following enum's members are not used or used only as values: `VersionFileFlags`, `VersionFileOS`, `VersionFileDriverSubtype`, `VersionFileFontSubtype`, and `VersionFileType`
+  - If you use the members as types (e.g. `let x: VersionFileFlags.Debug`), rewrite with using `typeof` (e.g, `let x: typeof VersionFileFlags.Debug`).
 
 ## Migrate from v1.x to v2.x
 

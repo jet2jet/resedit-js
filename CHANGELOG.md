@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.0.0
+
+- **\[Breaking changes\]** Drop older Node.js version (now ensures v20.19.5 or later)
+- **\[Maybe breaking changes\]** Change following enum types to `const` object and `type` definition:
+  - `VersionFileFlags`
+  - `VersionFileOS`
+  - `VersionFileDriverSubtype`
+  - `VersionFileFontSubtype`
+  - `VersionFileType`
+- (development) Update devDependencies packages excluding `typescript`
+
 ## v2.0.3
 
 - Fix icon item image size to ignore biImageSize when biCompression is BI_RGB (#56)
