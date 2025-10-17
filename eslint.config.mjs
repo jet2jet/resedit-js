@@ -124,12 +124,12 @@ export default defineConfig(
 					selector: 'variableLike',
 					format: null,
 					filter: {
-						regex: '^(?:child_process|ResEdit|DOS_Windows16|DOS_Windows32|NT_Windows32)$',
+						regex: '^(?:child_process|ResEdit)$',
 						match: true,
 					},
 				},
 				{
-					selector: 'enumMember',
+					selector: 'memberLike',
 					format: null,
 					filter: {
 						regex: '^(?:DOS_Windows16|DOS_Windows32|NT_Windows32)$',
@@ -150,7 +150,6 @@ export default defineConfig(
 			'@typescript-eslint/no-unsafe-argument': 'warn',
 			'@typescript-eslint/no-unsafe-assignment': 'warn',
 			'@typescript-eslint/no-unsafe-call': 'warn',
-			'@typescript-eslint/no-unsafe-enum-comparison': 'off',
 			'@typescript-eslint/no-unsafe-member-access': 'warn',
 			'@typescript-eslint/no-unsafe-return': 'warn',
 			'@typescript-eslint/no-unused-vars': 'off',

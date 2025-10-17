@@ -7,11 +7,13 @@ import type SpcLink from './SpcLink.js';
 // prettier-ignore
 export const SPC_PE_IMAGE_DATA_OBJID = new ObjectIdentifier([1,3,6,1,4,1,311,2,1,15]);
 
-export const enum SpcPeImageFlags {
-	IncludeResources = 0,
-	IncludeDebugInfo = 1,
-	IncludeImportAddressTable = 2,
-}
+const SpcPeImageFlags = {
+	IncludeResources: 0,
+	IncludeDebugInfo: 1,
+	IncludeImportAddressTable: 2,
+} as const;
+type SpcPeImageFlags = (typeof SpcPeImageFlags)[keyof typeof SpcPeImageFlags];
+export { SpcPeImageFlags };
 
 export default class SpcPeImageData implements DERObject {
 	constructor(
