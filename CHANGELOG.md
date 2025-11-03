@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.1
+
+- Remove npm version from engines and 'engineStrict' for convenience
+
 ## v3.0.0
 
 - **\[Breaking changes\]** Drop older Node.js version (now ensures v20.19.5 or later)
