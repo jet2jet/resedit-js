@@ -2,10 +2,8 @@
   "name": "resedit",
   "version": "3.0.0",
   "engines": {
-    "node": ">=20.19.5",
-    "npm": ">=11.5.1"
+    "node": ">=20"
   },
-  "engineStrict": true,
   "description": "Node.js library editing Windows Resource data",
   "type": "module",
   "module": "./dist/index.js",
