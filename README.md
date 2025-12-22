@@ -44,6 +44,8 @@ This major version up includes 'Change requirements of Node.js version (_v20.19.
 - If you use from ES module (.mjs) and load by using `import`, no need for migration.
 - If you use from ES module (.mjs) and load by using `require` (Node.js: via `createRequire`), replace with `import` statement: `import * as ResEdit from 'resedit'`.
 - If you use from CommonJS module (.cjs) and load by using `require`, choose followings:
+  - If you are using under Node.js environment, _only_ update Node.js to v20.19.0 or later
+    - Starting from Node.js v20.19.0, you can `require` synchronous ES module. resedit does not use top-level `await`, so you can write `require('resedit')` from CommonJS module.
   - Convert CommonJS module to ES module and replace `require` call with `import` statement
   - Use `resedit/cjs` module and call `load` function (see below)
 - If you use TypeScript,
