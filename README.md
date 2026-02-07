@@ -1,19 +1,19 @@
-[![NPM version](https://badge.fury.io/js/resedit.svg)](https://www.npmjs.com/package/resedit)
+[![NPM Version](https://img.shields.io/npm/v/resedit)](https://www.npmjs.com/package/resedit)
+[![NPM Downloads](https://img.shields.io/npm/dw/resedit)](https://www.npmjs.com/package/resedit)
 [![Build Status](https://github.com/jet2jet/resedit-js/actions/workflows/main-ci.yml/badge.svg)](https://github.com/jet2jet/resedit-js)
 
 # resedit-js
 
-resedit-js is a library that manipulates resouces contained by Windows Executable files. All implementations are written in JavaScript (TypeScript), so there are no further restrictions for running environment.
+resedit-js is a library that manipulates resouces contained by Windows Executable files. All implementations are written in JavaScript (TypeScript), without using any native binaries. resedit-js works in both Node.js environment and Web environment.
 
 This library is not tested well for modifying and/or signing executables yet. Please be careful with the emitted binaries.
 
-To use in command line, consider using [resedit-js-cli](https://www.npmjs.com/package/resedit-cli).
+To use from command line, [resedit-js-cli](https://www.npmjs.com/package/resedit-cli) is suitable.
 
 The demo page: [resedit demo](https://www.pg-fl.jp/program/resedit/index.en.htm)
 
 - [Install](#install)
-- [Migrate from v2.x to v3.x](#migrate-from-v2x-to-v3x)
-- [Migrate from v1.x to v2.x](#migrate-from-v1x-to-v2x)
+- [Usage](#usage)
 - [Supported formats](#supported-formats)
 - [Parsing signed executables](#parsing-signed-executables)
 - [Signing executables with resedit-js](#signing-executables-with-resedit-js)
@@ -27,7 +27,30 @@ The demo page: [resedit demo](https://www.pg-fl.jp/program/resedit/index.en.htm)
 npm install resedit
 ```
 
-## Migrate from v2.x to v3.x
+## Usage
+
+- For detailed code using `ResEdit` namespace, see [Examples](#examples).
+- For more APIs, please see `dist` directory of the package. And, [some test codes](./src/test) may help you for usages.
+
+For ESM (ES Modules):
+
+```js
+//import * as PELibrary from 'pe-library';
+import * as ResEdit from 'resedit';
+```
+
+For CJS (CommonJS modules including classic Node.js scripts):
+
+```js
+//const PELibrary = require('pe-library');
+const ResEdit = require('resedit');
+```
+
+> If your Node.js version is prior to v20.19.5, `require` cannot be used for `'resedit'` package and you must use `'resedit/cjs'` package as described in [Migrate from v1.x to v2.x](#migrate-from-v1x-to-v2x) (collapsed in `Migration from prior resedit versions` area).
+
+<details><summary>Migration from prior resedit versions</summary>
+
+### Migrate from v2.x to v3.x
 
 This major version up includes 'Change requirements of Node.js version (_v20.19.5 or later_ is required)' and 'Remove TypeScript enum usage' only. If your code base (project) meets following conditions, you can safely upgrade to v3.x (without no more actions):
 
@@ -39,7 +62,7 @@ This major version up includes 'Change requirements of Node.js version (_v20.19.
 - Following enum's members are not used or used only as values: `VersionFileFlags`, `VersionFileOS`, `VersionFileDriverSubtype`, `VersionFileFontSubtype`, and `VersionFileType`
   - If you use the members as types (e.g. `let x: VersionFileFlags.Debug`), rewrite with using `typeof` (e.g, `let x: typeof VersionFileFlags.Debug`).
 
-## Migrate from v1.x to v2.x
+### Migrate from v1.x to v2.x
 
 - If you use from ES module (.mjs) and load by using `import`, no need for migration.
 - If you use from ES module (.mjs) and load by using `require` (Node.js: via `createRequire`), replace with `import` statement: `import * as ResEdit from 'resedit'`.
@@ -72,6 +95,8 @@ load().then((RE: typeof ResEdit) => {
   // (for example RE.Data.IconFile is available)
 });
 ```
+
+</details>
 
 ## Supported formats
 
@@ -110,8 +135,6 @@ Note that resedit-js only provides basic signing process, and provides as beta v
 - **It is not strongly recommended that the destination executable file is equal to the source executable file (which is not an intermediate data).**
 
 ## Examples
-
-For more APIs, please see `dist` directory of the package. And, [some test codes](./src/test) may help you for usages.
 
 ```js
 import * as PELibrary from 'pe-library';

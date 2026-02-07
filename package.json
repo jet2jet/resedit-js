@@ -27,6 +27,7 @@
     "edit",
     "resedit",
     "pe-executable",
+    "signing",
     "authenticode"
   ],
   "repository": {
