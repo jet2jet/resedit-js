@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{ needs.get-vars.outputs.node-version }}
           cache: npm
@@ -21,7 +21,7 @@ jobs:
         run: npm i -g npm@${{ needs.get-vars.outputs.npm-version }}
       - name: Cache node modules
         id: node_modules_cache
-        uses: actions/cache@v3
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
         env:
           cache-name: cache-node-modules
         with:
@@ -43,15 +43,15 @@ jobs:
       TEST_IGNORE_256_ICON: 1
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{ needs.get-vars.outputs.node-version }}
           cache: npm
       - name: Cache node modules
         id: node_modules_cache
-        uses: actions/cache@v3
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
         env:
           cache-name: cache-node-modules
         with:
