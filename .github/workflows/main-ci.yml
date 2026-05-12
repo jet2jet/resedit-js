@@ -1,24 +1,35 @@
 name: Main CI
 on:
   push:
+permissions: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   get-vars:
     uses: ./.github/workflows/nodevars.yml
 
   main:
+    name: Lint and Test
     needs: get-vars
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
       - name: Setup node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{ needs.get-vars.outputs.node-version }}
           cache: npm
       - name: Setup npm
-        run: npm i -g npm@${{ needs.get-vars.outputs.npm-version }}
+        run: npm i -g npm@${NPM_VERSION}
+        env:
+          NPM_VERSION: ${{ needs.get-vars.outputs.npm-version }}
       - name: Cache node modules
         id: node_modules_cache
         uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
@@ -37,6 +48,7 @@ jobs:
       - name: Test
         run: npm run test
   windows-test:
+    name: Test using Windows environment
     needs: get-vars
     runs-on: windows-latest
     env:
@@ -44,6 +56,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
       - name: Setup node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
@@ -60,7 +74,9 @@ jobs:
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
         # use npx instead of installing npm globally to avoid permission error
-        run: npx -y npm@${{ needs.get-vars.outputs.npm-version }} ci
+        run: npx -y npm@${NPM_VERSION} ci
+        env:
+          NPM_VERSION: ${{ needs.get-vars.outputs.npm-version }}
       - name: Test (x86)
         # use normal npm (which should not affect to the test)
         run: npm run test:win-x86
