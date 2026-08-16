@@ -1,4 +1,4 @@
-name: Main CI
+name: Linting and Testing
 on:
   push:
 permissions: {}
@@ -9,6 +9,8 @@ concurrency:
 jobs:
   get-vars:
     uses: ./.github/workflows/nodevars.yml
+    permissions:
+      contents: read
 
   main:
     name: Lint and Test

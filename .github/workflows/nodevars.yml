@@ -21,9 +21,29 @@ jobs:
     outputs:
       node-version: ${{ steps.setver.outputs.node_version }}
       npm-version: ${{ steps.setver.outputs.npm_version }}
+    permissions:
+      contents: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
       - id: setver
         name: Output variables
         run: |
-          echo "node_version=${NODE_VERSION}" >> $GITHUB_OUTPUT
-          echo "npm_version=${NPM_VERSION}" >> $GITHUB_OUTPUT
+          if [ ! -f .tool-versions ]; then
+            echo ".tool-versions file not found in repository root" >&2
+            exit 1
+          fi
+
+          raw_node_version=$(awk '$1 == "nodejs" { print $2 }' .tool-versions | head -n 1)
+
+          if [ -z "$raw_node_version" ]; then
+            echo "nodejs entry not found in .tool-versions" >&2
+            exit 1
+          fi
+
+          node_version="${raw_node_version#v}"
+
+          echo "node_version=$node_version" >> "$GITHUB_OUTPUT"
+          echo "npm_version=${NPM_VERSION}" >> "$GITHUB_OUTPUT"
