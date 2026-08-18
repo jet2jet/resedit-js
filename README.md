@@ -1,6 +1,5 @@
 [![NPM Version](https://img.shields.io/npm/v/resedit)](https://www.npmjs.com/package/resedit)
 [![NPM Downloads](https://img.shields.io/npm/dw/resedit)](https://www.npmjs.com/package/resedit)
-[![Build Status](https://github.com/jet2jet/resedit-js/actions/workflows/main-ci.yml/badge.svg)](https://github.com/jet2jet/resedit-js)
 
 # resedit-js
 
