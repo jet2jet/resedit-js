@@ -152,10 +152,13 @@ function parseStringTable(
 		// String structure
 		const childDataLen = view.getUint16(offset, true);
 		const childValueLen = view.getUint16(offset + 2, true);
+		const valueType = view.getUint16(offset + 4, true);
 		// value type must be string; if not, skip it
-		if (view.getUint16(offset + 4, true) !== 1) {
-			offset += childDataLen;
-			continue;
+		if (valueType !== 1) {
+			if (valueType !== 0 || childValueLen !== 2) {
+				offset += roundUp(childDataLen, 4);
+				continue;
+			}
 		}
 		let childDataLast = offset + childDataLen;
 		if (childDataLast > last) {
@@ -164,14 +167,22 @@ function parseStringTable(
 		const name = readStringToNullChar(view, offset + 6, childDataLast);
 		offset = roundUp(offset + 6 + 2 * (name.length + 1), 4);
 
-		let childValueLast = offset + childValueLen * 2;
-		if (childValueLast > childDataLast) {
-			childValueLast = childDataLast;
-		}
-		const value = readStringToNullChar(view, offset, childValueLast);
-		offset = roundUp(childValueLast, 4);
+		if (valueType === 0) {
+			const valueData = view.getUint16(offset, true);
+			if (valueData === 0) {
+				r.values[name] = '';
+			}
+			offset = roundUp(offset + 2, 4);
+		} else {
+			let childValueLast = offset + childValueLen * 2;
+			if (childValueLast > childDataLast) {
+				childValueLast = childDataLast;
+			}
+			const value = readStringToNullChar(view, offset, childValueLast);
+			offset = roundUp(childValueLast, 4);
 
-		r.values[name] = value;
+			r.values[name] = value;
+		}
 	}
 	// return 'last' instead of 'offset'
 	return [last, r];
@@ -398,11 +409,16 @@ function generateStringTable(table: VersionStringTable): ArrayBuffer {
 			return;
 		}
 		const childHeaderSize = roundUp(6 + 2 * (key.length + 1), 4);
-		const newSize = roundUp(childHeaderSize + 2 * (value.length + 1), 4);
+		const newSize = childHeaderSize + 2 * (value.length + 1);
 		if (offset + newSize <= 65532) {
 			view.setUint16(offset, newSize, true);
-			view.setUint16(offset + 2, value.length + 1, true); // value length is in character count
-			view.setUint16(offset + 4, 1, true);
+			if (value.length === 0) {
+				view.setUint16(offset + 2, 2, true);
+				view.setUint16(offset + 4, 0, true);
+			} else {
+				view.setUint16(offset + 2, value.length + 1, true); // value length is in character count
+				view.setUint16(offset + 4, 1, true);
+			}
 			offset = roundUp(writeStringWithNullChar(view, offset + 6, key), 4);
 			offset = roundUp(writeStringWithNullChar(view, offset, value), 4);
 		}

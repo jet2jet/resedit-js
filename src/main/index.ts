@@ -1,5 +1,6 @@
 import { NtExecutable, NtExecutableResource, Format } from 'pe-library';
 import * as Data from './data/index.js';
+import * as Mui from './mui/index.js';
 import * as Resource from './resource/index.js';
 import {
 	generateExecutableWithSign,
@@ -16,6 +17,7 @@ export {
 	Data,
 	Format,
 	Resource,
+	Mui,
 	generateExecutableWithSign,
 	type SignerObject,
 	type DigestAlgorithmType,

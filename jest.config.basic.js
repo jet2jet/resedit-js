@@ -7,7 +7,7 @@ export default {
 	preset: 'ts-jest',
 	clearMocks: true,
 	testEnvironment: 'node',
-	testMatch: ['<rootDir>/src/test/basic/**/*.ts'],
+	testMatch: ['<rootDir>/src/test/basic/**/!(*.d.ts)@(.ts)'],
 	moduleNameMapper: {
 		'^@/(.*)\\.js$': '<rootDir>/src/main/$1',
 		'^@/(.*)$': '<rootDir>/src/main/$1',

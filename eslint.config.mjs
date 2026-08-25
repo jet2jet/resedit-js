@@ -166,6 +166,9 @@ export default defineConfig(
 	{
 		files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
 		extends: [tseslint.configs.disableTypeChecked],
+		rules: {
+			'@typescript-eslint/explicit-module-boundary-types': 'off',
+		},
 	},
 	{
 		files: ['./*.js', 'examples/**/*.js', 'tools/**/*.js'],
