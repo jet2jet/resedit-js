@@ -2,7 +2,7 @@ import base from './jest.config.basic.js';
 
 export default {
 	...base,
-	testMatch: ['<rootDir>/src/test/win/**/*.ts'],
+	testMatch: ['<rootDir>/src/test/win/**/!(*.d.ts)@(.ts)'],
 	globals: {
 		...base.globals,
 		__TEST_PLATFORM__: 'x86',
