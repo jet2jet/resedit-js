@@ -3,7 +3,7 @@
 
 # resedit-js
 
-resedit-js is a library that manipulates resouces contained by Windows Executable files. All implementations are written in JavaScript (TypeScript), without using any native binaries. resedit-js works in both Node.js environment and Web environment.
+resedit-js is a library that manipulates resouces contained by Windows Executable files. All implementations are written in JavaScript (TypeScript), without using any native binaries. resedit-js works in both Node.js environment and Web environment (with bundlers).
 
 This library is not tested well for modifying and/or signing executables yet. Please be careful with the emitted binaries.
 

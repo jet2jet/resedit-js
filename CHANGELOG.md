@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.0
+
+- Add MUI resource support via `Mui` namespace in the root namespace (e.g. `ResEdit.Mui`)
+
 ## v3.0.2
 
 - Update README only
