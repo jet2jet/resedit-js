@@ -1,12 +1,16 @@
 import { globalIgnores } from '@eslint/config-helpers';
 import { defineConfig } from 'eslint/config';
 import EslintConfigPrettier from 'eslint-config-prettier/flat';
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
+import { importX } from 'eslint-plugin-import-x';
 import globals from 'globals';
-import neostandard from 'neostandard';
-import tseslint from 'typescript-eslint';
+import { neostandard } from 'neostandard';
+import * as tseslint from 'typescript-eslint';
 
 export default defineConfig(
 	globalIgnores(['.work/', 'dist/', 'src/_esm', '**/*.d.ts']),
+	importX.flatConfigs.recommended,
+	importX.flatConfigs.typescript,
 	...neostandard({
 		ts: true,
 		env: ['browser'],
@@ -18,6 +22,12 @@ export default defineConfig(
 	}),
 	tseslint.configs.recommendedTypeChecked,
 	{
+		plugins: {
+			'import-x': importX,
+		},
+		settings: {
+			'import-x/resolver-next': [createTypeScriptImportResolver()],
+		},
 		languageOptions: {
 			parserOptions: {
 				projectService: true,
