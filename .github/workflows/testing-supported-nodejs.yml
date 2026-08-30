@@ -1,4 +1,4 @@
-name: Linting and Testing
+name: Testing for supported Node.js version
 on:
   push:
 permissions: {}
@@ -6,15 +6,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-jobs:
-  get-vars:
-    uses: ./.github/workflows/nodevars.yml
-    permissions:
-      contents: read
+env:
+  NODE_VERSION: 20.19.5
+  NPM_VERSION: 11.12.1
 
-  main:
-    name: Lint and Test
-    needs: get-vars
+jobs:
+  basic-test:
+    name: Test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,12 +24,12 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: ${{ needs.get-vars.outputs.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - name: Setup npm
         run: npm i -g npm@${NPM_VERSION}
         env:
-          NPM_VERSION: ${{ needs.get-vars.outputs.npm-version }}
+          NPM_VERSION: ${{ env.NPM_VERSION }}
       - name: Cache node modules
         id: node_modules_cache
         uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
@@ -39,19 +37,14 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: node_modules
-          key: ${{ env.cache-name }}-${{ needs.get-vars.outputs.npm-version }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ env.cache-name }}-${{ env.NPM_VERSION }}-${{ hashFiles('package-lock.json') }}
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
         run: npm ci
-      - name: Type check
-        run: npm run typecheck
-      - name: Lint check
-        run: npm run lint
       - name: Test
         run: npm run test
   windows-test:
     name: Test using Windows environment
-    needs: get-vars
     runs-on: windows-latest
     env:
       TEST_IGNORE_256_ICON: 1
@@ -63,13 +56,8 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: ${{ needs.get-vars.outputs.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
-      - name: Setup npm
-        shell: pwsh
-        run: npm i -g npm@${env:NPM_VERSION}
-        env:
-          NPM_VERSION: ${{ needs.get-vars.outputs.npm-version }}
       - name: Cache node modules
         id: node_modules_cache
         uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
@@ -77,10 +65,13 @@ jobs:
           cache-name: cache-node-modules-windows
         with:
           path: node_modules
-          key: ${{ env.cache-name }}-${{ needs.get-vars.outputs.npm-version }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ env.cache-name }}-${{ env.NPM_VERSION }}-${{ hashFiles('package-lock.json') }}
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
-        run: npm ci
+        # use npx instead of installing npm globally to avoid permission error
+        run: npx -y npm@${NPM_VERSION} ci
+        env:
+          NPM_VERSION: ${{ env.NPM_VERSION }}
       - name: Test (x86)
         # use normal npm (which should not affect to the test)
         run: npm run test:win-x86

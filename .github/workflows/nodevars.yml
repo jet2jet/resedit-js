@@ -10,8 +10,7 @@ on:
         description: 'Common NPM version'
         value: ${{ jobs.export.outputs.npm-version }}
 env:
-  NODE_VERSION: 20.19.5
-  NPM_VERSION: 11.12.1
+  NPM_VERSION: 12.0.2
 permissions: {}
 
 jobs:
