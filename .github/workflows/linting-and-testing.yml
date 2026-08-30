@@ -39,7 +39,7 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: node_modules
-          key: ${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ env.cache-name }}-${{ needs.get-vars.outputs.npm-version }}-${{ hashFiles('package-lock.json') }}
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
         run: npm ci
@@ -69,14 +69,15 @@ jobs:
         id: node_modules_cache
         uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
         env:
-          cache-name: cache-node-modules
+          cache-name: cache-node-modules-windows
         with:
           path: node_modules
-          key: ${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+          key: ${{ env.cache-name }}-${{ needs.get-vars.outputs.npm-version }}-${{ hashFiles('package-lock.json') }}
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
+        shell: pwsh
         # use npx instead of installing npm globally to avoid permission error
-        run: npx -y npm@${NPM_VERSION} ci
+        run: npx -y npm@${env:NPM_VERSION} ci
         env:
           NPM_VERSION: ${{ needs.get-vars.outputs.npm-version }}
       - name: Test (x86)
