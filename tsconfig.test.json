@@ -1,11 +1,10 @@
 {
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
-    "baseUrl": "./src/main",
     "module": "ES2015",
-    "rootDir": "../..",
+    "rootDir": ".",
     "paths": {
-      "@/*": ["../../src/main/*"]
+      "@/*": ["./src/main/*"]
     },
     "target": "es2015",
     "types": ["node", "jest"]
