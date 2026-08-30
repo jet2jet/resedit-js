@@ -1,9 +1,11 @@
 import { globalIgnores } from '@eslint/config-helpers';
 import { defineConfig } from 'eslint/config';
 import EslintConfigPrettier from 'eslint-config-prettier/flat';
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
+import { importX } from 'eslint-plugin-import-x';
 import globals from 'globals';
-import neostandard from 'neostandard';
-import tseslint from 'typescript-eslint';
+import { neostandard } from 'neostandard';
+import * as tseslint from 'typescript-eslint';
 
 export default defineConfig(
 	globalIgnores(['.work/', 'dist/', 'src/_esm', '**/*.d.ts']),
@@ -18,6 +20,12 @@ export default defineConfig(
 	}),
 	tseslint.configs.recommendedTypeChecked,
 	{
+		plugins: {
+			'import-x': importX,
+		},
+		settings: {
+			'import-x/resolver-next': [createTypeScriptImportResolver()],
+		},
 		languageOptions: {
 			parserOptions: {
 				projectService: true,
@@ -47,7 +55,14 @@ export default defineConfig(
 			],
 
 			'import-x/export': 'off',
+			'import-x/first': 'error',
+			'import-x/no-absolute-path': [
+				'error',
+				{ esmodule: true, commonjs: true, amd: false },
+			],
 			'import-x/no-duplicates': ['error', { 'prefer-inline': true }],
+			'import-x/no-named-default': 'error',
+			'import-x/no-webpack-loader-syntax': 'error',
 			'import-x/order': [
 				'error',
 				{

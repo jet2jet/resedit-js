@@ -40,7 +40,7 @@ jobs:
           key: ${{ env.cache-name }}-${{ env.NPM_VERSION }}-${{ hashFiles('package-lock.json') }}
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
-        run: npm ci
+        run: npm ci --no-engine-strict
       - name: Test
         run: npm run test
   windows-test:
@@ -69,7 +69,7 @@ jobs:
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
         # use npx instead of installing npm globally to avoid permission error
-        run: npx -y npm@${NPM_VERSION} ci
+        run: npx -y npm@${NPM_VERSION} ci --no-engine-strict
         env:
           NPM_VERSION: ${{ env.NPM_VERSION }}
       - name: Test (x86)

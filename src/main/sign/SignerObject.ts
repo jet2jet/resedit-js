@@ -56,9 +56,7 @@ export default interface SignerObject {
 	 * Note that this library does not sort certificates, so the implementation should have responsible for the order of certificates.
 	 */
 	getCertificateData():
-		| ArrayBuffer
-		| ArrayBufferView
-		| Array<ArrayBuffer | ArrayBufferView>;
+		ArrayBuffer | ArrayBufferView | Array<ArrayBuffer | ArrayBufferView>;
 	/**
 	 * Returns the public key data, which format is DER binary (X.509 Public Key or '.p7b' file data which is based on DER).
 	 *
@@ -70,9 +68,7 @@ export default interface SignerObject {
 	 *   and `getPublicKeyData` will no longer be used in the future.
 	 */
 	getPublicKeyData?():
-		| ArrayBuffer
-		| ArrayBufferView
-		| Array<ArrayBuffer | ArrayBufferView>;
+		ArrayBuffer | ArrayBufferView | Array<ArrayBuffer | ArrayBufferView>;
 	/**
 	 * Digests specified data. The digest algorithm type must be same as the result of `getDigestAlgorithm`.
 	 * Must pick all data from `dataIterator` (until `dataIterator.next().done` is `true`).

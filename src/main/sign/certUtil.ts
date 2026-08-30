@@ -297,7 +297,7 @@ export function certBinToCertificatesDER(
 		}
 		const offsetLast = eaten + tempLength;
 		const rawData: RawDERObject[] = [];
-		for (let offset = eaten; offset < offsetLast; ) {
+		for (let offset = eaten; offset < offsetLast;) {
 			// pick certificates
 			if (certsBin[offset] !== 0x30) {
 				throw new Error(
