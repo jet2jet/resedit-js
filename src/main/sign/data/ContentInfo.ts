@@ -3,9 +3,9 @@ import { makeDERSequence, makeDERTaggedData } from './derUtil.js';
 import type ObjectIdentifier from './ObjectIdentifier.js';
 
 // abstract
-export default class ContentInfo<TContent extends DERObject = DERObject>
-	implements DERObject
-{
+export default class ContentInfo<
+	TContent extends DERObject = DERObject,
+> implements DERObject {
 	constructor(
 		public contentType: ObjectIdentifier,
 		public content: TContent
