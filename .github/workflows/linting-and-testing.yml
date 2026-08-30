@@ -65,6 +65,11 @@ jobs:
         with:
           node-version: ${{ needs.get-vars.outputs.node-version }}
           cache: npm
+      - name: Setup npm
+        shell: pwsh
+        run: npm i -g npm@${env:NPM_VERSION}
+        env:
+          NPM_VERSION: ${{ needs.get-vars.outputs.npm-version }}
       - name: Cache node modules
         id: node_modules_cache
         uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
@@ -75,11 +80,7 @@ jobs:
           key: ${{ env.cache-name }}-${{ needs.get-vars.outputs.npm-version }}-${{ hashFiles('package-lock.json') }}
       - name: Install
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
-        shell: pwsh
-        # use npx instead of installing npm globally to avoid permission error
-        run: npx -y npm@${env:NPM_VERSION} ci
-        env:
-          NPM_VERSION: ${{ needs.get-vars.outputs.npm-version }}
+        run: npm ci
       - name: Test (x86)
         # use normal npm (which should not affect to the test)
         run: npm run test:win-x86
