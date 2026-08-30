@@ -7,7 +7,7 @@ import { OID_SIGNED_DATA } from './data/KnownOids.js';
 export function createTimestampRequest(
 	data: ArrayBuffer | ArrayBufferView,
 	algorithmIdentifier: AlgorithmIdentifier
-): ArrayBufferLike {
+): ArrayBuffer {
 	return new Uint8Array(
 		makeDERSequence(
 			// version
