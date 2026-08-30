@@ -9,8 +9,6 @@ import * as tseslint from 'typescript-eslint';
 
 export default defineConfig(
 	globalIgnores(['.work/', 'dist/', 'src/_esm', '**/*.d.ts']),
-	importX.flatConfigs.recommended,
-	importX.flatConfigs.typescript,
 	...neostandard({
 		ts: true,
 		env: ['browser'],
@@ -57,7 +55,14 @@ export default defineConfig(
 			],
 
 			'import-x/export': 'off',
+			'import-x/first': 'error',
+			'import-x/no-absolute-path': [
+				'error',
+				{ esmodule: true, commonjs: true, amd: false },
+			],
 			'import-x/no-duplicates': ['error', { 'prefer-inline': true }],
+			'import-x/no-named-default': 'error',
+			'import-x/no-webpack-loader-syntax': 'error',
 			'import-x/order': [
 				'error',
 				{
