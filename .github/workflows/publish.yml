@@ -87,5 +87,5 @@ jobs:
         with:
           name: npm-package
           path: package
-      - name: Publish
-        run: npm publish ./package/*.tgz --provenance --ignore-scripts
+      - name: Stage publish
+        run: npm stage publish ./package/*.tgz --ignore-scripts --access public
