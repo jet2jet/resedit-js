@@ -7,6 +7,10 @@ resedit-js is a library that manipulates resouces contained by Windows Executabl
 
 This library is not tested well for modifying and/or signing executables yet. Please be careful with the emitted binaries.
 
+> [!WARNING]  
+> This library treats raw binary data for executables.
+> Specifying untrusted data (such as unchecked user inputs) may increase security risks.
+
 To use from command line, [resedit-js-cli](https://www.npmjs.com/package/resedit-cli) is suitable.
 
 The demo page: [resedit demo](https://www.pg-fl.jp/program/resedit/index.en.htm)
