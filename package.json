@@ -57,7 +57,7 @@
     "typecheck": "tsc --project tsconfig.json --noEmit && echo \"Done\"."
   },
   "dependencies": {
-    "pe-library": "^2.0.1"
+    "pe-library": "^2.0.3"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
